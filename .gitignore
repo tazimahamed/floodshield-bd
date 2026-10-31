@@ -12,3 +12,4 @@ data/processed/
 *.grib
 backend/models/*.pt
 .ipynb_checkpoints/
+*.docx
