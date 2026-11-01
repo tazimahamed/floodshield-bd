@@ -13,6 +13,7 @@ from app.db.session import SessionLocal
 
 BOUNDARY_DIR = settings.data_dir / "raw" / "boundaries"
 SOURCE = "geoBoundaries gbOpen BGD (BBS, OCHA ROAP), CC BY 3.0 IGO"
+SPELLING_FIXES = {"Rajshani": "Rajshahi"}  # typo in the source ADM1 file
 
 
 def _features(name: str) -> list[dict]:
@@ -21,7 +22,7 @@ def _features(name: str) -> list[dict]:
 
 def _parent_lookup(features: list[dict]):
     geoms = [shape(f["geometry"]) for f in features]
-    names = [f["properties"]["shapeName"] for f in features]
+    names = [SPELLING_FIXES.get(n, n) for n in (f["properties"]["shapeName"] for f in features)]
     tree = STRtree(geoms)
 
     def find(point) -> str | None:
