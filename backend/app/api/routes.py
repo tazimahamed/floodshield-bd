@@ -4,8 +4,9 @@ from datetime import date
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select, text
 
-from app.db.models import Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, IngestRun, Node, RainForecast, River
+from app.db.models import Asset, Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, IngestRun, ModelVersion, Node, RainForecast, River
 from app.db.session import SessionLocal
+from app.services.impact import impact
 
 router = APIRouter(prefix="/api/v1")
 
@@ -188,6 +189,56 @@ def node_history(node_id: str, start: date = Query(...), end: date = Query(...))
         } for r in rows]}
 
 
+RISK_ORDER = {"low": 0, "medium": 1, "high": 2}
+
+
+@router.get("/nodes/{node_id}/assets")
+def node_assets(node_id: str):
+    """OSM critical assets inside one upazila (GeoJSON points)."""
+    with SessionLocal() as db:
+        rows = db.execute(select(Asset, func.ST_X(Asset.geom), func.ST_Y(Asset.geom))
+                          .where(Asset.node_id == node_id).order_by(Asset.kind, Asset.name)).all()
+        return {"type": "FeatureCollection", "source": "OpenStreetMap contributors (ODbL)", "features": [{
+            "type": "Feature", "geometry": {"type": "Point", "coordinates": [x, y]},
+            "properties": {"id": a.id, "kind": a.kind, "name": a.name, "name_bn": a.name_bn},
+        } for a, x, y in rows]}
+
+
+@router.get("/assets/at-risk")
+def assets_at_risk(min_risk: str = Query("medium", pattern="^(low|medium|high)$")):
+    """Direct and ripple impact for every upazila at or above `min_risk` in the latest flood forecast."""
+    with SessionLocal() as db:
+        run = _latest_flood_run(db)
+        if not run:
+            raise HTTPException(404, "No flood forecast run yet")
+        levels = [k for k, v in RISK_ORDER.items() if v >= RISK_ORDER[min_risk]]
+        ids = list(db.scalars(select(FloodForecast.node_id).where(FloodForecast.run_id == run.id,
+                                                                  FloodForecast.risk.in_(levels))))
+    return {"forecast_run": run.id, "min_risk": min_risk, "upazilas": ids, **impact(ids)}
+
+
+@router.get("/simulate/ripple")
+def simulate_ripple(ids: str = Query(..., description="Comma-separated upazila ids assumed flooded")):
+    """What-if: impact if these upazilas flood (independent of the forecast)."""
+    node_ids = [i for i in ids.split(",") if i]
+    if len(node_ids) > 544:
+        raise HTTPException(400, "Too many upazilas")
+    with SessionLocal() as db:
+        known = set(db.scalars(select(Node.id).where(Node.id.in_(node_ids), Node.node_type == "upazila")))
+    if unknown := [i for i in node_ids if i not in known]:
+        raise HTTPException(404, f"Unknown upazila ids: {unknown[:5]}")
+    return impact(node_ids)
+
+
+@router.get("/models")
+def model_versions():
+    """Model card data: every trained flood model with its leave-one-year-out scores."""
+    with SessionLocal() as db:
+        return [{"version": m.version, "trained_at": m.trained_at.isoformat(), "active": m.is_active,
+                 "metrics": m.metrics, **m.info}
+                for m in db.scalars(select(ModelVersion).order_by(ModelVersion.trained_at.desc())).all()]
+
+
 @router.get("/divisions")
 def divisions():
     with SessionLocal() as db:
@@ -229,6 +280,7 @@ def flood_forecast():
                           .where(FloodForecast.run_id == run.id).order_by(FloodForecast.flood_prob.desc())).all()
         return {"run": _flood_run_info(run), "upazilas": [{
             "id": f.node_id, "name": n, "district": d, "flood_frac": f.flood_frac,
+            "frac_p10": f.frac_p10, "frac_p90": f.frac_p90,
             "flood_prob": f.flood_prob, "risk": f.risk} for f, n, d in rows]}
 
 

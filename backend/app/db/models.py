@@ -1,7 +1,7 @@
 from datetime import date, datetime
 
 from geoalchemy2 import Geometry
-from sqlalchemy import JSON, Date, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint, func
+from sqlalchemy import JSON, BigInteger, Boolean, Date, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -159,5 +159,45 @@ class FloodForecast(Base):
     run_id: Mapped[int] = mapped_column(ForeignKey("flood_forecast_runs.id", ondelete="CASCADE"), index=True)
     node_id: Mapped[str] = mapped_column(ForeignKey("nodes.id", ondelete="CASCADE"), index=True)
     flood_frac: Mapped[float] = mapped_column(Float)
+    frac_p10: Mapped[float | None] = mapped_column(Float)
+    frac_p90: Mapped[float | None] = mapped_column(Float)
     flood_prob: Mapped[float] = mapped_column(Float)
     risk: Mapped[str] = mapped_column(String(8))  # low / medium / high
+
+
+class ModelVersion(Base):
+    """Every trained flood model with its leave-one-year-out scores; one is active."""
+
+    __tablename__ = "model_versions"
+
+    version: Mapped[str] = mapped_column(String(64), primary_key=True)
+    trained_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    path: Mapped[str] = mapped_column(String(256))
+    metrics: Mapped[dict] = mapped_column(JSON)
+    info: Mapped[dict] = mapped_column(JSON)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+
+
+class Asset(Base):
+    """Critical facility from OpenStreetMap (id = n/w/r + OSM id), linked to its upazila."""
+
+    __tablename__ = "assets"
+
+    id: Mapped[str] = mapped_column(String(24), primary_key=True)
+    kind: Mapped[str] = mapped_column(String(16), index=True)
+    name: Mapped[str | None] = mapped_column(String(256))
+    name_bn: Mapped[str | None] = mapped_column(String(256))
+    node_id: Mapped[str | None] = mapped_column(ForeignKey("nodes.id", ondelete="SET NULL"), index=True)
+    geom = mapped_column(Geometry("POINT", srid=4326))
+
+
+class Road(Base):
+    """Major road from OpenStreetMap (motorway / trunk / primary)."""
+
+    __tablename__ = "roads"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)  # OSM way id
+    highway: Mapped[str] = mapped_column(String(16))
+    ref: Mapped[str | None] = mapped_column(String(64))
+    name: Mapped[str | None] = mapped_column(String(256))
+    geom = mapped_column(Geometry("LINESTRING", srid=4326))

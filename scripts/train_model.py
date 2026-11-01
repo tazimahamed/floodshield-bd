@@ -10,13 +10,18 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
 
 from app.db import models  # noqa: E402,F401  (registers tables)
+from sqlalchemy import text  # noqa: E402
+
 from app.db.session import Base, engine  # noqa: E402
 from app.ml.train import train  # noqa: E402
 
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
+    with engine.begin() as c:  # columns added in P4 v1
+        c.execute(text("alter table flood_forecasts add column if not exists frac_p10 double precision"))
+        c.execute(text("alter table flood_forecasts add column if not exists frac_p90 double precision"))
     info = train()
-    print(json.dumps({k: info[k] for k in ("version", "n_windows", "n_rows", "years", "metrics", "importance")},
+    print(json.dumps({k: info[k] for k in ("version", "activated", "n_windows", "n_rows", "years", "metrics", "importance")},
                      indent=2))
     if "--forecast" in sys.argv:
         from app.ml.forecast import run_forecast

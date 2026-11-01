@@ -12,7 +12,7 @@ import joblib
 import pandas as pd
 from sqlalchemy import func, select
 
-from app.db.models import Era5Daily, FloodForecast, FloodForecastRun, IngestRun, RainForecast
+from app.db.models import Era5Daily, FloodForecast, FloodForecastRun, IngestRun, ModelVersion, RainForecast
 from app.db.session import SessionLocal
 from app.ml.features import FORECAST_DAYS, features_at, graph_tables, load_daily
 from app.ml.train import MODEL_DIR
@@ -27,8 +27,10 @@ def risk_level(prob: float) -> str:
 
 
 def load_model():
-    version = (MODEL_DIR / "latest.txt").read_text().strip()
-    return joblib.load(MODEL_DIR / f"{version}.joblib")
+    """The active model from model_versions (None if nothing has been trained yet)."""
+    with SessionLocal() as db:
+        active = db.scalars(select(ModelVersion).where(ModelVersion.is_active)).first()
+    return joblib.load(MODEL_DIR / active.path) if active else None
 
 
 def _gfs_daily(db, run_id: int) -> pd.DataFrame:
@@ -43,6 +45,8 @@ def _gfs_daily(db, run_id: int) -> pd.DataFrame:
 
 def run_forecast() -> int:
     model = load_model()
+    if model is None:
+        raise RuntimeError("No active flood model (run scripts/train_model.py)")
     with SessionLocal() as db:
         rain_run = db.scalars(select(IngestRun).where(IngestRun.source == "open-meteo-gfs", IngestRun.status == "done")
                               .order_by(IngestRun.finished_at.desc()).limit(1)).first()
@@ -60,9 +64,8 @@ def run_forecast() -> int:
         daily["precip_mm"] = pd.concat([daily["precip_mm"], after]).sort_index()
 
         static, weights = graph_tables()
-        f = features_at(t0, daily, static, weights)[model["info"]["features"]]
-        frac = model["reg"].predict(f).clip(0, 1)
-        prob = model["clf"].predict_proba(f)[:, 1]
+        f = features_at(t0, daily, static, weights)
+        pred = model["model"].predict(f)
 
         run = FloodForecastRun(
             issued_at=datetime.now(timezone.utc), reference_day=t0.date(),
@@ -73,9 +76,10 @@ def run_forecast() -> int:
                   "flood_frac": model["info"]["flood_frac"], "thresholds": {"high": HIGH, "medium": MEDIUM}})
         db.add(run)
         db.flush()
-        db.add_all(FloodForecast(run_id=run.id, node_id=n, flood_frac=round(float(a), 4),
-                                 flood_prob=round(float(p), 4), risk=risk_level(p))
-                   for n, a, p in zip(f.index, frac, prob))
+        db.add_all(FloodForecast(run_id=run.id, node_id=n, flood_frac=round(float(r.frac), 4),
+                                 frac_p10=round(float(r.p10), 4), frac_p90=round(float(r.p90), 4),
+                                 flood_prob=round(float(r.prob), 4), risk=risk_level(r.prob))
+                   for n, r in pred.iterrows())
         db.commit()
         log.info("flood forecast %d: model %s, rain run %d", run.id, run.model_version, rain_run.id)
         return run.id
@@ -83,7 +87,7 @@ def run_forecast() -> int:
 
 def safe_run_forecast() -> None:
     """Scheduler entry point: a missing model just means no forecast yet."""
-    if not (MODEL_DIR / "latest.txt").exists():
+    if load_model() is None:
         log.info("No trained flood model yet; skipping flood forecast")
         return
     run_forecast()

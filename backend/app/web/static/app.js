@@ -8,6 +8,13 @@ const T = {
     topTitle: "Highest forecast rainfall", sourceTitle: "Data source",
     chartNote: "Hourly precipitation (mm), NOAA GFS via Open-Meteo. Grey = past, blue = forecast.",
     noRain: "No rainfall run yet. Waiting for the first ingest.",
+    assetsTitle: "Critical facilities here (OpenStreetMap)", noAssets: "None mapped in OpenStreetMap",
+    rippleBtn: "What if this upazila floods?", rippleTitle: "If it floods",
+    powerRipple: "Upazilas fed by a substation here (may lose power)",
+    healthRipple: "Upazilas whose every hospital within 25 km is here",
+    roadKm: "major road under water", atRisk: "In medium/high-risk upazilas", none: "none", assumptions: "Assumptions",
+    kinds: { hospital: "hospitals", clinic: "clinics", school: "schools", college: "colleges",
+             shelter: "shelters", substation: "substations", power_plant: "power plants" },
     floodRisk: "Flood risk", chance: "chance", topRisk: "Highest flood risk", high: "High", medium: "Medium", low: "Low",
     validFor: "Next 15 days", upazilasAt: "upazilas at", modelSkill: "Tested on years it never saw",
     skillLine: (m, b) => `ranking skill (AUC) ${m} vs ${b} for "places that usually flood"`,
@@ -29,6 +36,13 @@ const T = {
     topTitle: "সর্বোচ্চ পূর্বাভাসিত বৃষ্টি", sourceTitle: "ডেটার উৎস",
     chartNote: "ঘণ্টাভিত্তিক বৃষ্টিপাত (মিমি), NOAA GFS (Open-Meteo)। ধূসর = অতীত, নীল = পূর্বাভাস।",
     noRain: "এখনো বৃষ্টির ডেটা আনা হয়নি। প্রথম ইনজেস্টের অপেক্ষায়।",
+    assetsTitle: "এখানকার গুরুত্বপূর্ণ স্থাপনা (OpenStreetMap)", noAssets: "OpenStreetMap-এ কিছু চিহ্নিত নেই",
+    rippleBtn: "এই উপজেলা ডুবলে কী হবে?", rippleTitle: "ডুবে গেলে",
+    powerRipple: "এখানকার সাবস্টেশন থেকে বিদ্যুৎ পায় এমন উপজেলা (বিদ্যুৎ যেতে পারে)",
+    healthRipple: "যেসব উপজেলার ২৫ কিমির মধ্যে সব হাসপাতাল এখানে",
+    roadKm: "প্রধান সড়ক পানির নিচে", atRisk: "মাঝারি/উচ্চ ঝুঁকির উপজেলায়", none: "নেই", assumptions: "অনুমান",
+    kinds: { hospital: "হাসপাতাল", clinic: "ক্লিনিক", school: "স্কুল", college: "কলেজ",
+             shelter: "আশ্রয়কেন্দ্র", substation: "সাবস্টেশন", power_plant: "বিদ্যুৎকেন্দ্র" },
     floodRisk: "বন্যার ঝুঁকি", chance: "সম্ভাবনা", topRisk: "সর্বোচ্চ বন্যার ঝুঁকি", high: "উচ্চ", medium: "মাঝারি", low: "নিম্ন",
     validFor: "আগামী ১৫ দিন", upazilasAt: "টি উপজেলা", modelSkill: "যে বছরগুলো মডেল দেখেনি সেগুলোতে পরীক্ষা",
     skillLine: (m, b) => `র‍্যাঙ্কিং দক্ষতা (AUC) ${m}, "যেখানে সাধারণত বন্যা হয়" পদ্ধতির ${b}`,
@@ -133,7 +147,20 @@ function renderFloodSummary() {
     </div>
     <p class="small">${t.floodNote}</p>
     <p class="small muted">${t.modelSkill}: ${t.skillLine(m.auc ?? "–", b.auc ?? "–")}<br>
-    ${r.model_version} · GFS run #${r.rain_run_id} · ERA5-Land → ${r.era5_last_day}</p>`;
+    ${r.model_version} · GFS run #${r.rain_run_id} · ERA5-Land → ${r.era5_last_day}</p>
+    <div id="at-risk"></div>`;
+  if (n("high") + n("medium")) showAtRisk();
+}
+
+async function showAtRisk() {
+  const res = await fetch("/api/v1/assets/at-risk?min_risk=medium");
+  if (!res.ok) return;
+  const r = await res.json(), t = T[lang];
+  const road = Object.values(r.road_km).reduce((a, b) => a + b, 0);
+  document.getElementById("at-risk").innerHTML = `<div class="upbox"><h3>${t.atRisk}</h3><div class="chips">
+    ${Object.entries(r.direct).map(([k, v]) => `<span>${v} ${t.kinds[k] ?? k}</span>`).join("")}
+    <span>${road.toFixed(0)} km ${t.roadKm}</span></div>
+    <span class="small">${t.powerRipple}: <b>${r.power_ripple.length}</b> · ${t.healthRipple}: <b>${r.health_ripple.length}</b></span></div>`;
 }
 
 function renderSidebar() {
@@ -162,6 +189,8 @@ async function showDetail(p) {
   document.getElementById("d-24").textContent = fmt(p.rain_24h_mm);
   document.getElementById("d-72").textContent = fmt(p.rain_72h_mm);
   showUpstream(p.id);
+  showAssets(p.id);
+  document.getElementById("ripple").hidden = true;
   const res = await fetch(`/api/v1/nodes/${p.id}/rain`);
   if (!res.ok) return;
   drawChart((await res.json()).hourly);
@@ -186,7 +215,41 @@ async function showUpstream(id) {
   hiLayer.bringToBack();
 }
 
-let basinData = null;
+let basinData = null, assetLayer = null;
+const KIND_COLORS = { hospital: "#d7301f", clinic: "#f768a1", school: "#2c7fb8", college: "#7570b3",
+                      shelter: "#1a9850", substation: "#ff7f00", power_plant: "#a65628" };
+
+async function showAssets(id) {
+  const box = document.getElementById("d-assets"), t = T[lang];
+  if (assetLayer) assetLayer.remove();
+  const res = await fetch(`/api/v1/nodes/${id}/assets`);
+  if (!res.ok) { box.innerHTML = ""; return; }
+  const fc = await res.json(), counts = {};
+  fc.features.forEach(f => counts[f.properties.kind] = (counts[f.properties.kind] || 0) + 1);
+  box.innerHTML = `<h3>${t.assetsTitle}</h3>` + (fc.features.length
+    ? `<div class="chips">${Object.entries(counts).map(([k, n]) =>
+        `<span><i class="asset-dot" style="display:inline-block;width:9px;height:9px;background:${KIND_COLORS[k]}"></i> ${n} ${t.kinds[k] ?? k}</span>`).join("")}</div>`
+    : `<span class="muted">${t.noAssets}</span>`);
+  assetLayer = L.geoJSON(fc, {
+    pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 5, color: "#fff", weight: 1, fillOpacity: 0.95,
+                                                  fillColor: KIND_COLORS[f.properties.kind] }),
+    onEachFeature: (f, l) => l.bindTooltip(`${(lang === "bn" && f.properties.name_bn) || f.properties.name || "—"}<br>${t.kinds[f.properties.kind]}`),
+  }).addTo(map);
+}
+
+async function showRipple() {
+  const box = document.getElementById("ripple"), t = T[lang];
+  const r = await (await fetch(`/api/v1/simulate/ripple?ids=${selected.id}`)).json();
+  const list = rows => rows.length ? rows.map(u => `${u.name} <span class="muted">(${u.district})</span>`).join(", ") : t.none;
+  const road = Object.values(r.road_km).reduce((a, b) => a + b, 0);
+  box.hidden = false;
+  box.innerHTML = `<h3>${t.rippleTitle}: ${selected.name}</h3>
+    <b>${road.toFixed(1)} km</b> ${t.roadKm}<br>
+    <b>${t.powerRipple}:</b> ${list(r.power_ripple)}<br>
+    <b>${t.healthRipple}:</b> ${list(r.health_ripple)}
+    <details class="small muted"><summary>${t.assumptions}</summary>${r.assumptions.join("<br>")}</details>`;
+}
+document.getElementById("ripple-btn").onclick = showRipple;
 
 async function toggleRivers() {
   if (!document.getElementById("show-rivers").checked) { riverLayer && riverLayer.remove(); return; }

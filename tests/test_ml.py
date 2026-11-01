@@ -21,3 +21,13 @@ def test_weighted_mean_uses_area_and_skips_missing_basins():
 
 def test_risk_levels():
     assert [risk_level(p) for p in (0.1, 0.25, 0.49, 0.5, 0.9)] == ["low", "medium", "medium", "high", "high"]
+
+
+def test_osm_asset_kinds():
+    from app.services.assets import _kind
+
+    assert _kind({"amenity": "hospital"}) == "hospital"
+    assert _kind({"amenity": "university"}) == "college"
+    assert _kind({"building": "cyclone_shelter"}) == "shelter"
+    assert _kind({"power": "substation"}) == "substation"
+    assert _kind({"amenity": "restaurant"}) is None
