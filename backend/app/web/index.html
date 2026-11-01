@@ -27,6 +27,8 @@
         <button data-lead="rain_72h_mm" class="on">72h</button>
         <button data-lead="rain_past_72h_mm" data-i18n="past72"></button>
       </div>
+      <label class="tog"><input type="checkbox" id="show-rivers" checked> <span data-i18n="rivers"></span></label>
+      <label class="tog"><input type="checkbox" id="show-basins"> <span data-i18n="upstream"></span></label>
       <button id="lang" class="ghost">বাংলা</button>
     </div>
   </header>
@@ -49,6 +51,7 @@
         </div>
         <canvas id="chart" height="140"></canvas>
         <p class="muted small" data-i18n="chartNote"></p>
+        <div id="d-up" class="upbox"></div>
       </section>
 
       <section class="card">

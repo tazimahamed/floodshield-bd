@@ -44,6 +44,9 @@ canvas { width: 100%; }
 #top li b { float: right; }
 .legend { background: var(--card); color: var(--text); padding: 8px 10px; border-radius: 8px; font-size: 12px; line-height: 18px; }
 .legend i { display: inline-block; width: 14px; height: 14px; margin-right: 6px; vertical-align: -2px; border-radius: 3px; }
+.tog { font-size: 14px; display: flex; gap: 4px; align-items: center; cursor: pointer; }
+.upbox { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; font-size: 14px; line-height: 1.6; }
+.upbox h3 { margin: 0 0 4px; font-size: 14px; }
 @media (max-width: 800px) {
   main { grid-template-columns: 1fr; height: auto; }
   #map { height: 60vh; }

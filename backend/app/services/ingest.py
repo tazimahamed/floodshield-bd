@@ -1,4 +1,4 @@
-"""M1 ingestion: live GFS rainfall forecast from Open-Meteo for every upazila.
+"""M1 ingestion: live GFS rainfall forecast from Open-Meteo for every upazila and upstream basin.
 
 Raw responses are written to data/raw/openmeteo/ with a SHA-256 checksum so every
 stored number can be traced back to the exact file it came from.
@@ -7,6 +7,7 @@ stored number can be traced back to the exact file it came from.
 import hashlib
 import json
 import logging
+import time
 from datetime import datetime, timedelta, timezone
 
 import httpx
@@ -29,7 +30,13 @@ def _fetch(client: httpx.Client, nodes: list[Node]) -> list[dict]:
         "forecast_days": 3,
         "timezone": "UTC",
     }
-    r = client.get(settings.open_meteo_gfs_url, params=params)
+    # Free tier allows ~600 locations/minute; with basins we send ~1250, so wait out 429s.
+    for attempt in range(5):
+        r = client.get(settings.open_meteo_gfs_url, params=params)
+        if r.status_code != 429:
+            break
+        log.info("Open-Meteo rate limit hit, waiting 61 s (attempt %d)", attempt + 1)
+        time.sleep(61)
     r.raise_for_status()
     data = r.json()
     return data if isinstance(data, list) else [data]
@@ -53,9 +60,9 @@ def _accumulate(times: list[str], precip: list[float | None], now: datetime) -> 
 
 
 def run_gfs_ingest() -> int:
-    """Pull the latest GFS forecast for all upazilas. Returns the ingest run id."""
+    """Pull the latest GFS forecast for all upazilas and upstream basins. Returns the ingest run id."""
     with SessionLocal() as db:
-        nodes = db.query(Node).filter(Node.node_type == "upazila").order_by(Node.id).all()
+        nodes = db.query(Node).filter(Node.node_type.in_(("upazila", "basin"))).order_by(Node.id).all()
         if not nodes:
             raise RuntimeError("No upazilas loaded. Run scripts/init_db.py first.")
 

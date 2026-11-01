@@ -3,7 +3,7 @@ import json
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select, text
 
-from app.db.models import IngestRun, Node, RainForecast
+from app.db.models import Edge, IngestRun, Node, RainForecast, River
 from app.db.session import SessionLocal
 
 router = APIRouter(prefix="/api/v1")
@@ -67,6 +67,78 @@ def node_rain(node_id: str):
                 "issued_at": rf.issued_at.isoformat(), "run_id": run.id, "hourly": rf.hourly}
 
 
+UPSTREAM_SQL = text("""
+    with recursive up(id) as (
+        select dst from edges where src = :node and edge_type = 'in_basin'
+        union
+        select e.src from edges e join up on e.dst = up.id where e.edge_type = 'drains_to'
+    )
+    select n.id, n.division, coalesce(n.bd_share, 0) as bd_share, st_area(n.geom::geography) / 1e6 as km2,
+           r.rain_24h_mm, r.rain_72h_mm, r.rain_past_72h_mm
+    from up join nodes n on n.id = up.id
+    left join rain_forecasts r on r.node_id = n.id and r.ingest_run_id = :run
+""")
+
+
+@router.get("/basins")
+def basins():
+    """HydroBASINS level-7 basins draining into Bangladesh, with latest GFS rainfall."""
+    with SessionLocal() as db:
+        run = _latest_run(db)
+        rows = db.execute(
+            select(Node, func.ST_AsGeoJSON(func.ST_SimplifyPreserveTopology(Node.geom, 0.01)), RainForecast)
+            .outerjoin(RainForecast, (RainForecast.node_id == Node.id) & (RainForecast.ingest_run_id == (run.id if run else -1)))
+            .where(Node.node_type == "basin")
+        ).all()
+        downstream = dict(db.execute(select(Edge.src, Edge.dst).where(Edge.edge_type == "drains_to")).all())
+        return {"type": "FeatureCollection", "features": [{
+            "type": "Feature", "geometry": json.loads(g),
+            "properties": {
+                "id": n.id, "name": n.name, "region": n.division, "drains_to": downstream.get(n.id),
+                "rain_past_72h_mm": rf.rain_past_72h_mm if rf else None,
+                "rain_24h_mm": rf.rain_24h_mm if rf else None,
+                "rain_48h_mm": rf.rain_48h_mm if rf else None,
+                "rain_72h_mm": rf.rain_72h_mm if rf else None,
+            },
+        } for n, g, rf in rows], "source": rows[0][0].source if rows else None}
+
+
+@router.get("/rivers")
+def rivers(min_upland_km2: float = 5000):
+    """Major HydroRIVERS reaches (upstream area >= min_upland_km2)."""
+    with SessionLocal() as db:
+        rows = db.execute(select(River, func.ST_AsGeoJSON(func.ST_Simplify(River.geom, 0.005)))
+                          .where(River.upland_skm >= min_upland_km2)).all()
+        return {"type": "FeatureCollection", "features": [{
+            "type": "Feature", "geometry": json.loads(g),
+            "properties": {"id": r.id, "upland_km2": r.upland_skm, "discharge_m3s": r.dis_av_cms,
+                           "order": r.ord_stra, "basin": r.basin_id},
+        } for r, g in rows], "source": "HydroRIVERS v1.0 (Lehner & Grill 2013, HydroSHEDS)"}
+
+
+@router.get("/nodes/{node_id}/upstream")
+def node_upstream(node_id: str):
+    """Every basin whose water reaches this upazila, and the rain forecast over that catchment."""
+    with SessionLocal() as db:
+        if not db.get(Node, node_id):
+            raise HTTPException(404, "Unknown node")
+        run = _latest_run(db)
+        rows = db.execute(UPSTREAM_SQL, {"node": node_id, "run": run.id if run else -1}).all()
+        area = sum(r.km2 for r in rows)
+
+        def mean(field):
+            got = [(getattr(r, field), r.km2) for r in rows if getattr(r, field) is not None]
+            w = sum(a for _, a in got)
+            return round(sum(v * a for v, a in got) / w, 1) if w else None
+
+        return {
+            "node": node_id, "basins": [r.id for r in rows], "n_basins": len(rows),
+            "catchment_km2": round(area), "outside_bd_km2": round(sum(r.km2 * (1 - r.bd_share) for r in rows)),
+            "rain_24h_mm": mean("rain_24h_mm"), "rain_72h_mm": mean("rain_72h_mm"),
+            "rain_past_72h_mm": mean("rain_past_72h_mm"),
+        }
+
+
 @router.get("/divisions")
 def divisions():
     with SessionLocal() as db:
@@ -97,6 +169,8 @@ def health_payload() -> dict:
     with SessionLocal() as db:
         db.execute(text("select 1"))
         run = _latest_run(db)
-        n = db.scalar(select(func.count()).select_from(Node))
-        return {"status": "ok", "database": "ok", "nodes": n,
+        counts = dict(db.execute(select(Node.node_type, func.count()).group_by(Node.node_type)).all())
+        edges = db.scalar(select(func.count()).select_from(Edge))
+        return {"status": "ok", "database": "ok", "nodes": sum(counts.values()), "node_types": counts,
+                "edges": edges,
                 "latest_rain_run": run.model_run_time.isoformat() if run else None}

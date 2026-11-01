@@ -8,7 +8,9 @@ const T = {
     topTitle: "Highest forecast rainfall", sourceTitle: "Data source",
     chartNote: "Hourly precipitation (mm), NOAA GFS via Open-Meteo. Grey = past, blue = forecast.",
     noRain: "No rainfall run yet. Waiting for the first ingest.",
-    mm: "mm",
+    mm: "mm", rivers: "Rivers", upstream: "Upstream basins",
+    upTitle: "Upstream catchment", upArea: "Area draining here", upOut: "of it outside Bangladesh",
+    upRain: "Forecast rain over catchment", basins: "basins",
   },
   bn: {
     official: "সরকারি সতর্কবার্তা আগে: FFWC (ffwc.gov.bd) ও BMD-এর বুলেটিন এবং উপজেলা দুর্যোগ ব্যবস্থাপনা কমিটির নির্দেশনা মেনে চলুন। FloodShield সরকারি সতর্কবার্তার সহায়ক, বিকল্প নয়।",
@@ -19,10 +21,13 @@ const T = {
     topTitle: "সর্বোচ্চ পূর্বাভাসিত বৃষ্টি", sourceTitle: "ডেটার উৎস",
     chartNote: "ঘণ্টাভিত্তিক বৃষ্টিপাত (মিমি), NOAA GFS (Open-Meteo)। ধূসর = অতীত, নীল = পূর্বাভাস।",
     noRain: "এখনো বৃষ্টির ডেটা আনা হয়নি। প্রথম ইনজেস্টের অপেক্ষায়।",
-    mm: "মিমি",
+    mm: "মিমি", rivers: "নদী", upstream: "উজানের অববাহিকা",
+    upTitle: "উজানের অববাহিকা", upArea: "যত এলাকার পানি এখানে আসে", upOut: "এর মধ্যে বাংলাদেশের বাইরে",
+    upRain: "অববাহিকায় পূর্বাভাসিত বৃষ্টি", basins: "টি অববাহিকা",
   },
 };
 let lang = "en", lead = "rain_72h_mm", data = null, layer = null, selected = null;
+let riverLayer = null, basinLayer = null, hiLayer = null;
 
 const BREAKS = [0, 5, 20, 50, 100, 200];
 const COLORS = ["#eef6fb", "#c6e2f0", "#86c3e0", "#3f97c9", "#1b5f9e", "#0b2f6b"];
@@ -31,7 +36,7 @@ const fmt = v => v == null ? "–" : `${v.toFixed(1)} ${T[lang].mm}`;
 
 const map = L.map("map", { zoomSnap: 0.25 }).setView([23.7, 90.35], 7);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 13, attribution: "© OpenStreetMap contributors · Boundaries: geoBoundaries (BBS, OCHA)",
+  maxZoom: 13, attribution: "© OpenStreetMap contributors · Boundaries: geoBoundaries (BBS, OCHA) · Rivers/basins: HydroSHEDS",
 }).addTo(map);
 
 const legend = L.control({ position: "bottomleft" });
@@ -62,11 +67,16 @@ async function load() {
       l.on("click", () => showDetail(f.properties));
     },
   }).addTo(map);
+  if (riverLayer && map.hasLayer(riverLayer)) riverLayer.bringToFront();
   if (div) map.fitBounds(layer.getBounds());
   renderSidebar();
 }
 
-function restyle() { layer && layer.setStyle(f => ({ fillColor: color(f.properties[lead]) })); renderSidebar(); }
+function restyle() {
+  layer && layer.setStyle(f => ({ fillColor: color(f.properties[lead]) }));
+  basinLayer && basinLayer.setStyle(f => ({ fillColor: color(f.properties[lead]) }));
+  renderSidebar();
+}
 
 function renderSidebar() {
   const run = data.rain_run;
@@ -91,9 +101,52 @@ async function showDetail(p) {
   document.getElementById("d-past").textContent = fmt(p.rain_past_72h_mm);
   document.getElementById("d-24").textContent = fmt(p.rain_24h_mm);
   document.getElementById("d-72").textContent = fmt(p.rain_72h_mm);
+  showUpstream(p.id);
   const res = await fetch(`/api/v1/nodes/${p.id}/rain`);
   if (!res.ok) return;
   drawChart((await res.json()).hourly);
+}
+
+const km2 = v => `${Math.round(v).toLocaleString(lang === "bn" ? "bn-BD" : "en-GB")} km²`;
+
+async function showUpstream(id) {
+  const box = document.getElementById("d-up");
+  const res = await fetch(`/api/v1/nodes/${id}/upstream`);
+  if (!res.ok) { box.innerHTML = ""; return; }
+  const u = await res.json(), t = T[lang];
+  box.innerHTML = `<h3>${t.upTitle}</h3>
+    ${t.upArea}: <b>${km2(u.catchment_km2)}</b> (${u.n_basins} ${t.basins})<br>
+    ${u.outside_bd_km2 ? `${t.upOut}: <b>${km2(u.outside_bd_km2)}</b><br>` : ""}
+    ${t.upRain} (72h): <b>${fmt(u.rain_72h_mm)}</b>`;
+  if (hiLayer) hiLayer.remove();
+  if (!basinData) basinData = await (await fetch("/api/v1/basins")).json();
+  const ids = new Set(u.basins);
+  hiLayer = L.geoJSON({ type: "FeatureCollection", features: basinData.features.filter(f => ids.has(f.properties.id)) },
+    { style: { color: "#e07b00", weight: 1.2, fillColor: "#f5a623", fillOpacity: 0.12 }, interactive: false }).addTo(map);
+  hiLayer.bringToBack();
+}
+
+let basinData = null;
+
+async function toggleRivers() {
+  if (!document.getElementById("show-rivers").checked) { riverLayer && riverLayer.remove(); return; }
+  if (!riverLayer) {
+    const r = await (await fetch("/api/v1/rivers")).json();
+    riverLayer = L.geoJSON(r, { interactive: false, style: f => ({
+      color: "#1f78d1", opacity: 0.9, weight: Math.max(1, Math.log10(f.properties.upland_km2) - 2.6) }) });
+  }
+  riverLayer.addTo(map);
+}
+
+async function toggleBasins() {
+  if (!document.getElementById("show-basins").checked) { basinLayer && basinLayer.remove(); return; }
+  if (!basinData) basinData = await (await fetch("/api/v1/basins")).json();
+  if (!basinLayer) basinLayer = L.geoJSON(basinData, {
+    style: f => ({ fillColor: color(f.properties[lead]), weight: 0.4, color: "#777", fillOpacity: 0.6 }),
+    onEachFeature: (f, l) => l.bindTooltip(() => `<b>${f.properties.name}</b><br>${f.properties.region}<br>${fmt(f.properties[lead])}`, { sticky: true }),
+  });
+  basinLayer.addTo(map).bringToBack();
+  map.fitBounds(basinLayer.getBounds());
 }
 
 function drawChart(h) {
@@ -121,11 +174,14 @@ document.querySelectorAll("#lead button").forEach(b => b.onclick = () => {
 });
 document.getElementById("lang").onclick = () => { lang = lang === "en" ? "bn" : "en"; applyLang(); };
 document.getElementById("division").onchange = load;
+document.getElementById("show-rivers").onchange = toggleRivers;
+document.getElementById("show-basins").onchange = toggleBasins;
 
 (async () => {
   applyLang();
   const divs = await (await fetch("/api/v1/divisions")).json();
   const sel = document.getElementById("division");
   divs.forEach(d => sel.insertAdjacentHTML("beforeend", `<option value="${d.name}">${d.name} (${d.upazilas})</option>`));
-  load();
+  await load();
+  toggleRivers();
 })();
