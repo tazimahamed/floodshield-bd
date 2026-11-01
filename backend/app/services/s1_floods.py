@@ -70,7 +70,9 @@ def flood_mask(event: dict, region):
     year = int(event["post"][0][:4])
     mins = [_s1(event["post"][0].replace(str(year), str(y), 1), event["post"][1].replace(str(year), str(y), 1),
                 region, orbit).min() for y in NORMAL_YEARS if y != year]
-    normal = ee.ImageCollection(mins).median().focal_mean(50, "circle", "meters")
+    # a year with no scene in this window gives a band-less image; drop it
+    mins = ee.ImageCollection(mins).map(lambda i: i.set("n_bands", i.bandNames().size()))
+    normal = mins.filter(ee.Filter.gt("n_bands", 0)).median().focal_mean(50, "circle", "meters")
     abnormal = flooded.And(post.divide(normal).gt(RATIO_THRESHOLD)).unmask(0)
     return flooded.rename("total").addBands(abnormal.rename("abnormal")), pre_c.size(), post_c.size()
 
