@@ -117,3 +117,5 @@ class FloodLabel(Base):
     node_id: Mapped[str] = mapped_column(ForeignKey("nodes.id", ondelete="CASCADE"), index=True)
     flooded_km2: Mapped[float] = mapped_column(Float)
     flooded_frac: Mapped[float] = mapped_column(Float)
+    abnormal_km2: Mapped[float | None] = mapped_column(Float)  # excluding normal seasonal water
+    abnormal_frac: Mapped[float | None] = mapped_column(Float)

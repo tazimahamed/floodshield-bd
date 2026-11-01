@@ -14,6 +14,7 @@ const T = {
     pastTitle: "Past floods (Sentinel-1 satellite)", pastNone: "Show forecast rainfall",
     pastEmpty: "No past flood mapped yet (run scripts/map_floods.py).", flooded: "flooded",
     scenes: "Sentinel-1 scenes", before: "before", during: "during",
+    abnormal: "abnormal flood (beyond normal monsoon water)", total: "all water incl. seasonal",
   },
   bn: {
     official: "সরকারি সতর্কবার্তা আগে: FFWC (ffwc.gov.bd) ও BMD-এর বুলেটিন এবং উপজেলা দুর্যোগ ব্যবস্থাপনা কমিটির নির্দেশনা মেনে চলুন। FloodShield সরকারি সতর্কবার্তার সহায়ক, বিকল্প নয়।",
@@ -30,6 +31,7 @@ const T = {
     pastTitle: "অতীতের বন্যা (Sentinel-1 স্যাটেলাইট)", pastNone: "পূর্বাভাসিত বৃষ্টি দেখাও",
     pastEmpty: "এখনো কোনো অতীতের বন্যা ম্যাপ করা হয়নি।", flooded: "প্লাবিত",
     scenes: "Sentinel-1 ছবি", before: "আগে", during: "বন্যার সময়",
+    abnormal: "অস্বাভাবিক বন্যা (স্বাভাবিক বর্ষার পানির বাইরে)", total: "মৌসুমি পানিসহ মোট",
   },
 };
 let lang = "en", lead = "rain_72h_mm", data = null, layer = null, selected = null;
@@ -38,9 +40,11 @@ let events = [], eventLabels = null;
 const FLOOD_BREAKS = [0, 0.02, 0.05, 0.1, 0.2, 0.4];
 const FLOOD_COLORS = ["#fdf3ee", "#fbd0b9", "#f6a582", "#ec6f4f", "#cf3a2b", "#8f1420"];
 const floodColor = v => v == null ? "#d0d4d8" : FLOOD_COLORS[FLOOD_BREAKS.filter(b => v >= b).length - 1];
-const fill = p => eventLabels ? floodColor(eventLabels[p.id]?.frac) : color(p[lead]);
+const fill = p => eventLabels ? floodColor(eventLabels[p.id]?.abnormal_frac) : color(p[lead]);
 const pct = v => v == null ? "–" : `${(v * 100).toFixed(1)}% ${T[lang].flooded}`;
-const value = p => eventLabels ? pct(eventLabels[p.id]?.frac) : fmt(p[lead]);
+const value = p => eventLabels
+  ? `${pct(eventLabels[p.id]?.abnormal_frac)}<br><span class="muted">${T[lang].total}: ${((eventLabels[p.id]?.frac ?? 0) * 100).toFixed(1)}%</span>`
+  : fmt(p[lead]);
 
 const BREAKS = [0, 5, 20, 50, 100, 200];
 const COLORS = ["#eef6fb", "#c6e2f0", "#86c3e0", "#3f97c9", "#1b5f9e", "#0b2f6b"];
@@ -195,7 +199,8 @@ async function selectEvent() {
   const id = document.getElementById("event").value, info = document.getElementById("event-info"), t = T[lang];
   eventLabels = id ? await (await fetch(`/api/v1/flood-events/${id}`)).json() : null;
   const e = events.find(x => x.id === id);
-  info.innerHTML = e ? `${e.post_start} → ${e.post_end}<br>${t.flooded}: <b>${km2(e.flooded_km2)}</b><br>
+  info.innerHTML = e ? `${e.post_start} → ${e.post_end}<br>${t.abnormal}: <b>${km2(e.abnormal_km2)}</b><br>
+    ${t.total}: ${km2(e.flooded_km2)}<br>
     ${t.scenes}: ${e.n_pre_scenes} ${t.before}, ${e.n_post_scenes} ${t.during}<br>${e.method}` : (events.length ? "" : t.pastEmpty);
   legend.remove(); legend.addTo(map);
   restyle();

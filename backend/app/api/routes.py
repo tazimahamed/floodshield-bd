@@ -143,13 +143,15 @@ def node_upstream(node_id: str):
 def flood_events():
     """Historical floods mapped from Sentinel-1 (training labels, P2)."""
     with SessionLocal() as db:
-        totals = dict(db.execute(select(FloodLabel.event_id, func.sum(FloodLabel.flooded_km2))
-                                 .group_by(FloodLabel.event_id)).all())
+        totals = {e: (t, a) for e, t, a in db.execute(
+            select(FloodLabel.event_id, func.sum(FloodLabel.flooded_km2), func.sum(FloodLabel.abnormal_km2))
+            .group_by(FloodLabel.event_id)).all()}
         return [{
             "id": e.id, "name": e.name, "post_start": e.post_start.isoformat(), "post_end": e.post_end.isoformat(),
             "pre_start": e.pre_start.isoformat(), "pre_end": e.pre_end.isoformat(),
             "n_pre_scenes": e.n_pre_scenes, "n_post_scenes": e.n_post_scenes, "method": e.method,
-            "flooded_km2": round(totals.get(e.id) or 0), "computed_at": e.computed_at.isoformat(),
+            "flooded_km2": round((totals.get(e.id) or (0, 0))[0] or 0),
+            "abnormal_km2": round((totals.get(e.id) or (0, 0))[1] or 0), "computed_at": e.computed_at.isoformat(),
         } for e in db.scalars(select(FloodEvent).order_by(FloodEvent.post_start)).all()]
 
 
@@ -158,9 +160,10 @@ def flood_event_labels(event_id: str):
     with SessionLocal() as db:
         if not db.get(FloodEvent, event_id):
             raise HTTPException(404, "Unknown flood event")
-        rows = db.execute(select(FloodLabel.node_id, FloodLabel.flooded_km2, FloodLabel.flooded_frac)
+        rows = db.execute(select(FloodLabel.node_id, FloodLabel.flooded_km2, FloodLabel.flooded_frac,
+                                 FloodLabel.abnormal_km2, FloodLabel.abnormal_frac)
                           .where(FloodLabel.event_id == event_id)).all()
-        return {n: {"km2": k, "frac": f} for n, k, f in rows}
+        return {n: {"km2": k, "frac": f, "abnormal_km2": ak, "abnormal_frac": af} for n, k, f, ak, af in rows}
 
 
 @router.get("/divisions")

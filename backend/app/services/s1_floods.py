@@ -5,6 +5,9 @@ Method: UN-SPIDER Recommended Practice for SAR flood mapping (change detection).
   - focal-mean speckle filter (50 m), ratio during/before (dB) > 1.25 = newly flooded
   - masks: JRC Global Surface Water occurrence > 80 % (permanent water), slope > 5 %
     (HydroSHEDS 3s DEM)
+  - "abnormal" flood compares the event with the same calendar window in other years
+    (2017-2024, Sentinel-1 itself, so monsoon clouds do not matter): pixels that are wet
+    every monsoon, like the haors, are not counted as flood
 The labels feed model training in P4. Each run stores the event windows and threshold.
 """
 
@@ -20,9 +23,11 @@ from app.db.models import FloodEvent, FloodLabel, Node
 from app.db.session import SessionLocal
 
 log = logging.getLogger(__name__)
-METHOD = "UN-SPIDER S1 change detection, VH, ratio > 1.25, JRC GSW > 80% and slope > 5% masked"
+METHOD = ("UN-SPIDER S1 change detection, VH, ratio > 1.25, JRC GSW > 80% and slope > 5% masked; "
+          "abnormal = also ratio > 1.25 vs the same window in other years 2017-2024")
+NORMAL_YEARS = range(2017, 2025)
 RATIO_THRESHOLD = 1.25
-SCALE_M = 30
+SCALE_M = 60  # 30 m times out interactively once the multi-year baseline is added
 
 # Documented major floods (FFWC annual reports, ReliefWeb). Pre-flood reference = dry season same year.
 EVENTS = [
@@ -60,27 +65,40 @@ def flood_mask(event: dict, region):
     flooded = post.divide(pre).gt(RATIO_THRESHOLD)
     permanent = ee.Image("JRC/GSW1_4/GlobalSurfaceWater").select("occurrence").gt(80)
     slope = ee.Terrain.slope(ee.Image("WWF/HydroSHEDS/03VFDEM"))
-    flooded = flooded.where(permanent, 0).updateMask(slope.lt(5)).selfMask()
-    return flooded, pre_c.size(), post_c.size()
+    flooded = flooded.where(permanent, 0).updateMask(slope.lt(5)).unmask(0)
+    # normal monsoon state: wettest observation of the same window, median over the other years
+    year = int(event["post"][0][:4])
+    mins = [_s1(event["post"][0].replace(str(year), str(y), 1), event["post"][1].replace(str(year), str(y), 1),
+                region, orbit).min() for y in NORMAL_YEARS if y != year]
+    normal = ee.ImageCollection(mins).median().focal_mean(50, "circle", "meters")
+    abnormal = flooded.And(post.divide(normal).gt(RATIO_THRESHOLD)).unmask(0)
+    return flooded.rename("total").addBands(abnormal.rename("abnormal")), pre_c.size(), post_c.size()
 
 
-def _upazila_fc(db) -> ee.FeatureCollection:
-    rows = db.execute(select(Node.id, func.ST_AsGeoJSON(func.ST_SimplifyPreserveTopology(Node.geom, 0.002)))
+def _upazila_fcs(db) -> dict[str, ee.FeatureCollection]:
+    """Upazilas as one Earth Engine collection per division (one request each avoids timeouts)."""
+    rows = db.execute(select(Node.id, Node.division,
+                             func.ST_AsGeoJSON(func.ST_SimplifyPreserveTopology(Node.geom, 0.002)))
                       .where(Node.node_type == "upazila")).all()
-    return ee.FeatureCollection([ee.Feature(json.loads(g), {"node_id": i}) for i, g in rows])
+    by_div: dict[str, list] = {}
+    for i, d, g in rows:
+        by_div.setdefault(d, []).append(ee.Feature(json.loads(g), {"node_id": i}))
+    return {d: ee.FeatureCollection(f) for d, f in by_div.items()}
 
 
 def run_event(event: dict) -> int:
     """Map one event and store flooded km2 / fraction for every upazila. Returns rows stored."""
     init_ee()
     with SessionLocal() as db:
-        fc = _upazila_fc(db)
-        mask, n_pre, n_post = flood_mask(event, fc.geometry().bounds())
-        area = mask.multiply(ee.Image.pixelArea()).rename("flooded_m2")
-        result = area.reduceRegions(collection=fc, reducer=ee.Reducer.sum(), scale=SCALE_M, tileScale=8)
-        result = result.map(lambda f: f.set("area_m2", f.geometry().area(100)).setGeometry(None))
-        info = result.getInfo()["features"]
-        n_pre, n_post = n_pre.getInfo(), n_post.getInfo()
+        info = []
+        for division, fc in _upazila_fcs(db).items():
+            mask, n_pre, n_post = flood_mask(event, fc.geometry().bounds())
+            area = mask.multiply(ee.Image.pixelArea())
+            result = area.reduceRegions(collection=fc, reducer=ee.Reducer.sum(), scale=SCALE_M, tileScale=16)
+            result = result.map(lambda f: f.set("area_m2", f.geometry().area(100)).setGeometry(None))
+            info += result.getInfo()["features"]
+            log.info("%s %s done", event["id"], division)
+        n_pre, n_post = n_pre.getInfo(), n_post.getInfo()  # scene counts of the last division
 
         db.execute(delete(FloodLabel).where(FloodLabel.event_id == event["id"]))
         db.merge(FloodEvent(
@@ -92,10 +110,12 @@ def run_event(event: dict) -> int:
         ))
         for f in info:
             p = f["properties"]
-            flooded = p.get("sum") or 0.0
+            total, abnormal, a = p.get("total") or 0.0, p.get("abnormal") or 0.0, p["area_m2"]
             db.add(FloodLabel(event_id=event["id"], node_id=p["node_id"],
-                              flooded_km2=round(flooded / 1e6, 3),
-                              flooded_frac=round(flooded / p["area_m2"], 4) if p["area_m2"] else 0.0))
+                              flooded_km2=round(total / 1e6, 3),
+                              flooded_frac=round(total / a, 4) if a else 0.0,
+                              abnormal_km2=round(abnormal / 1e6, 3),
+                              abnormal_frac=round(abnormal / a, 4) if a else 0.0))
         db.commit()
         log.info("%s: %d upazilas, %d pre / %d post scenes", event["id"], len(info), n_pre, n_post)
         return len(info)
