@@ -119,3 +119,16 @@ class FloodLabel(Base):
     flooded_frac: Mapped[float] = mapped_column(Float)
     abnormal_km2: Mapped[float | None] = mapped_column(Float)  # excluding normal seasonal water
     abnormal_frac: Mapped[float | None] = mapped_column(Float)
+
+
+class Era5Daily(Base):
+    """ERA5-Land daily history per node (P3 model inputs): area-mean over the node polygon."""
+
+    __tablename__ = "era5_daily"
+
+    node_id: Mapped[str] = mapped_column(ForeignKey("nodes.id", ondelete="CASCADE"), primary_key=True)
+    day: Mapped[date] = mapped_column(Date, primary_key=True, index=True)
+    precip_mm: Mapped[float | None] = mapped_column(Float)
+    runoff_mm: Mapped[float | None] = mapped_column(Float)
+    soil_water_1: Mapped[float | None] = mapped_column(Float)  # m3/m3, 0-7 cm
+    soil_water_2: Mapped[float | None] = mapped_column(Float)  # m3/m3, 7-28 cm

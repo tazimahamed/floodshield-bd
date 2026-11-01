@@ -1,9 +1,10 @@
 import json
+from datetime import date
 
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select, text
 
-from app.db.models import Edge, FloodEvent, FloodLabel, IngestRun, Node, RainForecast, River
+from app.db.models import Edge, Era5Daily, FloodEvent, FloodLabel, IngestRun, Node, RainForecast, River
 from app.db.session import SessionLocal
 
 router = APIRouter(prefix="/api/v1")
@@ -164,6 +165,22 @@ def flood_event_labels(event_id: str):
                                  FloodLabel.abnormal_km2, FloodLabel.abnormal_frac)
                           .where(FloodLabel.event_id == event_id)).all()
         return {n: {"km2": k, "frac": f, "abnormal_km2": ak, "abnormal_frac": af} for n, k, f, ak, af in rows}
+
+
+@router.get("/nodes/{node_id}/history")
+def node_history(node_id: str, start: date = Query(...), end: date = Query(...)):
+    """ERA5-Land daily rainfall, runoff and soil moisture for one node (P3)."""
+    if (end - start).days > 3660:
+        raise HTTPException(400, "Range too long (max 10 years)")
+    with SessionLocal() as db:
+        if not db.get(Node, node_id):
+            raise HTTPException(404, "Unknown node")
+        rows = db.scalars(select(Era5Daily).where(Era5Daily.node_id == node_id, Era5Daily.day.between(start, end))
+                          .order_by(Era5Daily.day)).all()
+        return {"node": node_id, "source": "ERA5-Land daily (ECMWF, via Google Earth Engine)", "days": [{
+            "day": r.day.isoformat(), "precip_mm": r.precip_mm, "runoff_mm": r.runoff_mm,
+            "soil_water_1": r.soil_water_1, "soil_water_2": r.soil_water_2,
+        } for r in rows]}
 
 
 @router.get("/divisions")
