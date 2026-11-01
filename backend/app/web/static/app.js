@@ -11,6 +11,9 @@ const T = {
     mm: "mm", rivers: "Rivers", upstream: "Upstream basins",
     upTitle: "Upstream catchment", upArea: "Area draining here", upOut: "of it outside Bangladesh",
     upRain: "Forecast rain over catchment", basins: "basins",
+    pastTitle: "Past floods (Sentinel-1 satellite)", pastNone: "Show forecast rainfall",
+    pastEmpty: "No past flood mapped yet (run scripts/map_floods.py).", flooded: "flooded",
+    scenes: "Sentinel-1 scenes", before: "before", during: "during",
   },
   bn: {
     official: "সরকারি সতর্কবার্তা আগে: FFWC (ffwc.gov.bd) ও BMD-এর বুলেটিন এবং উপজেলা দুর্যোগ ব্যবস্থাপনা কমিটির নির্দেশনা মেনে চলুন। FloodShield সরকারি সতর্কবার্তার সহায়ক, বিকল্প নয়।",
@@ -24,10 +27,20 @@ const T = {
     mm: "মিমি", rivers: "নদী", upstream: "উজানের অববাহিকা",
     upTitle: "উজানের অববাহিকা", upArea: "যত এলাকার পানি এখানে আসে", upOut: "এর মধ্যে বাংলাদেশের বাইরে",
     upRain: "অববাহিকায় পূর্বাভাসিত বৃষ্টি", basins: "টি অববাহিকা",
+    pastTitle: "অতীতের বন্যা (Sentinel-1 স্যাটেলাইট)", pastNone: "পূর্বাভাসিত বৃষ্টি দেখাও",
+    pastEmpty: "এখনো কোনো অতীতের বন্যা ম্যাপ করা হয়নি।", flooded: "প্লাবিত",
+    scenes: "Sentinel-1 ছবি", before: "আগে", during: "বন্যার সময়",
   },
 };
 let lang = "en", lead = "rain_72h_mm", data = null, layer = null, selected = null;
 let riverLayer = null, basinLayer = null, hiLayer = null;
+let events = [], eventLabels = null;
+const FLOOD_BREAKS = [0, 0.02, 0.05, 0.1, 0.2, 0.4];
+const FLOOD_COLORS = ["#fdf3ee", "#fbd0b9", "#f6a582", "#ec6f4f", "#cf3a2b", "#8f1420"];
+const floodColor = v => v == null ? "#d0d4d8" : FLOOD_COLORS[FLOOD_BREAKS.filter(b => v >= b).length - 1];
+const fill = p => eventLabels ? floodColor(eventLabels[p.id]?.frac) : color(p[lead]);
+const pct = v => v == null ? "–" : `${(v * 100).toFixed(1)}% ${T[lang].flooded}`;
+const value = p => eventLabels ? pct(eventLabels[p.id]?.frac) : fmt(p[lead]);
 
 const BREAKS = [0, 5, 20, 50, 100, 200];
 const COLORS = ["#eef6fb", "#c6e2f0", "#86c3e0", "#3f97c9", "#1b5f9e", "#0b2f6b"];
@@ -42,6 +55,10 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 const legend = L.control({ position: "bottomleft" });
 legend.onAdd = () => {
   const d = L.DomUtil.create("div", "legend");
+  if (eventLabels) {
+    d.innerHTML = FLOOD_BREAKS.map((b, i) => `<i style="background:${FLOOD_COLORS[i]}"></i>${b * 100}${FLOOD_BREAKS[i + 1] ? "–" + FLOOD_BREAKS[i + 1] * 100 : "+"}% ${T[lang].flooded}`).join("<br>");
+    return d;
+  }
   d.innerHTML = BREAKS.map((b, i) => `<i style="background:${COLORS[i]}"></i>${b}${BREAKS[i + 1] ? "–" + BREAKS[i + 1] : "+"} mm`).join("<br>");
   return d;
 };
@@ -61,9 +78,9 @@ async function load() {
   data = await res.json();
   if (layer) layer.remove();
   layer = L.geoJSON(data, {
-    style: f => ({ fillColor: color(f.properties[lead]), weight: 0.6, color: "#555", fillOpacity: 0.85 }),
+    style: f => ({ fillColor: fill(f.properties), weight: 0.6, color: "#555", fillOpacity: 0.85 }),
     onEachFeature: (f, l) => {
-      l.bindTooltip(() => `<b>${f.properties.name}</b><br>${f.properties.district ?? ""}<br>${fmt(f.properties[lead])}`, { sticky: true });
+      l.bindTooltip(() => `<b>${f.properties.name}</b><br>${f.properties.district ?? ""}<br>${value(f.properties)}`, { sticky: true });
       l.on("click", () => showDetail(f.properties));
     },
   }).addTo(map);
@@ -73,7 +90,7 @@ async function load() {
 }
 
 function restyle() {
-  layer && layer.setStyle(f => ({ fillColor: color(f.properties[lead]) }));
+  layer && layer.setStyle(f => ({ fillColor: fill(f.properties) }));
   basinLayer && basinLayer.setStyle(f => ({ fillColor: color(f.properties[lead]) }));
   renderSidebar();
 }
@@ -174,6 +191,17 @@ document.querySelectorAll("#lead button").forEach(b => b.onclick = () => {
 });
 document.getElementById("lang").onclick = () => { lang = lang === "en" ? "bn" : "en"; applyLang(); };
 document.getElementById("division").onchange = load;
+async function selectEvent() {
+  const id = document.getElementById("event").value, info = document.getElementById("event-info"), t = T[lang];
+  eventLabels = id ? await (await fetch(`/api/v1/flood-events/${id}`)).json() : null;
+  const e = events.find(x => x.id === id);
+  info.innerHTML = e ? `${e.post_start} → ${e.post_end}<br>${t.flooded}: <b>${km2(e.flooded_km2)}</b><br>
+    ${t.scenes}: ${e.n_pre_scenes} ${t.before}, ${e.n_post_scenes} ${t.during}<br>${e.method}` : (events.length ? "" : t.pastEmpty);
+  legend.remove(); legend.addTo(map);
+  restyle();
+}
+
+document.getElementById("event").onchange = selectEvent;
 document.getElementById("show-rivers").onchange = toggleRivers;
 document.getElementById("show-basins").onchange = toggleBasins;
 
@@ -182,6 +210,10 @@ document.getElementById("show-basins").onchange = toggleBasins;
   const divs = await (await fetch("/api/v1/divisions")).json();
   const sel = document.getElementById("division");
   divs.forEach(d => sel.insertAdjacentHTML("beforeend", `<option value="${d.name}">${d.name} (${d.upazilas})</option>`));
+  events = await (await fetch("/api/v1/flood-events")).json();
+  const es = document.getElementById("event");
+  events.forEach(e => es.insertAdjacentHTML("beforeend", `<option value="${e.id}">${e.name}</option>`));
+  if (!events.length) document.getElementById("event-info").textContent = T[lang].pastEmpty;
   await load();
   toggleRivers();
 })();

@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from geoalchemy2 import Geometry
-from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint, func
+from sqlalchemy import JSON, Date, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -87,3 +87,33 @@ class River(Base):
     dis_av_cms: Mapped[float] = mapped_column(Float)
     ord_stra: Mapped[int] = mapped_column(Integer)
     geom = mapped_column(Geometry("LINESTRING", srid=4326))
+
+
+class FloodEvent(Base):
+    """A documented historical flood mapped from Sentinel-1 (P2 training labels)."""
+
+    __tablename__ = "flood_events"
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    name: Mapped[str] = mapped_column(String(128))
+    pre_start: Mapped[date] = mapped_column(Date)
+    pre_end: Mapped[date] = mapped_column(Date)
+    post_start: Mapped[date] = mapped_column(Date)
+    post_end: Mapped[date] = mapped_column(Date)
+    method: Mapped[str] = mapped_column(String(256))
+    n_pre_scenes: Mapped[int] = mapped_column(Integer)
+    n_post_scenes: Mapped[int] = mapped_column(Integer)
+    computed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class FloodLabel(Base):
+    """Sentinel-1 flooded area of one upazila during one event."""
+
+    __tablename__ = "flood_labels"
+    __table_args__ = (UniqueConstraint("event_id", "node_id"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    event_id: Mapped[str] = mapped_column(ForeignKey("flood_events.id", ondelete="CASCADE"), index=True)
+    node_id: Mapped[str] = mapped_column(ForeignKey("nodes.id", ondelete="CASCADE"), index=True)
+    flooded_km2: Mapped[float] = mapped_column(Float)
+    flooded_frac: Mapped[float] = mapped_column(Float)

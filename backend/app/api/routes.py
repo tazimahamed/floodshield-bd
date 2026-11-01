@@ -3,7 +3,7 @@ import json
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select, text
 
-from app.db.models import Edge, IngestRun, Node, RainForecast, River
+from app.db.models import Edge, FloodEvent, FloodLabel, IngestRun, Node, RainForecast, River
 from app.db.session import SessionLocal
 
 router = APIRouter(prefix="/api/v1")
@@ -137,6 +137,30 @@ def node_upstream(node_id: str):
             "rain_24h_mm": mean("rain_24h_mm"), "rain_72h_mm": mean("rain_72h_mm"),
             "rain_past_72h_mm": mean("rain_past_72h_mm"),
         }
+
+
+@router.get("/flood-events")
+def flood_events():
+    """Historical floods mapped from Sentinel-1 (training labels, P2)."""
+    with SessionLocal() as db:
+        totals = dict(db.execute(select(FloodLabel.event_id, func.sum(FloodLabel.flooded_km2))
+                                 .group_by(FloodLabel.event_id)).all())
+        return [{
+            "id": e.id, "name": e.name, "post_start": e.post_start.isoformat(), "post_end": e.post_end.isoformat(),
+            "pre_start": e.pre_start.isoformat(), "pre_end": e.pre_end.isoformat(),
+            "n_pre_scenes": e.n_pre_scenes, "n_post_scenes": e.n_post_scenes, "method": e.method,
+            "flooded_km2": round(totals.get(e.id) or 0), "computed_at": e.computed_at.isoformat(),
+        } for e in db.scalars(select(FloodEvent).order_by(FloodEvent.post_start)).all()]
+
+
+@router.get("/flood-events/{event_id}")
+def flood_event_labels(event_id: str):
+    with SessionLocal() as db:
+        if not db.get(FloodEvent, event_id):
+            raise HTTPException(404, "Unknown flood event")
+        rows = db.execute(select(FloodLabel.node_id, FloodLabel.flooded_km2, FloodLabel.flooded_frac)
+                          .where(FloodLabel.event_id == event_id)).all()
+        return {n: {"km2": k, "frac": f} for n, k, f in rows}
 
 
 @router.get("/divisions")
