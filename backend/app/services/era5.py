@@ -88,3 +88,11 @@ def backfill(first_year: int, last_year: int, months: range = range(1, 13)) -> i
             run.finished_at = func.now()
             db.commit()
     return total
+
+
+def refresh_recent() -> int:
+    """Daily job: reload the current and previous month so newly published ERA5-Land days arrive."""
+    today = date.today()
+    prev = date(today.year - (today.month == 1), (today.month - 2) % 12 + 1, 1)
+    n = backfill(prev.year, prev.year, range(prev.month, prev.month + 1))
+    return n + backfill(today.year, today.year, range(today.month, today.month + 1))

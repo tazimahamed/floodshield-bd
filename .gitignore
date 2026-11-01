@@ -13,3 +13,4 @@ data/processed/
 backend/models/*.pt
 .ipynb_checkpoints/
 *.docx
+data/models/

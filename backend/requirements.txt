@@ -12,3 +12,9 @@ shapely==2.0.*
 pytest==8.*
 pyshp
 earthengine-api
+lightgbm
+pandas
+numpy
+scikit-learn
+scipy
+joblib

@@ -132,3 +132,32 @@ class Era5Daily(Base):
     runoff_mm: Mapped[float | None] = mapped_column(Float)
     soil_water_1: Mapped[float | None] = mapped_column(Float)  # m3/m3, 0-7 cm
     soil_water_2: Mapped[float | None] = mapped_column(Float)  # m3/m3, 7-28 cm
+
+
+class FloodForecastRun(Base):
+    """One live flood forecast: model version + the GFS rain run it used."""
+
+    __tablename__ = "flood_forecast_runs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    reference_day: Mapped[date] = mapped_column(Date)
+    valid_until: Mapped[date] = mapped_column(Date)
+    model_version: Mapped[str] = mapped_column(String(64))
+    rain_run_id: Mapped[int] = mapped_column(ForeignKey("ingest_runs.id"))
+    era5_last_day: Mapped[date] = mapped_column(Date)
+    meta: Mapped[dict] = mapped_column(JSON, default=dict)
+
+
+class FloodForecast(Base):
+    """Forecast for one upazila: expected abnormal flooded share and P(share >= threshold)."""
+
+    __tablename__ = "flood_forecasts"
+    __table_args__ = (UniqueConstraint("run_id", "node_id"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    run_id: Mapped[int] = mapped_column(ForeignKey("flood_forecast_runs.id", ondelete="CASCADE"), index=True)
+    node_id: Mapped[str] = mapped_column(ForeignKey("nodes.id", ondelete="CASCADE"), index=True)
+    flood_frac: Mapped[float] = mapped_column(Float)
+    flood_prob: Mapped[float] = mapped_column(Float)
+    risk: Mapped[str] = mapped_column(String(8))  # low / medium / high

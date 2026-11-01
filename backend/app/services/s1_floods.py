@@ -13,7 +13,7 @@ The labels feed model training in P4. Each run stores the event windows and thre
 
 import json
 import logging
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 import ee
 from sqlalchemy import delete, func, select
@@ -42,6 +42,18 @@ EVENTS = [
     {"id": "east_2024_aug", "name": "Feni-Noakhali-Cumilla flood, August 2024",
      "pre": ("2024-02-01", "2024-03-31"), "post": ("2024-08-21", "2024-09-02")},
 ]
+
+
+def monsoon_windows(first_year: int = 2017, last_year: int = 2025) -> list[dict]:
+    """Every 15-day window of every monsoon (1 Jun - 28 Sep): flood and no-flood periods alike,
+    so the model also sees normal monsoons (negatives), not only the famous floods."""
+    out = []
+    for y in range(first_year, last_year + 1):
+        for start in (date(y, 6, 1) + timedelta(days=15 * k) for k in range(8)):
+            end = start + timedelta(days=14)
+            out.append({"id": f"auto_{start:%Y%m%d}", "name": f"Monsoon window {start:%d %b} - {end:%d %b %Y}",
+                        "pre": (f"{y}-02-01", f"{y}-03-31"), "post": (start.isoformat(), end.isoformat())})
+    return out
 
 
 def init_ee() -> None:
@@ -93,14 +105,19 @@ def run_event(event: dict) -> int:
     init_ee()
     with SessionLocal() as db:
         info = []
+        n_pre = n_post = 0
         for division, fc in _upazila_fcs(db).items():
-            mask, n_pre, n_post = flood_mask(event, fc.geometry().bounds())
+            mask, pre_n, post_n = flood_mask(event, fc.geometry().bounds())
+            pre_n, post_n = pre_n.getInfo(), post_n.getInfo()
+            if not pre_n or not post_n:  # no satellite pass here: no label rather than a guess
+                log.info("%s %s skipped: %d pre / %d post scenes", event["id"], division, pre_n, post_n)
+                continue
             area = mask.multiply(ee.Image.pixelArea())
             result = area.reduceRegions(collection=fc, reducer=ee.Reducer.sum(), scale=SCALE_M, tileScale=16)
             result = result.map(lambda f: f.set("area_m2", f.geometry().area(100)).setGeometry(None))
             info += result.getInfo()["features"]
+            n_pre, n_post = n_pre + pre_n, n_post + post_n
             log.info("%s %s done", event["id"], division)
-        n_pre, n_post = n_pre.getInfo(), n_post.getInfo()  # scene counts of the last division
 
         db.execute(delete(FloodLabel).where(FloodLabel.event_id == event["id"]))
         db.merge(FloodEvent(

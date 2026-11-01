@@ -8,6 +8,10 @@ const T = {
     topTitle: "Highest forecast rainfall", sourceTitle: "Data source",
     chartNote: "Hourly precipitation (mm), NOAA GFS via Open-Meteo. Grey = past, blue = forecast.",
     noRain: "No rainfall run yet. Waiting for the first ingest.",
+    floodRisk: "Flood risk", chance: "chance", topRisk: "Highest flood risk", high: "High", medium: "Medium", low: "Low",
+    validFor: "Next 15 days", upazilasAt: "upazilas at", modelSkill: "Tested on years it never saw",
+    skillLine: (m, b) => `ranking skill (AUC) ${m} vs ${b} for "places that usually flood"`,
+    floodNote: "Chance that ≥5% of the upazila has abnormal flood water (Sentinel-1 definition). Experimental model.",
     mm: "mm", rivers: "Rivers", upstream: "Upstream basins",
     upTitle: "Upstream catchment", upArea: "Area draining here", upOut: "of it outside Bangladesh",
     upRain: "Forecast rain over catchment", basins: "basins",
@@ -25,6 +29,10 @@ const T = {
     topTitle: "সর্বোচ্চ পূর্বাভাসিত বৃষ্টি", sourceTitle: "ডেটার উৎস",
     chartNote: "ঘণ্টাভিত্তিক বৃষ্টিপাত (মিমি), NOAA GFS (Open-Meteo)। ধূসর = অতীত, নীল = পূর্বাভাস।",
     noRain: "এখনো বৃষ্টির ডেটা আনা হয়নি। প্রথম ইনজেস্টের অপেক্ষায়।",
+    floodRisk: "বন্যার ঝুঁকি", chance: "সম্ভাবনা", topRisk: "সর্বোচ্চ বন্যার ঝুঁকি", high: "উচ্চ", medium: "মাঝারি", low: "নিম্ন",
+    validFor: "আগামী ১৫ দিন", upazilasAt: "টি উপজেলা", modelSkill: "যে বছরগুলো মডেল দেখেনি সেগুলোতে পরীক্ষা",
+    skillLine: (m, b) => `র‍্যাঙ্কিং দক্ষতা (AUC) ${m}, "যেখানে সাধারণত বন্যা হয়" পদ্ধতির ${b}`,
+    floodNote: "উপজেলার ≥৫% এলাকায় অস্বাভাবিক বন্যার পানি ওঠার সম্ভাবনা (Sentinel-1 সংজ্ঞা)। পরীক্ষামূলক মডেল।",
     mm: "মিমি", rivers: "নদী", upstream: "উজানের অববাহিকা",
     upTitle: "উজানের অববাহিকা", upArea: "যত এলাকার পানি এখানে আসে", upOut: "এর মধ্যে বাংলাদেশের বাইরে",
     upRain: "অববাহিকায় পূর্বাভাসিত বৃষ্টি", basins: "টি অববাহিকা",
@@ -40,16 +48,23 @@ let events = [], eventLabels = null;
 const FLOOD_BREAKS = [0, 0.02, 0.05, 0.1, 0.2, 0.4];
 const FLOOD_COLORS = ["#fdf3ee", "#fbd0b9", "#f6a582", "#ec6f4f", "#cf3a2b", "#8f1420"];
 const floodColor = v => v == null ? "#d0d4d8" : FLOOD_COLORS[FLOOD_BREAKS.filter(b => v >= b).length - 1];
-const fill = p => eventLabels ? floodColor(eventLabels[p.id]?.abnormal_frac) : color(p[lead]);
+const RISK_BREAKS = [0, 0.25, 0.5];
+const RISK_COLORS = ["#e8f3e8", "#f5b942", "#d7301f"];
+const riskColor = v => v == null ? "#d0d4d8" : RISK_COLORS[RISK_BREAKS.filter(b => v >= b).length - 1];
+const isRisk = () => lead === "flood_prob";
+const fill = p => eventLabels ? floodColor(eventLabels[p.id]?.abnormal_frac)
+  : isRisk() ? riskColor(p.flood_prob) : color(p[lead]);
 const pct = v => v == null ? "–" : `${(v * 100).toFixed(1)}% ${T[lang].flooded}`;
 const value = p => eventLabels
   ? `${pct(eventLabels[p.id]?.abnormal_frac)}<br><span class="muted">${T[lang].total}: ${((eventLabels[p.id]?.frac ?? 0) * 100).toFixed(1)}%</span>`
-  : fmt(p[lead]);
+  : leadValue(p);
 
 const BREAKS = [0, 5, 20, 50, 100, 200];
 const COLORS = ["#eef6fb", "#c6e2f0", "#86c3e0", "#3f97c9", "#1b5f9e", "#0b2f6b"];
 const color = v => v == null ? "#d0d4d8" : COLORS[BREAKS.filter(b => v >= b).length - 1];
 const fmt = v => v == null ? "–" : `${v.toFixed(1)} ${T[lang].mm}`;
+const probFmt = v => v == null ? "–" : `${Math.round(v * 100)}% ${T[lang].chance}`;
+const leadValue = p => isRisk() ? probFmt(p.flood_prob) : fmt(p[lead]);
 
 const map = L.map("map", { zoomSnap: 0.25 }).setView([23.7, 90.35], 7);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -59,6 +74,12 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 const legend = L.control({ position: "bottomleft" });
 legend.onAdd = () => {
   const d = L.DomUtil.create("div", "legend");
+  if (isRisk() && !eventLabels) {
+    const t = T[lang];
+    d.innerHTML = [[t.low, "<25%"], [t.medium, "25–50%"], [t.high, "≥50%"]]
+      .map(([n, r], i) => `<i style="background:${RISK_COLORS[i]}"></i>${n} (${r})`).join("<br>");
+    return d;
+  }
   if (eventLabels) {
     d.innerHTML = FLOOD_BREAKS.map((b, i) => `<i style="background:${FLOOD_COLORS[i]}"></i>${b * 100}${FLOOD_BREAKS[i + 1] ? "–" + FLOOD_BREAKS[i + 1] * 100 : "+"}% ${T[lang].flooded}`).join("<br>");
     return d;
@@ -99,7 +120,25 @@ function restyle() {
   renderSidebar();
 }
 
+function renderFloodSummary() {
+  const r = data.flood_forecast_run, box = document.getElementById("flood-summary"), t = T[lang];
+  if (!r) { box.innerHTML = `<p>${t.floodEmpty}</p>`; return; }
+  const n = k => data.features.filter(f => f.properties.flood_risk === k).length;
+  const m = r.metrics || {}, b = r.baseline || {};
+  box.innerHTML = `<p><b>${t.validFor}</b> (${r.reference_day} → ${r.valid_until})</p>
+    <div class="stats">
+      <div><span style="color:#d7301f">${n("high")}</span><small>${t.high}</small></div>
+      <div><span style="color:#b37f00">${n("medium")}</span><small>${t.medium}</small></div>
+      <div><span>${n("low")}</span><small>${t.low}</small></div>
+    </div>
+    <p class="small">${t.floodNote}</p>
+    <p class="small muted">${t.modelSkill}: ${t.skillLine(m.auc ?? "–", b.auc ?? "–")}<br>
+    ${r.model_version} · GFS run #${r.rain_run_id} · ERA5-Land → ${r.era5_last_day}</p>`;
+}
+
 function renderSidebar() {
+  renderFloodSummary();
+  document.querySelector('[data-i18n="topTitle"]').textContent = T[lang][isRisk() ? "topRisk" : "topTitle"];
   const run = data.rain_run;
   const src = document.getElementById("source");
   if (!run) { src.textContent = T[lang].noRain; document.getElementById("top").innerHTML = ""; return; }
@@ -108,7 +147,7 @@ function renderSidebar() {
   const top = [...data.features].filter(f => f.properties[lead] != null)
     .sort((a, b) => b.properties[lead] - a.properties[lead]).slice(0, 10);
   document.getElementById("top").innerHTML = top.map(f =>
-    `<li data-id="${f.properties.id}">${f.properties.name} <span class="muted">(${f.properties.district ?? ""})</span><b>${fmt(f.properties[lead])}</b></li>`).join("");
+    `<li data-id="${f.properties.id}">${f.properties.name} <span class="muted">(${f.properties.district ?? ""})</span><b>${leadValue(f.properties)}</b></li>`).join("");
   document.querySelectorAll("#top li").forEach(li => li.onclick = () =>
     showDetail(data.features.find(f => f.properties.id === li.dataset.id).properties));
 }
@@ -191,7 +230,7 @@ function drawChart(h) {
 
 document.querySelectorAll("#lead button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#lead button").forEach(x => x.classList.remove("on"));
-  b.classList.add("on"); lead = b.dataset.lead; restyle();
+  b.classList.add("on"); lead = b.dataset.lead; legend.remove(); legend.addTo(map); restyle();
 });
 document.getElementById("lang").onclick = () => { lang = lang === "en" ? "bn" : "en"; applyLang(); };
 document.getElementById("division").onchange = load;
@@ -217,6 +256,7 @@ document.getElementById("show-basins").onchange = toggleBasins;
   divs.forEach(d => sel.insertAdjacentHTML("beforeend", `<option value="${d.name}">${d.name} (${d.upazilas})</option>`));
   events = await (await fetch("/api/v1/flood-events")).json();
   const es = document.getElementById("event");
+  events = events.filter(e => !e.id.startsWith("auto_"));  // monsoon windows are training labels only
   events.forEach(e => es.insertAdjacentHTML("beforeend", `<option value="${e.id}">${e.name}</option>`));
   if (!events.length) document.getElementById("event-info").textContent = T[lang].pastEmpty;
   await load();

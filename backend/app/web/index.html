@@ -26,6 +26,7 @@
         <button data-lead="rain_48h_mm">48h</button>
         <button data-lead="rain_72h_mm" class="on">72h</button>
         <button data-lead="rain_past_72h_mm" data-i18n="past72"></button>
+        <button data-lead="flood_prob" data-i18n="floodRisk"></button>
       </div>
       <label class="tog"><input type="checkbox" id="show-rivers" checked> <span data-i18n="rivers"></span></label>
       <label class="tog"><input type="checkbox" id="show-basins"> <span data-i18n="upstream"></span></label>
@@ -38,7 +39,7 @@
     <aside>
       <section class="card warn">
         <h2 data-i18n="floodTitle"></h2>
-        <p data-i18n="floodEmpty"></p>
+        <div id="flood-summary"><p data-i18n="floodEmpty"></p></div>
       </section>
 
       <section class="card">

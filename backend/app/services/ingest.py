@@ -26,7 +26,7 @@ def _fetch(client: httpx.Client, nodes: list[Node]) -> list[dict]:
         "latitude": ",".join(str(n.point_lat) for n in nodes),
         "longitude": ",".join(str(n.point_lon) for n in nodes),
         "hourly": "precipitation",
-        "past_days": 3,
+        "past_days": 10,  # bridges the ~1 week ERA5-Land publication lag for the flood model
         "forecast_days": 3,
         "timezone": "UTC",
     }

@@ -4,7 +4,7 @@ from datetime import date
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select, text
 
-from app.db.models import Edge, Era5Daily, FloodEvent, FloodLabel, IngestRun, Node, RainForecast, River
+from app.db.models import Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, IngestRun, Node, RainForecast, River
 from app.db.session import SessionLocal
 
 router = APIRouter(prefix="/api/v1")
@@ -22,15 +22,17 @@ def upazilas(division: str | None = Query(None)):
     """Upazila polygons as GeoJSON, joined with the latest real rainfall forecast (if any)."""
     with SessionLocal() as db:
         run = _latest_run(db)
+        frun = _latest_flood_run(db)
         q = (
-            select(Node, func.ST_AsGeoJSON(func.ST_SimplifyPreserveTopology(Node.geom, 0.003)), RainForecast)
+            select(Node, func.ST_AsGeoJSON(func.ST_SimplifyPreserveTopology(Node.geom, 0.003)), RainForecast, FloodForecast)
             .outerjoin(RainForecast, (RainForecast.node_id == Node.id) & (RainForecast.ingest_run_id == (run.id if run else -1)))
+            .outerjoin(FloodForecast, (FloodForecast.node_id == Node.id) & (FloodForecast.run_id == (frun.id if frun else -1)))
             .where(Node.node_type == "upazila")
         )
         if division:
             q = q.where(Node.division == division)
         features = []
-        for node, geom, rf in db.execute(q).all():
+        for node, geom, rf, ff in db.execute(q).all():
             features.append({
                 "type": "Feature",
                 "geometry": json.loads(geom),
@@ -40,6 +42,9 @@ def upazilas(division: str | None = Query(None)):
                     "rain_24h_mm": rf.rain_24h_mm if rf else None,
                     "rain_48h_mm": rf.rain_48h_mm if rf else None,
                     "rain_72h_mm": rf.rain_72h_mm if rf else None,
+                    "flood_prob": ff.flood_prob if ff else None,
+                    "flood_frac": ff.flood_frac if ff else None,
+                    "flood_risk": ff.risk if ff else None,
                 },
             })
         return {
@@ -49,7 +54,7 @@ def upazilas(division: str | None = Query(None)):
                 "id": run.id, "source": "NOAA GFS via Open-Meteo",
                 "issued_at": run.model_run_time.isoformat(), "sha256": run.sha256,
             },
-            "flood_forecast_run": None,
+            "flood_forecast_run": _flood_run_info(frun) if frun else None,
         }
 
 
@@ -203,10 +208,28 @@ def ingest_status(limit: int = 20):
         } for r in runs]
 
 
+def _latest_flood_run(db) -> FloodForecastRun | None:
+    return db.scalars(select(FloodForecastRun).order_by(FloodForecastRun.id.desc()).limit(1)).first()
+
+
+def _flood_run_info(r: FloodForecastRun) -> dict:
+    return {"id": r.id, "issued_at": r.issued_at.isoformat(), "reference_day": r.reference_day.isoformat(),
+            "valid_until": r.valid_until.isoformat(), "model_version": r.model_version,
+            "rain_run_id": r.rain_run_id, "era5_last_day": r.era5_last_day.isoformat(), **r.meta}
+
+
 @router.get("/flood-forecast")
 def flood_forecast():
-    # No model has been trained yet (Phase P4). We say so instead of inventing numbers.
-    raise HTTPException(404, "No flood forecast run yet: model training (Phase P4) has not happened.")
+    """Latest model forecast per upazila. 404 (with the reason) until a model has been trained."""
+    with SessionLocal() as db:
+        run = _latest_flood_run(db)
+        if not run:
+            raise HTTPException(404, "No flood forecast run yet: the model has not been trained.")
+        rows = db.execute(select(FloodForecast, Node.name, Node.district).join(Node, Node.id == FloodForecast.node_id)
+                          .where(FloodForecast.run_id == run.id).order_by(FloodForecast.flood_prob.desc())).all()
+        return {"run": _flood_run_info(run), "upazilas": [{
+            "id": f.node_id, "name": n, "district": d, "flood_frac": f.flood_frac,
+            "flood_prob": f.flood_prob, "risk": f.risk} for f, n, d in rows]}
 
 
 def health_payload() -> dict:
