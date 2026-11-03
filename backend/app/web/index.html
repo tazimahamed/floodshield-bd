@@ -41,8 +41,7 @@
       </div>
       <div class="sub" data-for="rain" hidden>
         <div class="chips-row" id="lead">
-          <button data-lead="hourly" class="on" data-i18n="hourly"></button>
-          <button data-lead="rain_24h_mm" data-i18n="total24"></button>
+          <button data-lead="rain_24h_mm" class="on" data-i18n="total24"></button>
           <button data-lead="rain_72h_mm" data-i18n="total72"></button>
           <button data-lead="rain_past_72h_mm" data-i18n="past72"></button>
         </div>
@@ -58,7 +57,6 @@
         <div class="strip-name"><b id="s-name"></b><small id="s-where"></small></div>
         <div id="s-risk" class="strip-risk"></div>
       </div>
-      <canvas id="s-spark" height="46" aria-label="Rain next 3 days"></canvas>
       <button id="strip-close" class="icon-btn" aria-label="Close">×</button>
     </div>
 
@@ -78,16 +76,8 @@
       <label class="check"><input type="checkbox" id="show-basins"><span data-i18n="upstream"></span></label>
     </div>
 
-    <!-- bottom: timeline + colour scale -->
+    <!-- bottom: colour scale -->
     <div class="bottom">
-      <div id="timeline" class="timeline" hidden>
-        <button id="play" class="play" aria-label="Play">▶</button>
-        <div class="track-wrap">
-          <div id="t-label" class="t-label"></div>
-          <input id="t-range" type="range" min="0" max="0" value="0" aria-label="Time">
-          <div id="t-days" class="t-days"></div>
-        </div>
-      </div>
       <div id="scale" class="scale"></div>
     </div>
     <div id="map-loading" class="map-loading" hidden><span class="spinner"></span><span data-i18n="loading"></span></div>

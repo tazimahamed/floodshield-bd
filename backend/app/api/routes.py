@@ -1,5 +1,5 @@
 import json
-from datetime import date, timedelta, timezone
+from datetime import date, timedelta
 
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select, text
@@ -59,28 +59,6 @@ def upazilas(division: str | None = Query(None)):
             },
             "flood_forecast_run": _flood_run_info(frun) if frun else None,
         }
-
-
-@router.get("/rain-timeline")
-def rain_timeline(hours_back: int = Query(24, ge=0, le=72), hours_ahead: int = Query(72, ge=1, le=72)):
-    """Hourly GFS rain (mm/h) for every upazila from the latest run, for the map's time slider."""
-    with SessionLocal() as db:
-        run = _latest_run(db)
-        if not run:
-            raise HTTPException(404, "No rainfall run yet")
-        rows = db.execute(select(RainForecast.node_id, RainForecast.hourly).join(Node, Node.id == RainForecast.node_id)
-                          .where(RainForecast.ingest_run_id == run.id, Node.node_type == "upazila")).all()
-    if not rows:
-        raise HTTPException(404, "No rainfall for upazilas in the latest run")
-    times = rows[0][1]["time"]
-    issued = run.model_run_time.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:00")
-    now_i = next((i for i, t in enumerate(times) if t >= issued), 0)
-    lo, hi = max(0, now_i - hours_back), min(len(times), now_i + hours_ahead)
-    return {
-        "source": "NOAA GFS via Open-Meteo", "run_id": run.id, "issued_at": run.model_run_time.isoformat(),
-        "times_utc": times[lo:hi], "now_index": now_i - lo,
-        "upazilas": {n: [None if v is None else round(v, 1) for v in h["precipitation"][lo:hi]] for n, h in rows},
-    }
 
 
 @router.get("/nodes/{node_id}/rain")
