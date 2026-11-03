@@ -33,10 +33,11 @@ def test_osm_asset_kinds():
     assert _kind({"amenity": "restaurant"}) is None
 
 
-def test_alert_levels_and_bangla_message():
+def test_alert_levels_and_messages():
+    from datetime import date
     from types import SimpleNamespace
 
-    from app.services.alerts import handle_message, level_for, render  # noqa: F401
+    from app.services.alerts import level_for, render
 
     assert level_for("low", True) == "none"
     assert level_for("medium", True) == "watch"
@@ -44,8 +45,20 @@ def test_alert_levels_and_bangla_message():
     assert level_for("high", True) == "severe"
 
     node = SimpleNamespace(name="Chhatak", district="Sunamganj")
-    fc = SimpleNamespace(flood_prob=0.62, flood_frac=0.18, frac_p10=0.05, frac_p90=0.35)
-    run = SimpleNamespace(reference_day="2026-07-01", valid_until="2026-07-15")
-    msg = render("bn", "warning", node, fc, run, {"hospital": 1, "school": 20})
-    assert "বন্যা সতর্কবার্তা" in msg and "62%" in msg and "১ হাসপাতাল" not in msg and "1 হাসপাতাল" in msg
-    assert "FFWC" in msg
+    run = SimpleNamespace(reference_day=date(2026, 7, 1), valid_until=date(2026, 7, 15))
+    low = SimpleNamespace(flood_prob=0.03, flood_frac=0.01, frac_p10=0.0, frac_p90=0.02)
+    calm = render("none", node, low, run, {"hospital": 1})
+    assert "বাড়তি ঝুঁকি দেখা যাচ্ছে না" in calm and "No elevated flood risk" in calm
+    assert "আশ্রয়কেন্দ্র" not in calm and "shelter" not in calm  # no alarming advice at low risk
+
+    high = SimpleNamespace(flood_prob=0.62, flood_frac=0.18, frac_p10=0.05, frac_p90=0.35)
+    msg = render("warning", node, high, run, {"hospital": 1, "shelter": 2})
+    assert "৬২%" in msg and "62%" in msg and "এখনই" in msg and "Act now" in msg and "FFWC" in msg
+
+
+def test_place_names_normalise_spellings():
+    from app.services.places import norm
+
+    assert norm("Jashore") == "jessore"
+    assert norm("Cumilla Sadar") == "comilla"
+    assert norm("  Chhatak upazila ") == "chhatak"

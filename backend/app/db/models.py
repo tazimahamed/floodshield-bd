@@ -210,6 +210,7 @@ class Subscriber(Base):
 
     chat_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     lang: Mapped[str] = mapped_column(String(2), default="bn")
+    voice: Mapped[bool | None] = mapped_column(Boolean, default=True)  # Bangla voice note with each message
     node_ids: Mapped[list] = mapped_column(JSON, default=list)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

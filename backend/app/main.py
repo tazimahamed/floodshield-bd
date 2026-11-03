@@ -13,6 +13,7 @@ from app.core.config import settings
 from app.ml.features import graph_tables
 from app.ml.forecast import safe_run_forecast
 from app.services.alerts import dispatch_alerts, poll_updates
+from app.services.tts import warm as warm_voice
 from app.services.era5 import refresh_recent
 from app.services.ingest import run_gfs_ingest
 
@@ -38,7 +39,8 @@ async def lifespan(app: FastAPI):
                       id="gfs_ingest", max_instances=1, coalesce=True, next_run_time=datetime.now(timezone.utc))
     scheduler.add_job(graph_tables, id="warm_graph")  # build the upstream graph cache in the background
     if settings.telegram_bot_token:
-        scheduler.add_job(poll_updates, "interval", seconds=30, id="telegram_poll", max_instances=1, coalesce=True)
+        scheduler.add_job(poll_updates, "interval", seconds=5, id="telegram_poll", max_instances=1, coalesce=True)
+        scheduler.add_job(warm_voice, id="warm_voice")  # load the Bangla voice model before the first message
     scheduler.add_job(refresh_recent, "cron", hour=3, id="era5_refresh", max_instances=1, coalesce=True)
     scheduler.start()
     yield
