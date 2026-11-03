@@ -135,20 +135,40 @@ function sortKey(p) {
 const dark = matchMedia("(prefers-color-scheme: dark)").matches;
 const map = L.map("map", { zoomSnap: 0.25, zoomControl: false, minZoom: 5 }).setView([23.75, 90.3], 7);
 L.control.zoom({ position: "bottomright" }).addTo(map);
-const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas";
-const canvasBase = dark ? "World_Dark_Gray_Base" : "World_Light_Gray_Base";
-L.tileLayer(`${ESRI}/${canvasBase}/MapServer/tile/{z}/{y}/{x}`, {
-  maxZoom: 16, attribution: "Basemap © Esri, HERE, Garmin, © OpenStreetMap contributors · Boundaries BBS/OCHA · Rivers HydroSHEDS",
+const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services";
+// light: Ocean basemap (blue sea, soft terrain) — dark: dark grey canvas
+L.tileLayer(`${ESRI}/${dark ? "Canvas/World_Dark_Gray_Base" : "Ocean/World_Ocean_Base"}/MapServer/tile/{z}/{y}/{x}`, {
+  maxZoom: 16, maxNativeZoom: 13, attribution: "Basemap © Esri, GEBCO, NOAA, Garmin, HERE, © OpenStreetMap contributors · Boundaries BBS/OCHA · Rivers HydroSHEDS",
 }).addTo(map);
 map.createPane("labels").style.zIndex = 640;
 map.getPane("labels").style.pointerEvents = "none";
-L.tileLayer(`${ESRI}/${dark ? "World_Dark_Gray_Reference" : "World_Light_Gray_Reference"}/MapServer/tile/{z}/{y}/{x}`,
-  { pane: "labels", maxZoom: 16 }).addTo(map);
+L.tileLayer(`${ESRI}/${dark ? "Canvas/World_Dark_Gray_Reference" : "Ocean/World_Ocean_Reference"}/MapServer/tile/{z}/{y}/{x}`,
+  { pane: "labels", maxZoom: 16, maxNativeZoom: 13, opacity: 0.9 }).addTo(map);
+map.createPane("mask").style.zIndex = 460;
+map.getPane("mask").style.pointerEvents = "none";
+map.createPane("geo").style.zIndex = 650;
+map.getPane("geo").style.pointerEvents = "none";
 map.createPane("rivers").style.zIndex = 450;
+let maskLayer = null;
+const MASK = dark ? 0.5 : 0.38;  // neighbours stay readable, Bangladesh stands out
+
+/* soften everything outside Bangladesh and draw a crisp national border */
+async function drawCountry() {
+  const f = await (await fetch("/api/v1/country-outline")).json();
+  const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+  const ll = ring => ring.map(([x, y]) => [y, x]);
+  const world = [[-89, -179], [-89, 179], [89, 179], [89, -179]];
+  maskLayer = L.polygon([world, ...polys.map(p => ll(p[0]))], {
+    pane: "mask", stroke: false, fillColor: dark ? "#0b1218" : "#ffffff", fillOpacity: MASK, interactive: false,
+  }).addTo(map);
+  const rings = polys.map(p => ll(p[0]));
+  L.polyline(rings, { pane: "geo", color: dark ? "#0b1218" : "#ffffff", weight: 5, opacity: 0.9, interactive: false }).addTo(map);
+  L.polyline(rings, { pane: "geo", color: dark ? "#9fb3c6" : "#33475b", weight: 1.6, opacity: 1, interactive: false }).addTo(map);
+}
 map.createPane("assets").style.zIndex = 620;
 
 function baseStyle(f) {
-  return { fillColor: fillFor(f.properties), fillOpacity: 0.82, weight: 0.5, color: dark ? "#0d141b" : "#ffffff", opacity: 0.9 };
+  return { fillColor: fillFor(f.properties), fillOpacity: 0.85, weight: 0.6, color: dark ? "#0d141b" : "#ffffff", opacity: 1 };
 }
 
 function renderLegend() {
@@ -456,13 +476,18 @@ async function toggleRivers() {
 }
 
 async function toggleBasins() {
-  if (!$("show-basins").checked) { basinLayer && basinLayer.remove(); return; }
+  if (!$("show-basins").checked) {
+    basinLayer && basinLayer.remove();
+    maskLayer && maskLayer.setStyle({ fillOpacity: MASK });
+    return;
+  }
   if (!basinData) basinData = await (await fetch("/api/v1/basins")).json();
   if (!basinLayer) basinLayer = L.geoJSON(basinData, {
     style: f => ({ fillColor: step(f.properties.rain_72h_mm, RAIN_BREAKS, RAIN_COLORS), weight: 0.4, color: "#8a96a3", fillOpacity: 0.55 }),
     onEachFeature: (f, l) => l.bindTooltip(() => `<div class="tt-name">${f.properties.name}</div><div class="tt-sub">${f.properties.region}</div>${t().next72}: <b>${f.properties.rain_72h_mm == null ? "–" : nf(f.properties.rain_72h_mm, 1) + " " + t().mm}</b>`, { sticky: true }),
   });
   basinLayer.addTo(map).bringToBack();
+  maskLayer && maskLayer.setStyle({ fillOpacity: 0.15 });
   map.fitBounds(basinLayer.getBounds());
 }
 
@@ -554,6 +579,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && selected) 
   events = evs.filter(e => !e.id.startsWith("auto_"));  // monsoon windows are training labels only
   events.forEach(e => $("event").insertAdjacentHTML("beforeend",
     `<option value="${e.id}">${e.name}</option>`));
+  drawCountry();
   await load();
   $("map-loading").hidden = true;
   renderFreshness();

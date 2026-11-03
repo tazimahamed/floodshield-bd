@@ -282,6 +282,21 @@ def model_versions():
                 for m in db.scalars(select(ModelVersion).order_by(ModelVersion.trained_at.desc())).all()]
 
 
+_outline_cache: dict = {}
+
+
+@router.get("/country-outline")
+def country_outline():
+    """Bangladesh outline (union of the upazilas), for the map mask and border."""
+    if not _outline_cache:
+        with SessionLocal() as db:
+            g = db.scalar(text("""select st_asgeojson(st_simplifypreservetopology(st_collectionextract(
+                st_union(st_makevalid(st_snaptogrid(geom, 0.0005))), 3), 0.004), 4)
+                from nodes where node_type = 'upazila'"""))
+        _outline_cache["geojson"] = {"type": "Feature", "geometry": json.loads(g), "properties": {}}
+    return _outline_cache["geojson"]
+
+
 @router.get("/divisions")
 def divisions():
     with SessionLocal() as db:
