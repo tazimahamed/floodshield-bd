@@ -45,6 +45,8 @@ def upazilas(division: str | None = Query(None)):
                     "rain_72h_mm": rf.rain_72h_mm if rf else None,
                     "flood_prob": ff.flood_prob if ff else None,
                     "flood_frac": ff.flood_frac if ff else None,
+                    "frac_p10": ff.frac_p10 if ff else None,
+                    "frac_p90": ff.frac_p90 if ff else None,
                     "flood_risk": ff.risk if ff else None,
                 },
             })

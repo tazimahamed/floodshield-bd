@@ -1,22 +1,42 @@
-.back { font-size: 14px; color: var(--teal); text-decoration: none; margin-right: 12px; white-space: nowrap; }
-.report { max-width: 1100px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
-.kpis div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
-.kpis b { display: block; font-size: 22px; }
-.kpis small { color: var(--muted); }
-.kpis .red b { color: #d7301f; }
-#insight p { margin: 0 0 8px; font-size: 15px; line-height: 1.6; }
+body.page { min-height: 100vh; }
+.report { max-width: 1160px; margin: 0 auto; padding: 20px 16px 40px; display: flex; flex-direction: column; gap: 14px; }
+.hero { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; padding: 6px 2px; }
+.hero h1 { font-size: 30px; font-weight: 700; letter-spacing: -.02em; margin: 2px 0; }
+.eyebrow { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--brand); }
+.now { min-width: 240px; }
+.now .risk-card { margin: 0; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.kpis div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.kpis b { display: block; font-size: 24px; font-weight: 700; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.kpis small { color: var(--muted); font-size: 13px; }
+.kpis .alert b { color: var(--high); }
+#insight p { margin: 0 0 10px; font-size: 15px; line-height: 1.65; }
+#insight p:last-child { margin-bottom: 0; }
 #insight .big { font-size: 17px; }
-.two { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; }
-.table-wrap { overflow-x: auto; }
+.callouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 12px 0; }
+.callouts div { background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px 14px; }
+.callouts b { display: block; font-size: 22px; }
+.callouts .vs { color: var(--muted); font-size: 13px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.table-wrap { overflow-x: auto; max-height: 520px; overflow-y: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); }
 table { border-collapse: collapse; width: 100%; font-size: 13px; }
-th, td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
-th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
-th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--card); }
-tr.flood td { background: rgba(215, 48, 31, 0.08); }
-tr.named td:nth-child(2) { font-weight: 700; }
-.pill { display: inline-block; border-radius: 10px; padding: 1px 8px; font-size: 12px; }
-.pill.yes { background: #d7301f; color: #fff; }
-.pill.no { background: var(--bg); color: var(--muted); }
-#wettest { padding-left: 20px; font-size: 14px; line-height: 1.8; }
-@media (max-width: 800px) { .two { grid-template-columns: 1fr; } }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+th:nth-child(-n+3), td:nth-child(-n+3) { text-align: left; }
+th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--surface); z-index: 1; font-size: 12px; }
+tr.named td:nth-child(2) { font-weight: 600; }
+tbody tr:hover td { background: var(--surface-2); }
+.pill { display: inline-block; border-radius: 999px; padding: 1px 9px; font-size: 12px; font-weight: 600; }
+.pill.yes { background: var(--high-bg); color: var(--high); }
+.pill.no { background: var(--surface-2); color: var(--muted); }
+.impact { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 12px; }
+.impact div { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px; }
+.impact h3 { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+.impact b.big { font-size: 22px; display: block; }
+#wettest li { cursor: default; }
+@media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } .hero h1 { font-size: 24px; } }
+@media print {
+  .topbar .top-actions, .notice { display: none; }
+  body { background: #fff; }
+  .panel, .kpis div { box-shadow: none; break-inside: avoid; }
+  .table-wrap { max-height: none; overflow: visible; }
+}

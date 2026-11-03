@@ -48,6 +48,10 @@ def upazila_report(node_id: str) -> dict:
                              params={"n": node_id}, parse_dates=["post_start", "post_end"])
         facilities = dict(c.execute(text("select kind, count(*) from assets where node_id = :n group by kind"),
                                     {"n": node_id}).all())
+        current = c.execute(text("""
+            select f.flood_prob, f.flood_frac, f.frac_p10, f.frac_p90, f.risk, r.reference_day, r.valid_until
+            from flood_forecasts f join flood_forecast_runs r on r.id = f.run_id
+            where f.node_id = :n order by r.id desc limit 1"""), {"n": node_id}).mappings().first()
 
     rain = _daily_rain(node_id)
 
@@ -101,6 +105,8 @@ def upazila_report(node_id: str) -> dict:
                          for y, r in yearly.iterrows()],
         "wettest_days": [{"day": d.date().isoformat(), "mm": round(float(v), 1)} for d, v in wettest.items()],
         "facilities": facilities, "ripple": impact([node_id]),
+        "current": None if not current else {k: (v.isoformat() if hasattr(v, "isoformat") else v)
+                                             for k, v in current.items()},
         "sources": ["Sentinel-1 SAR via Google Earth Engine (flood extent)",
                     "ERA5-Land daily via Google Earth Engine (rain)", "HydroBASINS (upstream area)",
                     "OpenStreetMap (facilities, roads)"],
