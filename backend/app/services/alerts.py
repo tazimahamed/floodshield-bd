@@ -13,6 +13,7 @@ People can just type a place name (old or new spelling, small typos, district, B
 the bot answers with buttons when it needs them to pick an upazila.
 """
 
+import html
 import logging
 from datetime import datetime, timedelta, timezone
 
@@ -20,7 +21,7 @@ import httpx
 from sqlalchemy import func, select
 
 from app.core.config import settings
-from app.db.models import AlertLog, Asset, FloodForecast, FloodForecastRun, Node, Subscriber
+from app.db.models import AlertLog, Asset, FloodForecast, FloodForecastRun, Node, RainForecast, Subscriber
 from app.db.session import SessionLocal
 from app.services.places import find
 
@@ -38,46 +39,114 @@ HEAD = {
     "warning": ("🟠 বন্যা সতর্কবার্তা — এখনই ব্যবস্থা নিন", "🟠 FLOOD WARNING — act now"),
     "severe": ("🔴 তীব্র বন্যার সতর্কবার্তা", "🔴 SEVERE FLOOD WARNING"),
 }
-BODY = {
-    "none": (
-        "এই মুহূর্তে {period} আপনার উপজেলায় বন্যার বাড়তি ঝুঁকি দেখা যাচ্ছে না। স্বাভাবিক কাজকর্ম চালিয়ে যান। "
-        "পরিস্থিতি বদলালে আমরা সঙ্গে সঙ্গে জানাব।",
-        "No elevated flood risk is expected in your upazila {period_en}. Carry on as usual — "
-        "we will message you right away if this changes."),
-    "watch": (
-        "{period} বন্যার আশঙ্কা আছে (সম্ভাবনা প্রায় {prob}%)।\n"
-        "প্রস্তুতি নিন: জরুরি কাগজপত্র ও ওষুধ পানিরোধী ব্যাগে রাখুন, মোবাইল চার্জ রাখুন, "
-        "নিকটতম আশ্রয়কেন্দ্র কোথায় জেনে নিন।",
-        "Flooding is possible {period_en} (about {prob_en}% chance).\n"
-        "Get ready: keep papers and medicine in a waterproof bag, keep your phone charged, "
-        "know where your nearest shelter is."),
-    "warning": (
-        "{period} বন্যার ঝুঁকি বেশি (সম্ভাবনা প্রায় {prob}%)। উপজেলার প্রায় {frac}% এলাকা ডুবতে পারে।\n"
-        "এখনই করুন: খাবার পানি ও শুকনো খাবার মজুত করুন; গবাদিপশু ও মালামাল উঁচু জায়গায় সরান; "
-        "শিশু ও বয়স্কদের দিকে খেয়াল রাখুন।",
-        "High flood risk {period_en} (about {prob_en}% chance); about {frac_en}% of the upazila may go under water.\n"
-        "Act now: store drinking water and dry food; move livestock and goods to higher ground; "
-        "look after children and the elderly."),
-    "severe": (
-        "{period} তীব্র বন্যার ঝুঁকি (সম্ভাবনা প্রায় {prob}%)। উপজেলার প্রায় {frac}% এলাকা ডুবতে পারে।\n"
-        "পানি বাড়তে শুরু করলে দেরি না করে আশ্রয়কেন্দ্রে যান। খাবার পানি, ওষুধ ও জরুরি কাগজপত্র সঙ্গে নিন।\n"
-        "জরুরি সাহায্য: ৯৯৯ · দুর্যোগের তথ্য: ১০৯০",
-        "Severe flood risk {period_en} (about {prob_en}% chance); about {frac_en}% of the upazila may go under water.\n"
-        "If water starts rising, go to a shelter without delay. Take water, medicine and documents.\n"
-        "Emergency: 999 · Disaster info: 1090"),
+ADVICE = {
+    "none": ("স্বাভাবিক কাজকর্ম চালিয়ে যান। পরিস্থিতি বদলালে আমরা সঙ্গে সঙ্গে জানাব।",
+             "Carry on as usual. We will message you right away if this changes."),
+    "watch": ("জরুরি কাগজপত্র ও ওষুধ পানিরোধী ব্যাগে রাখুন, মোবাইল চার্জ রাখুন, নিকটতম আশ্রয়কেন্দ্র কোথায় জেনে নিন।",
+              "Keep papers and medicine in a waterproof bag, keep your phone charged, know where your nearest shelter is."),
+    "warning": ("খাবার পানি ও শুকনো খাবার মজুত করুন; গবাদিপশু ও মালামাল উঁচু জায়গায় সরান; শিশু ও বয়স্কদের দিকে খেয়াল রাখুন।",
+                "Store drinking water and dry food; move livestock and goods to higher ground; look after children and the elderly."),
+    "severe": ("পানি বাড়তে শুরু করলে দেরি না করে আশ্রয়কেন্দ্রে যান; খাবার পানি, ওষুধ ও কাগজপত্র সঙ্গে নিন।\n"
+               "☎️ জরুরি সাহায্য ৯৯৯ · দুর্যোগের তথ্য ১০৯০",
+               "If water starts rising, go to a shelter without delay; take water, medicine and documents.\n"
+               "☎️ Emergency 999 · Disaster info 1090"),
 }
+RISK_WORD = {"low": ("নিম্ন", "low"), "medium": ("মাঝারি", "medium"), "high": ("উচ্চ", "high")}
 FOOT = ("সরকারি সতর্কবার্তা (FFWC, আবহাওয়া অধিদপ্তর, উপজেলা প্রশাসন) সবসময় আগে মানুন।",
         "Always follow official warnings (FFWC, BMD, upazila administration) first.")
+# BMD rainfall categories, mm per day
+RAIN_WORDS = [(0.5, "বৃষ্টি নেই", "no rain"), (10, "হালকা", "light"), (22, "মাঝারি", "moderate"),
+              (43, "মাঝারি ধরনের ভারী", "moderately heavy"), (88, "ভারী", "heavy"), (1e9, "অতি ভারী", "very heavy")]
+VOICE_RAIN = {"বৃষ্টি নেই": "বৃষ্টির সম্ভাবনা নেই", "হালকা": "হালকা বৃষ্টি হতে পারে", "মাঝারি": "মাঝারি বৃষ্টি হতে পারে",
+              "মাঝারি ধরনের ভারী": "মাঝারি ধরনের ভারী বৃষ্টি হতে পারে", "ভারী": "ভারী বৃষ্টি হতে পারে",
+              "অতি ভারী": "অতি ভারী বৃষ্টি হতে পারে"}
 VOICE = {
-    "none": "দুর্যোগ বার্তা। আপনার উপজেলায় আগামী পনেরো দিনে বন্যার বাড়তি ঝুঁকি দেখা যাচ্ছে না। "
+    "none": "দুর্যোগ বার্তা। আপনার উপজেলায় আগামী পনেরো দিনে বন্যার বাড়তি ঝুঁকি দেখা যাচ্ছে না। আগামী তিন দিনে {rain}। "
             "স্বাভাবিক কাজকর্ম চালিয়ে যান। পরিস্থিতি বদলালে আমরা জানাব।",
-    "watch": "দুর্যোগ বার্তা। আপনার উপজেলায় আগামী পনেরো দিনে বন্যার আশঙ্কা আছে। প্রস্তুত থাকুন। "
+    "watch": "দুর্যোগ বার্তা। আপনার উপজেলায় আগামী পনেরো দিনে বন্যার আশঙ্কা আছে। আগামী তিন দিনে {rain}। প্রস্তুত থাকুন। "
              "জরুরি কাগজপত্র আর ওষুধ পানিরোধী ব্যাগে রাখুন, মোবাইল চার্জ রাখুন, নিকটতম আশ্রয়কেন্দ্র জেনে নিন।",
-    "warning": "দুর্যোগ বার্তা। জরুরি। আপনার উপজেলায় বন্যার ঝুঁকি বেশি। এখনই খাবার পানি আর শুকনো খাবার মজুত করুন। "
-               "গবাদিপশু আর মালামাল উঁচু জায়গায় সরান। শিশু আর বয়স্কদের দিকে খেয়াল রাখুন।",
-    "severe": "দুর্যোগ বার্তা। খুব জরুরি। আপনার উপজেলায় তীব্র বন্যার ঝুঁকি। পানি বাড়তে শুরু করলে দেরি না করে "
-              "আশ্রয়কেন্দ্রে যান। জরুরি সাহায্যের জন্য নয় নয় নয় নম্বরে ফোন করুন।",
+    "warning": "দুর্যোগ বার্তা। জরুরি। আপনার উপজেলায় বন্যার ঝুঁকি বেশি। আগামী তিন দিনে {rain}। এখনই খাবার পানি আর শুকনো খাবার "
+               "মজুত করুন। গবাদিপশু আর মালামাল উঁচু জায়গায় সরান। শিশু আর বয়স্কদের দিকে খেয়াল রাখুন।",
+    "severe": "দুর্যোগ বার্তা। খুব জরুরি। আপনার উপজেলায় তীব্র বন্যার ঝুঁকি। আগামী তিন দিনে {rain}। পানি বাড়তে শুরু করলে "
+              "দেরি না করে আশ্রয়কেন্দ্রে যান। জরুরি সাহায্যের জন্য নয় নয় নয় নম্বরে ফোন করুন।",
 }
+
+
+def rain_word(mm_per_day: float | None) -> tuple[str, str]:
+    v = mm_per_day or 0
+    return next((bn, en) for top, bn, en in RAIN_WORDS if v < top)
+
+
+def level_for(risk: str, has_critical: bool) -> str:
+    if risk == "high":
+        return "severe" if has_critical else "warning"
+    return "watch" if risk == "medium" else "none"
+
+
+def _bn(x) -> str:
+    return str(x).translate(BN_DIGITS)
+
+
+def _bn_date(d) -> str:
+    return f"{_bn(d.day)} {BN_MONTHS[d.month - 1]}"
+
+
+def _mm(v, bn: bool) -> str:
+    if v is None:
+        return "–"
+    s = f"{v:.0f}" if v >= 10 else f"{v:.1f}"
+    return f"{_bn(s)} মিমি" if bn else f"{s} mm"
+
+
+def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, facilities: dict,
+           rain: dict | None = None) -> str:
+    """One organised message (HTML): Bangla first, then English, worded for the risk level."""
+    rain = rain or {}
+    start, end = run.reference_day, run.valid_until
+    pct = round((fc.flood_prob or 0) * 100)
+    frac, p10, p90 = (round((v or 0) * 100) for v in (fc.flood_frac, fc.frac_p10, fc.frac_p90))
+    risk_bn, risk_en = RISK_WORD[fc.risk]
+    w_bn, w_en = rain_word((rain.get("next72") or 0) / 3)
+    name = html.escape(f"{node.name}, {node.district}")
+    kinds = [("hospital", "হাসপাতাল", "hospitals"), ("shelter", "আশ্রয়কেন্দ্র", "shelters"),
+             ("school", "স্কুল", "schools"), ("substation", "সাবস্টেশন", "substations")]
+    fac_bn = " · ".join(f"{_bn(facilities[k])} {bn}" for k, bn, _ in kinds if facilities.get(k))
+    fac_en = " · ".join(f"{facilities[k]} {en if facilities[k] > 1 else en[:-1]}" for k, _, en in kinds if facilities.get(k))
+
+    bn = [f"<b>{HEAD[level][0]}</b>", f"📍 {name}", f"📅 আগামী ১৫ দিন: {_bn_date(start)} – {_bn_date(end)}", "",
+          "<b>🌧️ বৃষ্টির পূর্বাভাস</b>",
+          f"• আগামী ২৪ ঘণ্টা: {_mm(rain.get('next24'), True)}",
+          f"• আগামী ৩ দিন: {_mm(rain.get('next72'), True)} ({w_bn})",
+          f"• উজানে (ভারতসহ), আগামী ৩ দিন: {_mm(rain.get('up72'), True)}",
+          f"• গত ৩ দিন: {_mm(rain.get('past72'), True)}", "",
+          "<b>🌊 বন্যার ঝুঁকি</b>",
+          f"• সম্ভাবনা: {_bn(pct)}% ({risk_bn})"]
+    en = [f"<b>{HEAD[level][1]}</b>", f"📅 Next 15 days: {start:%d %b} – {end:%d %b}", "",
+          "<b>🌧️ Rain forecast</b>",
+          f"• Next 24 h: {_mm(rain.get('next24'), False)}",
+          f"• Next 3 days: {_mm(rain.get('next72'), False)} ({w_en})",
+          f"• Upstream (incl. India), next 3 days: {_mm(rain.get('up72'), False)}",
+          f"• Last 3 days: {_mm(rain.get('past72'), False)}", "",
+          "<b>🌊 Flood risk</b>",
+          f"• Chance: {pct}% ({risk_en})"]
+    if level != "none":
+        bn.append(f"• ডুবতে পারে: উপজেলার প্রায় {_bn(frac)}% (সম্ভাব্য {_bn(p10)}–{_bn(p90)}%)")
+        en.append(f"• May flood: about {frac}% of the upazila (likely {p10}–{p90}%)")
+    if fac_bn:
+        bn += ["", f"<b>🏥 এই উপজেলায়</b>: {fac_bn}"]
+        en += ["", f"<b>🏥 In this upazila</b>: {fac_en}"]
+    bn += ["", f"<b>✅ করণীয়</b>: {ADVICE[level][0]}"]
+    en += ["", f"<b>✅ What to do</b>: {ADVICE[level][1]}"]
+    return ("\n".join(bn) + "\n\n━━━━━━━━━━ English ━━━━━━━━━━\n" + "\n".join(en) +
+            f"\n\n<i>ℹ️ {FOOT[0]}\n{FOOT[1]}</i>")
+
+
+def voice_script(level: str, node: Node, rain: dict | None = None) -> str:
+    # the Bangla voice model cannot read Latin letters, so the place name is in the text above it
+    words = rain_word(((rain or {}).get("next72") or 0) / 3)[0]
+    return VOICE[level].format(rain=VOICE_RAIN[words])
+
+
 UI = {
     "start": ("দুর্যোগ বার্তা বাংলাদেশে স্বাগতম! 🙏\nআপনার উপজেলা বা জেলার নাম লিখে পাঠান — যেমন Chhatak, Jessore বা যশোর। "
               "বানান একটু ভুল হলেও চলবে।\n\nWelcome to Durjog Barta Bangladesh! Just send the name of your upazila or "
@@ -95,41 +164,6 @@ UI = {
 }
 
 
-def level_for(risk: str, has_critical: bool) -> str:
-    if risk == "high":
-        return "severe" if has_critical else "warning"
-    return "watch" if risk == "medium" else "none"
-
-
-def _bn_date(d) -> str:
-    return f"{str(d.day).translate(BN_DIGITS)} {BN_MONTHS[d.month - 1]}"
-
-
-def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, facilities: dict) -> str:
-    """One message, Bangla first then English, worded for the risk level."""
-    start, end = run.reference_day, run.valid_until
-    pct = lambda v: round((v or 0) * 100)  # noqa: E731
-    v = dict(period=f"আগামী ১৫ দিনে ({_bn_date(start)} – {_bn_date(end)})",
-             period_en=f"over the next 15 days ({start:%d %b} – {end:%d %b})",
-             prob=str(pct(fc.flood_prob)).translate(BN_DIGITS), prob_en=pct(fc.flood_prob),
-             frac=str(pct(fc.flood_frac)).translate(BN_DIGITS), frac_en=pct(fc.flood_frac))
-    place = f"📍 {node.name}, {node.district}"
-    extra = ""
-    if level != "none":
-        shelters, hospitals = facilities.get("shelter", 0), facilities.get("hospital", 0)
-        if shelters or hospitals:
-            extra = (f"\n🏥 এই উপজেলায় (OpenStreetMap): {str(hospitals).translate(BN_DIGITS)} হাসপাতাল, "
-                     f"{str(shelters).translate(BN_DIGITS)} আশ্রয়কেন্দ্র · {hospitals} hospitals, {shelters} shelters")
-    bn_head, en_head = HEAD[level]
-    bn_body, en_body = BODY[level]
-    return (f"{bn_head}\n{place}\n\n{bn_body.format(**v)}{extra}\n\n— English —\n{en_head}\n"
-            f"{en_body.format(**v)}\n\nℹ️ {FOOT[0]}\n{FOOT[1]}")
-
-
-def voice_script(level: str, node: Node) -> str:
-    # the Bangla voice model cannot read Latin letters, so the place name is in the text above it
-    return VOICE[level]
-
 
 # ---------- Telegram API ----------
 
@@ -145,7 +179,7 @@ def _call(method: str, files: dict | None = None, **params) -> dict:
 
 
 def send(chat_id: int, text: str, buttons: list[list[dict]] | None = None) -> None:
-    params = {"chat_id": chat_id, "text": text, "disable_web_page_preview": True}
+    params = {"chat_id": chat_id, "text": text, "parse_mode": "HTML", "disable_web_page_preview": True}
     if buttons:
         params["reply_markup"] = {"inline_keyboard": buttons}
     _call("sendMessage", **params)
@@ -164,6 +198,21 @@ def send_voice(chat_id: int, script: str) -> None:
 def _facilities(db, node_id: str) -> dict:
     return dict(db.execute(select(Asset.kind, func.count()).where(Asset.node_id == node_id)
                            .group_by(Asset.kind)).all())
+
+
+def _rain(db, node_id: str) -> dict:
+    """Latest GFS rain for the upazila and the area-weighted rain over its upstream basins."""
+    from app.api.routes import UPSTREAM_SQL, _latest_run as latest_rain_run
+    run = latest_rain_run(db)
+    if not run:
+        return {}
+    rf = db.scalars(select(RainForecast).where(RainForecast.ingest_run_id == run.id,
+                                               RainForecast.node_id == node_id)).first()
+    up = db.execute(UPSTREAM_SQL, {"node": node_id, "run": run.id}).all()
+    got = [(r.rain_72h_mm, r.km2) for r in up if r.rain_72h_mm is not None]
+    area = sum(a for _, a in got)
+    return {"past72": rf and rf.rain_past_72h_mm, "next24": rf and rf.rain_24h_mm, "next72": rf and rf.rain_72h_mm,
+            "up72": sum(v * a for v, a in got) / area if area else None}
 
 
 def _latest_run(db) -> FloodForecastRun | None:
@@ -200,14 +249,14 @@ def dispatch_alerts() -> int:
                                   .order_by(AlertLog.sent_at.desc()).limit(1)).first()
                 if last and LEVEL_RANK[last.level] >= LEVEL_RANK[level] and now - last.sent_at < REPEAT_AFTER:
                     continue
-                node = db.get(Node, node_id)
-                text = render(level, node, fc, run, fac)
+                node, rain = db.get(Node, node_id), _rain(db, node_id)
+                text = render(level, node, fc, run, fac, rain)
                 entry = AlertLog(forecast_run_id=run.id, chat_id=sub.chat_id, node_id=node_id, level=level,
                                  message=text, status="sent")
                 try:
                     send(sub.chat_id, text)
                     if sub.voice is not False:
-                        send_voice(sub.chat_id, voice_script(level, node))
+                        send_voice(sub.chat_id, voice_script(level, node, rain))
                     sent += 1
                 except Exception as e:
                     entry.status, entry.error = "failed", str(e)[:1000]
@@ -238,7 +287,8 @@ def _status_messages(db, sub: Subscriber, node_ids: list[str]) -> list[tuple[str
         if fc and node:
             fac = _facilities(db, i)
             level = level_for(fc.risk, bool(fac.get("hospital") or fac.get("substation")))
-            out.append((render(level, node, fc, run, fac), voice_script(level, node)))
+            rain = _rain(db, i)
+            out.append((render(level, node, fc, run, fac, rain), voice_script(level, node, rain)))
     return out
 
 
@@ -286,7 +336,7 @@ def handle_message(chat_id: int, text: str) -> list[dict]:
                 elif r["kind"] == "suggest":
                     replies.append({"text": UI["pick"], "buttons": _buttons(r["nodes"], with_district=True)})
                 else:
-                    replies.append({"text": UI["not_found"].format(q=q.strip())})
+                    replies.append({"text": UI["not_found"].format(q=html.escape(q.strip()))})
         db.commit()
         return replies
 
@@ -295,7 +345,7 @@ def _subscribe(db, sub: Subscriber, node_id: str) -> list[dict]:
     node = db.get(Node, node_id)
     sub.node_ids = sorted(set(sub.node_ids) | {node_id})
     sub.active = True
-    out = [{"text": UI["subscribed"].format(name=node.name, district=node.district)}]
+    out = [{"text": UI["subscribed"].format(name=html.escape(node.name), district=html.escape(node.district or ""))}]
     for t, v in _status_messages(db, sub, [node_id]):
         out.append({"text": t, "voice": v if sub.voice is not False else ""})
     return out

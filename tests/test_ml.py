@@ -46,14 +46,14 @@ def test_alert_levels_and_messages():
 
     node = SimpleNamespace(name="Chhatak", district="Sunamganj")
     run = SimpleNamespace(reference_day=date(2026, 7, 1), valid_until=date(2026, 7, 15))
-    low = SimpleNamespace(flood_prob=0.03, flood_frac=0.01, frac_p10=0.0, frac_p90=0.02)
+    low = SimpleNamespace(flood_prob=0.03, flood_frac=0.01, frac_p10=0.0, frac_p90=0.02, risk="low")
     calm = render("none", node, low, run, {"hospital": 1})
-    assert "বাড়তি ঝুঁকি দেখা যাচ্ছে না" in calm and "No elevated flood risk" in calm
+    assert "বাড়তি ঝুঁকি নেই" in calm and "No elevated flood risk" in calm and "বৃষ্টির পূর্বাভাস" in calm
     assert "আশ্রয়কেন্দ্র" not in calm and "shelter" not in calm  # no alarming advice at low risk
 
-    high = SimpleNamespace(flood_prob=0.62, flood_frac=0.18, frac_p10=0.05, frac_p90=0.35)
+    high = SimpleNamespace(flood_prob=0.62, flood_frac=0.18, frac_p10=0.05, frac_p90=0.35, risk="high")
     msg = render("warning", node, high, run, {"hospital": 1, "shelter": 2})
-    assert "৬২%" in msg and "62%" in msg and "এখনই" in msg and "Act now" in msg and "FFWC" in msg
+    assert "৬২%" in msg and "62%" in msg and "এখনই" in msg and "act now" in msg and "FFWC" in msg
 
 
 def test_place_names_normalise_spellings():
