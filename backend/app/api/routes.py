@@ -300,7 +300,16 @@ def cyclone_detail(sid: str):
         pts = db.scalars(select(CyclonePoint).where(CyclonePoint.sid == sid).order_by(CyclonePoint.time)).all()
         exp = db.execute(select(CycloneExposure.node_id, CycloneExposure.min_km, CycloneExposure.wind_kt_near)
                          .where(CycloneExposure.sid == sid)).all()
+        place = None
+        if cy.landfall_lat is not None:  # nearest upazila to the coast crossing, if it is in Bangladesh
+            place = db.execute(text("""
+                select name, district, st_distance(geom::geography, st_setsrid(st_point(:lon, :lat), 4326)::geography) / 1000 km
+                from nodes where node_type = 'upazila'
+                order by geom <-> st_setsrid(st_point(:lon, :lat), 4326) limit 1"""),
+                {"lat": cy.landfall_lat, "lon": cy.landfall_lon}).mappings().first()
         return {**_cyclone_info(cy),
+                "landfall_place": None if not place or place["km"] > 40 else
+                {"upazila": place["name"], "district": place["district"], "km": round(place["km"])},
                 "points": [{"time": p.time.isoformat(), "lat": p.lat, "lon": p.lon, "wind_kt": p.wind_kt,
                             "pres_hpa": p.pres_hpa} for p in pts],
                 "upazilas": {n: {"min_km": round(km, 1), "wind_kt": w} for n, km, w in exp}}

@@ -12,6 +12,18 @@ const T = {
     cycJtwc: kt => `US JTWC estimate: ${kt} kt (1-min wind, a different measure)`, cycProvisional: "Provisional track (not yet final)",
     cycNote: "Track: official best track of IMD New Delhi (the WMO regional centre for the Bay of Bengal), from NOAA IBTrACS. Upazilas are coloured by how close the storm centre passed; strong winds reach further than the centre.",
     cycHistTitle: "🌀 Cyclones since 1960",
+    cats: ["Depression", "Deep depression", "Cyclone", "Severe cyclone", "Very severe cyclone", "Extremely severe cyclone", "Super cyclone"],
+    catRange: ["31–49", "50–61", "62–88", "89–117", "118–166", "167–221", "222+"],
+    kmh: "km/h", allStorms: "All storms since 1960…", playStorm: "Watch the storm",
+    stFormed: "Formed in the Bay of Bengal", stPeak: "Strongest", stLand: "Hit the coast", stEnd: "Faded away",
+    nearPlace: (u, d) => `near ${u} (${d})`, outsideBd: "outside Bangladesh (India / Myanmar coast)",
+    affected: n => `<b>${n}</b> upazilas had the storm centre within 50 km`,
+    peakWind: "Strongest wind", hitCoast: "Hit the coast", noLandfall: "Did not reach land",
+    passedNear: "Areas the storm centre passed near", howToRead: "How to read the map",
+    readTrack: "The line is the storm path; its colour shows how strong it was there.",
+    readArea: "Coloured upazilas: how close the storm centre came (red = within 50 km).",
+    dataNote: "Official IMD New Delhi best track via NOAA IBTrACS. Wind = 3-minute average.",
+    noWindRec: "Wind speed was not recorded for this storm.",
     cycHist: (n50, n150) => `<b>${n50}</b> storm tracks passed within 50 km, <b>${n150}</b> within 150 km (IBTrACS, IMD best track).`,
     cycStrongest: "Strongest nearby",
     cycNoLand: "Did not make landfall",
@@ -66,6 +78,18 @@ const T = {
     cycJtwc: kt => `মার্কিন JTWC-এর হিসাব: ${kt} নট (১ মিনিটের বাতাস, ভিন্ন মাপ)`, cycProvisional: "অস্থায়ী পথ (এখনো চূড়ান্ত নয়)",
     cycNote: "পথ: IMD নয়াদিল্লির (বঙ্গোপসাগরের জন্য WMO-র আঞ্চলিক কেন্দ্র) অফিসিয়াল best track, NOAA IBTrACS থেকে। উপজেলার রঙ দেখায় ঝড়ের কেন্দ্র কত কাছ দিয়ে গেছে; জোরালো বাতাস কেন্দ্রের চেয়ে দূর পর্যন্ত যায়।",
     cycHistTitle: "🌀 ১৯৬০ থেকে ঘূর্ণিঝড়",
+    cats: ["নিম্নচাপ", "গভীর নিম্নচাপ", "ঘূর্ণিঝড়", "প্রবল ঘূর্ণিঝড়", "অতি প্রবল ঘূর্ণিঝড়", "অত্যন্ত প্রবল ঘূর্ণিঝড়", "সুপার সাইক্লোন"],
+    catRange: ["৩১–৪৯", "৫০–৬১", "৬২–৮৮", "৮৯–১১৭", "১১৮–১৬৬", "১৬৭–২২১", "২২২+"],
+    kmh: "কিমি/ঘণ্টা", allStorms: "১৯৬০ থেকে সব ঝড়…", playStorm: "ঝড়টি চলতে দেখুন",
+    stFormed: "বঙ্গোপসাগরে সৃষ্টি", stPeak: "সবচেয়ে শক্তিশালী", stLand: "উপকূলে আঘাত", stEnd: "দুর্বল হয়ে মিলিয়ে যায়",
+    nearPlace: (u, d) => `${u} (${d})-এর কাছে`, outsideBd: "বাংলাদেশের বাইরে (ভারত / মিয়ানমার উপকূল)",
+    affected: n => `<b>${n}</b>টি উপজেলার ৫০ কিমির মধ্যে দিয়ে ঝড়ের কেন্দ্র গেছে`,
+    peakWind: "সর্বোচ্চ বাতাস", hitCoast: "উপকূলে আঘাত", noLandfall: "স্থলভাগে পৌঁছায়নি",
+    passedNear: "ঝড়ের কেন্দ্র যেসব এলাকার কাছ দিয়ে গেছে", howToRead: "ম্যাপ কীভাবে বুঝবেন",
+    readTrack: "রেখাটি ঝড়ের পথ; রঙ দেখায় সেখানে ঝড় কত শক্তিশালী ছিল।",
+    readArea: "রঙিন উপজেলা: ঝড়ের কেন্দ্র কত কাছে এসেছিল (লাল = ৫০ কিমির মধ্যে)।",
+    dataNote: "IMD নয়াদিল্লির অফিসিয়াল best track, NOAA IBTrACS থেকে। বাতাস = ৩ মিনিটের গড়।",
+    noWindRec: "এই ঝড়ের বাতাসের গতি রেকর্ডে নেই।",
     cycHist: (n50, n150) => `<b>${n50}</b>টি ঝড়ের পথ ৫০ কিমির মধ্যে, <b>${n150}</b>টি ১৫০ কিমির মধ্যে দিয়ে গেছে (IBTrACS, IMD best track)।`,
     cycStrongest: "কাছ দিয়ে যাওয়া সবচেয়ে শক্তিশালী",
     cycNoLand: "স্থলভাগে আঘাত হানেনি",
@@ -133,7 +157,7 @@ const TOTAL = { breaks: [0, 1, 5, 10, 20, 50, 100, 200], colors: ["rgba(0,0,0,0)
 const FLOOD = { breaks: [0, 0.02, 0.05, 0.1, 0.2, 0.4], colors: ["rgba(0,0,0,0)", "#f6c9a8", "#f39b6d", "#ea6a45", "#cf3a2b", "#8f1420"] };
 const step = (v, s) => v == null ? "rgba(0,0,0,0)" : s.colors[s.breaks.filter(b => v >= b).length - 1];
 
-const CYC_BANDS = [[50, "#e5483a"], [100, "#f4914a"], [150, "#f4d35e"]];
+const CYC_BANDS = [[50, "#e5483a"], [100, "#f4914a"], [150, "#f4d35e"]];  // closeness of the storm centre
 const cycOf = p => cyc?.upazilas[p.id];
 function fillFor(p) {
   if (view === "cyc") { const e = cycOf(p); return e ? CYC_BANDS.find(([km]) => e.min_km <= km)[1] : "rgba(0,0,0,0)"; }
@@ -164,8 +188,8 @@ function sortKey(p) {
 
 /* ---------- map ---------- */
 const BD_BOUNDS = L.latLngBounds([20.55, 88.0], [26.65, 92.7]);
-const REGION_BOUNDS = L.latLngBounds([14.5, 76.0], [33.5, 101.0]);
-const map = L.map("map", { zoomSnap: 0.25, zoomControl: false, minZoom: 6, maxBounds: REGION_BOUNDS, maxBoundsViscosity: 0.8 });
+const REGION_BOUNDS = L.latLngBounds([4.0, 72.0], [33.5, 101.0]);  // whole Bay of Bengal: cyclone tracks start far south
+const map = L.map("map", { zoomSnap: 0.25, zoomControl: false, minZoom: 5, maxBounds: REGION_BOUNDS, maxBoundsViscosity: 0.8 });
 map.setView([23.7, 90.3], 7);
 // fitBounds throws (NaN LatLng) when the padding is larger than the map; fall back to no padding
 function safeFit(bounds, opts = {}) {
@@ -225,7 +249,7 @@ async function drawCountry() {
 function baseStyle(f) {
   const fill = fillFor(f.properties), empty = fill === "rgba(0,0,0,0)";
   // low risk stays a soft tint so medium/high areas are what the eye catches
-  const soft = view === "risk" && riskOf(f.properties.flood_prob) === "low";
+  const soft = (view === "risk" && riskOf(f.properties.flood_prob) === "low") || view === "cyc";
   return { fillColor: fill, fillOpacity: empty ? 0 : soft ? 0.3 : 0.82, weight: 0.4, opacity: 0.5,
            color: mapDark ? "#6d7c8a" : "#ffffff" };
 }
@@ -273,6 +297,7 @@ function highlight(id) {
 /* ---------- bottom colour scale ---------- */
 function renderScale() {
   const tt = t();
+  $("scale").classList.remove("cats");
   let s, labels, unit;
   if (view === "risk") {
     $("scale").innerHTML = [["low", `${tt.low} < 25%`], ["medium", `${tt.medium} 25–50%`], ["high", `${tt.high} ≥ 50%`]]
@@ -280,8 +305,9 @@ function renderScale() {
     return;
   }
   if (view === "cyc") {
-    $("scale").innerHTML = CYC_BANDS.map(([, c], i) => `<span style="background:${c}">${tt.cycBand[i]}</span>`).join("")
-      + `<span class="unit">${tt.cycScale}</span>`;
+    $("scale").classList.add("cats");
+    $("scale").innerHTML = CAT_COLORS.map((c, i) => `<span style="background:${c}" title="${tt.cats[i]}: ${tt.catRange[i]} ${tt.kmh}"><b>${tt.cats[i]}</b><small>${tt.catRange[i]}</small></span>`).join("")
+      + `<span class="unit">${tt.kmh}</span>`;
     return;
   }
   if (view === "past") { s = FLOOD; labels = ["0", "2%", "5%", "10%", "20%", "40%+"]; unit = tt.flooded; }
@@ -295,7 +321,9 @@ function setView(v) {
   view = v;
   document.querySelectorAll("#view button").forEach(b => b.classList.toggle("on", b.dataset.view === v));
   document.querySelectorAll(".top-left .sub").forEach(s => s.hidden = s.dataset.for !== v);
-  if (v !== "cyc") cycLayer && cycLayer.remove(); else cycLayer && cycLayer.addTo(map);
+  $("playbar").hidden = v !== "cyc";
+  [cycLayer, trailLayer, stormMarker].forEach(l => l && (v === "cyc" ? l.addTo(map) : l.remove()));
+  if (v !== "cyc") stopStorm();
   if (v === "cyc" && !cyc) { loadCyclones(); return; }
   if (v === "past" && !eventLabels && events.length) { $("event").value = events[events.length - 1].id; selectEvent(); return; }
   restyle();
@@ -308,39 +336,128 @@ async function selectEvent() {
 }
 
 /* ---------- cyclones ---------- */
-const IMD_COLOR = kt => kt == null ? "#9aa5ae" : kt >= 90 ? "#8f1420" : kt >= 64 ? "#d42e5a" : kt >= 48 ? "#f07c2a"
-  : kt >= 34 ? "#f2d43a" : "#7dcf3c";
+const CAT_KT = [17, 28, 34, 48, 64, 90, 120];
+const CAT_COLORS = ["#7fd0a8", "#3fb6a8", "#f2d43a", "#f39a2b", "#e8562c", "#c41d4a", "#7b1fa2"];
+const catIdx = kt => kt == null ? -1 : CAT_KT.filter(k => kt >= k).length - 1;
+const IMD_COLOR = kt => catIdx(kt) < 0 ? "#9aa5ae" : CAT_COLORS[catIdx(kt)];
+const kmh = kt => Math.round(kt * 1.852);
+const catName = kt => catIdx(kt) < 0 ? "" : t().cats[catIdx(kt)];
+// famous storms, picked from the IBTrACS list by name/season (unnamed ones by date and coast)
+const FAMOUS = [
+  { label: { en: "Remal", bn: "রেমাল" }, find: c => c.name === "Remal" && c.season === 2024 },
+  { label: { en: "Mocha", bn: "মোখা" }, find: c => c.name === "Mocha" && c.season === 2023 },
+  { label: { en: "Sitrang", bn: "সিত্রাং" }, find: c => c.name === "Sitrang" && c.season === 2022 },
+  { label: { en: "Amphan", bn: "আম্পান" }, find: c => c.name === "Amphan" && c.season === 2020 },
+  { label: { en: "Bulbul", bn: "বুলবুল" }, find: c => c.name === "Bulbul" && c.season === 2019 },
+  { label: { en: "Aila", bn: "আইলা" }, find: c => c.name === "Aila" && c.season === 2009 },
+  { label: { en: "Sidr", bn: "সিডর" }, find: c => c.name === "Sidr" && c.season === 2007 },
+  { label: { en: "1991 cyclone", bn: "১৯৯১-এর ঘূর্ণিঝড়" }, find: c => c.season === 1991 && c.max_wind_kt >= 120 },
+  { label: { en: "1970 Bhola", bn: "১৯৭০ ভোলা" }, find: c => c.season === 1970 && (c.landfall_time || "").startsWith("1970-11-12") },
+];
+let playTimer = null, pbIdx = 0, stormMarker = null, trailLayer = null, cycTrack = [];
 
 async function loadCyclones() {
   if (!cycList.length) {
     const r = await (await fetch("/api/v1/cyclones?min_wind_kt=34")).json();
     cycList = r.cyclones;
-    $("cyclone").innerHTML = cycList.map(c => `<option value="${c.sid}">${c.name} ${c.season}${c.category ? " · " + c.category : ""}${c.closest_bd_km === 0 ? " 🇧🇩" : ""}</option>`).join("");
+    renderStormCards();
   }
-  const first = cycList.find(c => c.name !== "Unnamed" && c.closest_bd_km === 0)
-    || cycList.find(c => c.name !== "Unnamed") || cycList[0];
-  $("cyclone").value = first.sid;
+  await pickStorm((FAMOUS.map(f => cycList.find(f.find)).find(Boolean) || cycList[0]).sid);
+}
+
+function renderStormCards() {
+  const tt = t();
+  $("storm-cards").innerHTML = FAMOUS.map(f => {
+    const c = cycList.find(f.find);
+    if (!c) return "";
+    const kt = c.max_wind_kt;
+    return `<button class="storm-card${cyc && cyc.sid === c.sid ? " on" : ""}" data-sid="${c.sid}" style="--c:${IMD_COLOR(kt)}">
+      <span class="sc-name">${f.label[lang]}</span><span class="sc-year">${c.season}</span>
+      <span class="sc-wind">${kt ? `${kmh(kt)} ${tt.kmh}` : "–"}</span></button>`;
+  }).join("");
+  document.querySelectorAll(".storm-card").forEach(b => b.onclick = () => pickStorm(b.dataset.sid));
+  $("cyclone").innerHTML = `<option value="">${tt.allStorms}</option>` + cycList.map(c =>
+    `<option value="${c.sid}">${c.name === "Unnamed" ? "—" : c.name} ${c.season}${c.max_wind_kt ? ` · ${kmh(c.max_wind_kt)} ${tt.kmh}` : ""}${c.closest_bd_km === 0 ? " · 🇧🇩" : ""}</option>`).join("");
+}
+
+async function pickStorm(sid) {
+  if (!sid) return;
+  $("cyclone").value = sid;
   await selectCyclone();
+  renderStormCards();
+  $("cyclone").value = sid;
 }
 
 async function selectCyclone() {
-  cyc = await (await fetch(`/api/v1/cyclones/${$("cyclone").value}`)).json();
-  if (cycLayer) cycLayer.remove();
-  const pts = cyc.points, segs = [];
-  for (let i = 1; i < pts.length; i++)
-    segs.push(L.polyline([[pts[i - 1].lat, pts[i - 1].lon], [pts[i].lat, pts[i].lon]],
-      { pane: "track", color: IMD_COLOR(pts[i].wind_kt ?? pts[i - 1].wind_kt), weight: 4, opacity: 0.95, interactive: false }));
-  const marks = pts.filter(p => p.wind_kt != null).map(p => L.circleMarker([p.lat, p.lon],
-    { pane: "track", radius: 4, color: "#10161d", weight: 1, fillColor: IMD_COLOR(p.wind_kt), fillOpacity: 1 })
-    .bindTooltip(`<div class="tt-name">${cyc.name}</div><div class="tt-sub">${new Date(p.time).toLocaleString(loc(), { timeZone: "Asia/Dhaka", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</div>${p.wind_kt} kt · ${Math.round(p.wind_kt * 1.852)} km/h${p.pres_hpa ? ` · ${p.pres_hpa} hPa` : ""}`));
-  const extra = [];
+  const sid = $("cyclone").value;
+  if (!sid) return;
+  stopStorm();
+  cyc = await (await fetch(`/api/v1/cyclones/${sid}`)).json();
+  [cycLayer, trailLayer, stormMarker].forEach(l => l && l.remove());
+  cycTrack = cyc.points;
+  const ll = cycTrack.map(p => [p.lat, p.lon]);
+  const extra = [L.polyline(ll, { pane: "track", color: "#ffffff", weight: 2, opacity: 0.35, dashArray: "4 6", interactive: false })];
   if (cyc.landfall_lat != null) extra.push(L.circleMarker([cyc.landfall_lat, cyc.landfall_lon],
-    { pane: "track", radius: 8, color: "#ffffff", weight: 2.5, fillColor: "#f2a90f", fillOpacity: 1 })
-    .bindTooltip(`⚑ ${t().cycLandfall} · ${dateFmt(cyc.landfall_time)}`, { permanent: true, direction: "left", className: "lf-tip", offset: [-8, 0] }));
-  cycLayer = L.layerGroup([...segs, ...marks, ...extra]).addTo(map);
-  safeFit(L.latLngBounds(pts.map(p => [p.lat, p.lon])).extend(BD_BOUNDS), { padding: [40, 40] });
+    { pane: "track", radius: 7, color: "#ffffff", weight: 2.5, fillColor: "#f2a90f", fillOpacity: 1, className: "lf-dot" })
+    .bindTooltip(`⚑ ${t().hitCoast} · ${dateFmt(cyc.landfall_time)}`, { permanent: true, direction: "left", className: "lf-tip", offset: [-8, 0] }));
+  cycLayer = L.layerGroup(extra).addTo(map);
+  trailLayer = L.layerGroup().addTo(map);
+  stormMarker = L.marker(ll[0], { pane: "track", interactive: false, icon: stormIcon(cycTrack[0].wind_kt) }).addTo(map);
+  safeFit(L.latLngBounds(ll).extend(BD_BOUNDS), { paddingTopLeft: [innerWidth > 900 ? 380 : 20, 20], paddingBottomRight: [80, 140] });
+  $("pb-range").max = cycTrack.length - 1;
+  renderPbDays();
+  setStormTime(0);
   restyle();
+  setTimeout(() => { if (view === "cyc" && cyc?.sid === sid) playStorm(); }, 500);
 }
+
+function stormIcon(kt) {
+  const size = 26 + Math.max(0, catIdx(kt)) * 5, c = IMD_COLOR(kt);
+  return L.divIcon({ className: "storm-icon", iconSize: [size, size], iconAnchor: [size / 2, size / 2],
+    html: `<svg viewBox="0 0 40 40" width="${size}" height="${size}"><g class="spin" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round">
+      <path d="M20 20 C 20 8, 34 6, 36 14"/><path d="M20 20 C 32 20, 34 34, 26 36"/><path d="M20 20 C 20 32, 6 34, 4 26"/><path d="M20 20 C 8 20, 6 6, 14 4"/></g>
+      <circle cx="20" cy="20" r="5" fill="${c}" stroke="#fff" stroke-width="2"/></svg>` });
+}
+
+function setStormTime(i) {
+  pbIdx = +i;
+  const p = cycTrack[pbIdx], tt = t();
+  $("pb-range").value = pbIdx;
+  stormMarker.setLatLng([p.lat, p.lon]).setIcon(stormIcon(p.wind_kt));
+  trailLayer.clearLayers();
+  for (let k = 1; k <= pbIdx; k++)
+    trailLayer.addLayer(L.polyline([[cycTrack[k - 1].lat, cycTrack[k - 1].lon], [cycTrack[k].lat, cycTrack[k].lon]],
+      { pane: "track", color: IMD_COLOR(cycTrack[k].wind_kt ?? cycTrack[k - 1].wind_kt), weight: 5, opacity: 0.95, lineCap: "round", interactive: false }));
+  $("pb-time").textContent = new Date(p.time).toLocaleString(loc(), { timeZone: "Asia/Dhaka", day: "numeric", month: "short", hour: "numeric" });
+  $("pb-cat").textContent = catName(p.wind_kt) || "";
+  $("pb-cat").style.background = IMD_COLOR(p.wind_kt);
+  $("pb-cat").hidden = p.wind_kt == null;
+  $("pb-wind").textContent = p.wind_kt != null ? `${nf(kmh(p.wind_kt))} ${tt.kmh}` : "";
+}
+
+function renderPbDays() {
+  const n = cycTrack.length - 1, out = [];
+  let last = "", lastPos = -100;
+  const minGap = innerWidth < 760 ? 18 : 9;  // % of the bar between labels, so dates never overlap
+  cycTrack.forEach((p, i) => {
+    const d = new Date(p.time).toLocaleDateString(loc(), { timeZone: "Asia/Dhaka", day: "numeric", month: "short" });
+    const pos = n ? (i / n) * 100 : 0;
+    if (d !== last && pos - lastPos >= minGap) { out.push(`<span style="left:${pos}%">${d}</span>`); lastPos = pos; }
+    last = d;
+  });
+  $("pb-days").innerHTML = out.join("");
+}
+
+function playStorm() {
+  if (playTimer) { stopStorm(); return; }
+  if (pbIdx >= cycTrack.length - 1) setStormTime(0);
+  $("cyc-play").textContent = "❚❚";
+  playTimer = setInterval(() => {
+    if (pbIdx >= cycTrack.length - 1) { stopStorm(); return; }
+    setStormTime(pbIdx + 1);
+  }, Math.max(90, Math.min(260, 9000 / cycTrack.length)));
+}
+function stopStorm() { clearInterval(playTimer); playTimer = null; if ($("cyc-play")) $("cyc-play").textContent = "▶"; }
 
 function applyHindcast() {
   data.features.forEach(f => Object.assign(f.properties, hind.upazilas[f.properties.id] || {}));
@@ -374,23 +491,34 @@ function counts() {
 }
 
 function renderCycStatus(el, tt) {
-  el.className = "panel status high";
-  if (!cyc) { el.innerHTML = `<div class="eyebrow">${tt.cycEyebrow}</div><p class="note">${tt.loading}</p>`; return; }
-  const kmh = kt => Math.round(kt * 1.852);
-  const lf = cyc.landfall_time ? `${dateFmt(cyc.landfall_time)} · ${cyc.landfall_lat}°N ${cyc.landfall_lon}°E` : tt.cycNoLand;
-  el.innerHTML = `<div class="eyebrow">${tt.cycEyebrow}</div>
-    <div class="headline">${cyc.name} (${cyc.season})</div>
-    <div class="period">${dateFmt(cyc.start)} – ${dateFmt(cyc.end)}</div>
-    <dl class="kv" style="margin-top:12px">
-      <dt>${tt.cycPeak}</dt><dd>${cyc.max_wind_kt ? `${cyc.max_wind_kt} kt · ${kmh(cyc.max_wind_kt)} km/h` : tt.cycNoWind}</dd>
-      ${cyc.category ? `<dt></dt><dd>${cyc.category}</dd>` : ""}
-      ${cyc.min_pres_hpa ? `<dt>hPa</dt><dd>${cyc.min_pres_hpa}</dd>` : ""}
-      <dt>${tt.cycLandfall}</dt><dd>${lf}</dd>
-      <dt></dt><dd>${Object.keys(cyc.upazilas).length ? tt.cycUpz(nf(Object.keys(cyc.upazilas).length)) : tt.cycFar(nf(cyc.closest_bd_km))}</dd>
-    </dl>
-    ${!cyc.max_wind_kt && cyc.max_wind_jtwc_kt ? `<p class="note" style="margin-top:8px">${tt.cycJtwc(cyc.max_wind_jtwc_kt)}</p>` : ""}
-    ${cyc.provisional ? `<p class="note">${tt.cycProvisional}</p>` : ""}
-    <p class="note" style="margin-top:8px">${tt.cycNote}</p>`;
+  el.className = "panel status storm";
+  if (!cyc) { el.innerHTML = `<p class="note">${tt.loading}</p>`; return; }
+  const peak = cycTrack.reduce((a, p) => (p.wind_kt ?? -1) > (a?.wind_kt ?? -1) ? p : a, null);
+  const when = iso => new Date(iso).toLocaleString(loc(), { timeZone: "Asia/Dhaka", day: "numeric", month: "long", year: "numeric", hour: "numeric", minute: "2-digit" });
+  const place = cyc.landfall_place ? tt.nearPlace(cyc.landfall_place.upazila, cyc.landfall_place.district) : tt.outsideBd;
+  const n50 = Object.values(cyc.upazilas).filter(e => e.min_km <= 50).length;
+  const steps = [[tt.stFormed, cycTrack[0].time]];
+  if (peak && peak.wind_kt != null) steps.push([`${tt.stPeak} · ${nf(kmh(peak.wind_kt))} ${tt.kmh}`, peak.time]);
+  if (cyc.landfall_time) steps.push([`${tt.stLand} · ${place}`, cyc.landfall_time]);
+  steps.push([tt.stEnd, cycTrack[cycTrack.length - 1].time]);
+  steps.sort((a, b) => a[1].localeCompare(b[1]));
+  el.innerHTML = `<div class="storm-head" style="--c:${IMD_COLOR(cyc.max_wind_kt)}">
+      <span class="storm-emoji">🌀</span>
+      <div><div class="headline">${cyc.name === "Unnamed" ? (FAMOUS.find(f => f.find(cyc))?.label[lang] || "—") : cyc.name}</div>
+      <div class="period">${cyc.season}</div></div>
+      ${cyc.max_wind_kt ? `<span class="cat-badge" style="background:${IMD_COLOR(cyc.max_wind_kt)}">${catName(cyc.max_wind_kt)}</span>` : ""}
+    </div>
+    <div class="storm-facts">
+      <div><small>${tt.peakWind}</small><b>${cyc.max_wind_kt ? `${nf(kmh(cyc.max_wind_kt))} <i>${tt.kmh}</i>` : "–"}</b></div>
+      <div><small>${tt.hitCoast}</small><b class="sm">${cyc.landfall_time ? `${when(cyc.landfall_time)}<br><span>${place}</span>` : tt.noLandfall}</b></div>
+    </div>
+    ${cyc.max_wind_kt ? "" : `<p class="note">${tt.noWindRec}</p>`}
+    <p class="note">${n50 ? tt.affected(nf(n50)) : tt.cycFar(nf(cyc.closest_bd_km))}</p>
+    <ol class="storm-steps">${steps.map(([s2, iso]) => `<li><b>${s2}</b><span>${when(iso)}</span></li>`).join("")}</ol>
+    <button class="btn primary block" id="replay">▶ ${tt.playStorm}</button>
+    <details class="more"><summary>${tt.howToRead}</summary>${tt.readTrack}<br>${tt.readArea}<br><br>${tt.dataNote}
+      ${cyc.provisional ? `<br>${tt.cycProvisional}` : ""}</details>`;
+  $("replay").onclick = () => { stopStorm(); setStormTime(0); playStorm(); };
 }
 
 function renderStatus() {
@@ -670,6 +798,8 @@ function applyLang() {
   $("lang").textContent = lang === "en" ? "বাং" : "EN";
   if ($("event").firstElementChild) $("event").firstElementChild.textContent = tt.pastPick;
   renderScale();
+  if (cycList.length) renderStormCards();
+  if (cyc && cycTrack.length) setStormTime(pbIdx);
   if (data) { renderSide(); if (selected) renderStrip(); }
 }
 
@@ -681,7 +811,9 @@ document.querySelectorAll("#lead button").forEach(b => b.onclick = () => {
   restyle();
 });
 $("event").onchange = selectEvent;
-$("cyclone").onchange = selectCyclone;
+$("cyclone").onchange = () => pickStorm($("cyclone").value);
+$("cyc-play").onclick = playStorm;
+$("pb-range").oninput = e => { stopStorm(); setStormTime(e.target.value); };
 $("day").onchange = selectDay;
 $("day").max = new Date().toISOString().slice(0, 10);
 $("day-clear").onclick = () => { $("day").value = ""; selectDay(); };

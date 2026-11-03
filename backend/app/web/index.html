@@ -50,8 +50,9 @@
       <div class="sub" data-for="past" hidden>
         <select id="event" aria-label="Past flood"></select>
       </div>
-      <div class="sub" data-for="cyc" hidden>
-        <select id="cyclone" aria-label="Cyclone"></select>
+      <div class="sub cyc-sub" data-for="cyc" hidden>
+        <div class="storm-cards" id="storm-cards"></div>
+        <select id="cyclone" aria-label="All cyclones"></select>
       </div>
     </div>
 
@@ -82,6 +83,14 @@
 
     <!-- bottom: colour scale -->
     <div class="bottom">
+      <div id="playbar" class="playbar" hidden>
+        <button id="cyc-play" class="play" aria-label="Play">▶</button>
+        <div class="pb-main">
+          <div class="pb-top"><b id="pb-time"></b><span id="pb-cat" class="cat-badge"></span><span id="pb-wind"></span></div>
+          <input id="pb-range" type="range" min="0" max="0" value="0" aria-label="Storm time">
+          <div id="pb-days" class="pb-days"></div>
+        </div>
+      </div>
       <div id="scale" class="scale"></div>
     </div>
     <div id="map-loading" class="map-loading" hidden><span class="spinner"></span><span data-i18n="loading"></span></div>
