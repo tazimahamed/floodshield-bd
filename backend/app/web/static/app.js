@@ -14,7 +14,8 @@ const T = {
     cycHistTitle: "🌀 Cyclones since 1960",
     cycHist: (n50, n150) => `<b>${n50}</b> storm tracks passed within 50 km, <b>${n150}</b> within 150 km (IBTrACS, IMD best track).`,
     cycStrongest: "Strongest nearby",
-    cycNoLand: "Did not make landfall", cycUpz: n => `${n} upazilas within 150 km`,
+    cycNoLand: "Did not make landfall",
+    cycFar: km => `Never within 150 km of an upazila (closest ${km} km from Bangladesh)`, cycUpz: n => `${n} upazilas within 150 km`,
     dateLabel: "Date", today: "Today", total24: "Next 24h", total72: "Next 72h",
     past72: "Last 72h", next24: "Next 24h", next72: "Next 72h",
     allDivisions: "All Bangladesh", rivers: "Rivers", upstream: "Upstream basins (India, Nepal…)",
@@ -67,7 +68,8 @@ const T = {
     cycHistTitle: "🌀 ১৯৬০ থেকে ঘূর্ণিঝড়",
     cycHist: (n50, n150) => `<b>${n50}</b>টি ঝড়ের পথ ৫০ কিমির মধ্যে, <b>${n150}</b>টি ১৫০ কিমির মধ্যে দিয়ে গেছে (IBTrACS, IMD best track)।`,
     cycStrongest: "কাছ দিয়ে যাওয়া সবচেয়ে শক্তিশালী",
-    cycNoLand: "স্থলভাগে আঘাত হানেনি", cycUpz: n => `${n}টি উপজেলা ১৫০ কিমির মধ্যে`,
+    cycNoLand: "স্থলভাগে আঘাত হানেনি",
+    cycFar: km => `কোনো উপজেলার ১৫০ কিমির মধ্যে আসেনি (বাংলাদেশ থেকে সবচেয়ে কাছে ${km} কিমি)`, cycUpz: n => `${n}টি উপজেলা ১৫০ কিমির মধ্যে`,
     dateLabel: "তারিখ", today: "আজ", total24: "আগামী ২৪ ঘণ্টা", total72: "আগামী ৭২ ঘণ্টা",
     past72: "গত ৭২ ঘণ্টা", next24: "আগামী ২৪ ঘণ্টা", next72: "আগামী ৭২ ঘণ্টা",
     allDivisions: "সমগ্র বাংলাদেশ", rivers: "নদী", upstream: "উজানের অববাহিকা (ভারত, নেপাল…)",
@@ -178,6 +180,8 @@ function fitBangladesh() {
   safeFit(BD_BOUNDS, { paddingTopLeft: [left, 10], paddingBottomRight: [70, bottom] });
 }
 new ResizeObserver(() => map.invalidateSize()).observe($("map"));
+$("map").addEventListener("mouseleave", () => closeTips());
+map.on("zoomstart movestart", () => closeTips());
 const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services";
 map.createPane("labels").style.zIndex = 640;
 map.getPane("labels").style.pointerEvents = "none";
@@ -231,7 +235,7 @@ async function load(reframe = false) {
   const res = await fetch("/api/v1/upazilas" + (div ? `?division=${encodeURIComponent(div)}` : ""));
   data = await res.json();
   if (hind) applyHindcast();
-  if (layer) layer.remove();
+  if (layer) { closeTips(); layer.remove(); }
   layer = L.geoJSON(data, {
     style: baseStyle,
     onEachFeature: (f, l) => {
@@ -248,7 +252,10 @@ async function load(reframe = false) {
   renderSide();
 }
 
+const closeTips = () => layer && layer.eachLayer(l => l.closeTooltip());  // upazila tooltips only
+
 function restyle() {
+  closeTips();
   layer && layer.setStyle(baseStyle);
   if (selected) highlight(selected.id);
   basinLayer && basinLayer.setStyle(f => ({ fillColor: step(f.properties.rain_72h_mm, TOTAL) }));
@@ -308,9 +315,10 @@ async function loadCyclones() {
   if (!cycList.length) {
     const r = await (await fetch("/api/v1/cyclones?min_wind_kt=34")).json();
     cycList = r.cyclones;
-    $("cyclone").innerHTML = cycList.map(c => `<option value="${c.sid}">${c.name} ${c.season}${c.category ? " · " + c.category : ""}</option>`).join("");
+    $("cyclone").innerHTML = cycList.map(c => `<option value="${c.sid}">${c.name} ${c.season}${c.category ? " · " + c.category : ""}${c.closest_bd_km === 0 ? " 🇧🇩" : ""}</option>`).join("");
   }
-  const first = cycList.find(c => c.name !== "Unnamed") || cycList[0];
+  const first = cycList.find(c => c.name !== "Unnamed" && c.closest_bd_km === 0)
+    || cycList.find(c => c.name !== "Unnamed") || cycList[0];
   $("cyclone").value = first.sid;
   await selectCyclone();
 }
@@ -325,7 +333,12 @@ async function selectCyclone() {
   const marks = pts.filter(p => p.wind_kt != null).map(p => L.circleMarker([p.lat, p.lon],
     { pane: "track", radius: 4, color: "#10161d", weight: 1, fillColor: IMD_COLOR(p.wind_kt), fillOpacity: 1 })
     .bindTooltip(`<div class="tt-name">${cyc.name}</div><div class="tt-sub">${new Date(p.time).toLocaleString(loc(), { timeZone: "Asia/Dhaka", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</div>${p.wind_kt} kt · ${Math.round(p.wind_kt * 1.852)} km/h${p.pres_hpa ? ` · ${p.pres_hpa} hPa` : ""}`));
-  cycLayer = L.layerGroup([...segs, ...marks]).addTo(map);
+  const extra = [];
+  if (cyc.landfall_lat != null) extra.push(L.circleMarker([cyc.landfall_lat, cyc.landfall_lon],
+    { pane: "track", radius: 8, color: "#ffffff", weight: 2.5, fillColor: "#f2a90f", fillOpacity: 1 })
+    .bindTooltip(`⚑ ${t().cycLandfall} · ${dateFmt(cyc.landfall_time)}`, { permanent: true, direction: "left", className: "lf-tip", offset: [-8, 0] }));
+  cycLayer = L.layerGroup([...segs, ...marks, ...extra]).addTo(map);
+  safeFit(L.latLngBounds(pts.map(p => [p.lat, p.lon])).extend(BD_BOUNDS), { padding: [40, 40] });
   restyle();
 }
 
@@ -373,7 +386,7 @@ function renderCycStatus(el, tt) {
       ${cyc.category ? `<dt></dt><dd>${cyc.category}</dd>` : ""}
       ${cyc.min_pres_hpa ? `<dt>hPa</dt><dd>${cyc.min_pres_hpa}</dd>` : ""}
       <dt>${tt.cycLandfall}</dt><dd>${lf}</dd>
-      <dt></dt><dd>${tt.cycUpz(nf(Object.keys(cyc.upazilas).length))}</dd>
+      <dt></dt><dd>${Object.keys(cyc.upazilas).length ? tt.cycUpz(nf(Object.keys(cyc.upazilas).length)) : tt.cycFar(nf(cyc.closest_bd_km))}</dd>
     </dl>
     ${!cyc.max_wind_kt && cyc.max_wind_jtwc_kt ? `<p class="note" style="margin-top:8px">${tt.cycJtwc(cyc.max_wind_jtwc_kt)}</p>` : ""}
     ${cyc.provisional ? `<p class="note">${tt.cycProvisional}</p>` : ""}
