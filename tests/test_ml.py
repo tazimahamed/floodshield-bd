@@ -49,11 +49,12 @@ def test_alert_levels_and_messages():
     low = SimpleNamespace(flood_prob=0.03, flood_frac=0.01, frac_p10=0.0, frac_p90=0.02, risk="low")
     calm = render("none", node, low, run)
     assert "বাড়তি ঝুঁকি নেই" in calm and "No elevated flood risk" in calm and "বৃষ্টির পূর্বাভাস" in calm
-    assert "আশ্রয়কেন্দ্র" not in calm and "shelter" not in calm  # no alarming advice at low risk
+    assert "আশ্রয়কেন্দ্র" not in calm and "helter" not in calm  # no alarming advice at low risk
 
     high = SimpleNamespace(flood_prob=0.62, flood_frac=0.18, frac_p10=0.05, frac_p90=0.35, risk="high")
     msg = render("warning", node, high, run)
     assert "স্কুল" not in msg and "school" not in msg  # OSM counts are incomplete: never in alerts
+    assert "১০৯০" in msg and "1090" in msg and "UNO" in msg  # shelter guidance points to UNO / 1090
     assert "৬২%" in msg and "62%" in msg and "এখনই" in msg and "act now" in msg and "FFWC" in msg
 
 
