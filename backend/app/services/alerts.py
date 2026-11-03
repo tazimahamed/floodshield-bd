@@ -51,14 +51,6 @@ ADVICE = {
                "If water starts rising, go to a shelter without delay; take water, medicine and documents.\n"
                "☎️ Emergency 999 · Disaster info 1090"),
 }
-# No complete, current, government shelter list is publicly downloadable yet (checked: GeoDASH/DDM
-# layer is from 2010 and offline; REACH Cox's Bazar 2019 covers 2 upazilas as PDF maps). So we never
-# say "there is no shelter": during floods the upazila administration designates schools and
-# madrasas as shelters, and 1090 is the DDM toll-free disaster helpline.
-SHELTER = ("আমাদের কাছে এই উপজেলার আশ্রয়কেন্দ্রের সরকারি তালিকা নেই। নিকটতম আশ্রয়কেন্দ্র জানতে ইউএনও অফিসে "
-           "বা ১০৯০ নম্বরে (ফ্রি) ফোন করুন।",
-           "We do not have an official shelter list for this upazila. To find your nearest shelter, call the "
-           "UNO office or 1090 (toll-free).")
 RISK_WORD = {"low": ("নিম্ন", "low"), "medium": ("মাঝারি", "medium"), "high": ("উচ্চ", "high")}
 FOOT = ("সরকারি সতর্কবার্তা (FFWC, আবহাওয়া অধিদপ্তর, উপজেলা প্রশাসন) সবসময় আগে মানুন।",
         "Always follow official warnings (FFWC, BMD, upazila administration) first.")
@@ -72,13 +64,11 @@ VOICE = {
     "none": "দুর্যোগ বার্তা। আপনার উপজেলায় আগামী পনেরো দিনে বন্যার বাড়তি ঝুঁকি দেখা যাচ্ছে না। আগামী তিন দিনে {rain}। "
             "স্বাভাবিক কাজকর্ম চালিয়ে যান। পরিস্থিতি বদলালে আমরা জানাব।",
     "watch": "দুর্যোগ বার্তা। আপনার উপজেলায় আগামী পনেরো দিনে বন্যার আশঙ্কা আছে। আগামী তিন দিনে {rain}। প্রস্তুত থাকুন। "
-             "জরুরি কাগজপত্র আর ওষুধ পানিরোধী ব্যাগে রাখুন, মোবাইল চার্জ রাখুন। নিকটতম আশ্রয়কেন্দ্র জানতে ইউএনও অফিসে "
-             "বা এক শূন্য নয় শূন্য নম্বরে ফোন করুন।",
+             "জরুরি কাগজপত্র আর ওষুধ পানিরোধী ব্যাগে রাখুন, মোবাইল চার্জ রাখুন, নিকটতম আশ্রয়কেন্দ্র জেনে নিন।",
     "warning": "দুর্যোগ বার্তা। জরুরি। আপনার উপজেলায় বন্যার ঝুঁকি বেশি। আগামী তিন দিনে {rain}। এখনই খাবার পানি আর শুকনো খাবার "
                "মজুত করুন। গবাদিপশু আর মালামাল উঁচু জায়গায় সরান। শিশু আর বয়স্কদের দিকে খেয়াল রাখুন।",
     "severe": "দুর্যোগ বার্তা। খুব জরুরি। আপনার উপজেলায় তীব্র বন্যার ঝুঁকি। আগামী তিন দিনে {rain}। পানি বাড়তে শুরু করলে "
-              "দেরি না করে আশ্রয়কেন্দ্রে যান। নিকটতম আশ্রয়কেন্দ্র জানতে এক শূন্য নয় শূন্য নম্বরে ফোন করুন। "
-              "জরুরি সাহায্যের জন্য নয় নয় নয় নম্বরে ফোন করুন।",
+              "দেরি না করে আশ্রয়কেন্দ্রে যান। জরুরি সাহায্যের জন্য নয় নয় নয় নম্বরে ফোন করুন।",
 }
 
 
@@ -143,9 +133,6 @@ def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, rai
         en.append(f"• May flood: about {frac}% of the upazila (likely {p10}–{p90}%)")
     bn += ["", f"<b>✅ করণীয়</b>: {ADVICE[level][0]}"]
     en += ["", f"<b>✅ What to do</b>: {ADVICE[level][1]}"]
-    if level != "none":  # shelter guidance only when there is a risk, so low-risk messages stay calm
-        bn += ["", f"<b>🏠 আশ্রয়কেন্দ্র</b>: {SHELTER[0]}"]
-        en += ["", f"<b>🏠 Shelters</b>: {SHELTER[1]}"]
     return ("\n".join(bn) + "\n\n━━━━━━━━━━ English ━━━━━━━━━━\n" + "\n".join(en) +
             f"\n\n<i>ℹ️ {FOOT[0]}\n{FOOT[1]}</i>")
 
