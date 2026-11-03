@@ -10,7 +10,7 @@ from sqlalchemy import text
 from app.db.session import engine
 from app.ml.features import graph_tables
 from app.ml.train import FLOOD_FRAC
-from app.services.impact import impact
+import re
 
 
 def _daily_rain(node_id: str) -> pd.DataFrame:
@@ -34,6 +34,23 @@ def _daily_rain(node_id: str) -> pd.DataFrame:
     return local.sort_index()
 
 
+def slugify(s: str | None) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", (s or "").lower()).strip("-")
+
+
+def slug(district: str | None, name: str) -> str:
+    """Readable URL path: /upazila/magura/magura-sadar"""
+    return f"{slugify(district)}/{slugify(name)}"
+
+
+def node_from_slug(district: str, name: str) -> str | None:
+    with engine.connect() as c:
+        for nid, d, n in c.execute(text("select id, district, name from nodes where node_type = 'upazila'")):
+            if slugify(d) == district and slugify(n) == name:
+                return nid
+    return None
+
+
 def upazila_report(node_id: str) -> dict:
     static, _ = graph_tables()
     with engine.connect() as c:
@@ -44,10 +61,10 @@ def upazila_report(node_id: str) -> dict:
         events = pd.read_sql(text("""
             select e.id, e.name, e.post_start, e.post_end, l.abnormal_frac, l.abnormal_km2, l.flooded_frac
             from flood_labels l join flood_events e on e.id = l.event_id
-            where l.node_id = :n and l.abnormal_frac is not null order by e.post_start"""), c,
+            where l.node_id = :n and l.abnormal_frac is not null
+              and e.id like 'auto_%'  -- the regular 15-day monsoon grid only: named events overlap it
+            order by e.post_start"""), c,
                              params={"n": node_id}, parse_dates=["post_start", "post_end"])
-        facilities = dict(c.execute(text("select kind, count(*) from assets where node_id = :n group by kind"),
-                                    {"n": node_id}).all())
         current = c.execute(text("""
             select f.flood_prob, f.flood_frac, f.frac_p10, f.frac_p90, f.risk, r.reference_day, r.valid_until
             from flood_forecasts f join flood_forecast_runs r on r.id = f.run_id
@@ -104,10 +121,7 @@ def upazila_report(node_id: str) -> dict:
                           "upstream_mm": None if pd.isna(r.upstream) else int(r.upstream)}
                          for y, r in yearly.iterrows()],
         "wettest_days": [{"day": d.date().isoformat(), "mm": round(float(v), 1)} for d, v in wettest.items()],
-        "facilities": facilities, "ripple": impact([node_id]),
         "current": None if not current else {k: (v.isoformat() if hasattr(v, "isoformat") else v)
                                              for k, v in current.items()},
-        "sources": ["Sentinel-1 SAR via Google Earth Engine (flood extent)",
-                    "ERA5-Land daily via Google Earth Engine (rain)", "HydroBASINS (upstream area)",
-                    "OpenStreetMap (facilities, roads)"],
+        "slug": slug(node["district"], node["name"]),
     }

@@ -232,6 +232,40 @@ def simulate_ripple(ids: str = Query(..., description="Comma-separated upazila i
     return impact(node_ids)
 
 
+@router.get("/upazila-slug/{district}/{name}")
+def upazila_by_slug(district: str, name: str):
+    from app.services.report import node_from_slug
+
+    nid = node_from_slug(district.lower(), name.lower())
+    if not nid:
+        raise HTTPException(404, "Unknown upazila")
+    return {"id": nid}
+
+
+@router.get("/nodes/{node_id}/report.csv")
+def node_report_csv(node_id: str):
+    """Every mapped monsoon window for one upazila, as CSV (for people who want the numbers)."""
+    import csv
+    import io
+
+    from fastapi.responses import Response
+
+    from app.services.report import upazila_report
+
+    r = upazila_report(node_id)
+    if not r:
+        raise HTTPException(404, "Unknown upazila")
+    buf = io.StringIO()
+    cols = ["start", "end", "flooded", "flooded_pct", "flooded_km2", "all_water_pct", "rain_local_7d_before",
+            "rain_local_15d_before", "rain_up_15d_before", "rain_local_during", "rain_up_during"]
+    w = csv.DictWriter(buf, fieldnames=cols, extrasaction="ignore")
+    w.writeheader()
+    w.writerows(r["history"])
+    name = r["slug"].replace("/", "_")
+    return Response(buf.getvalue(), media_type="text/csv",
+                    headers={"Content-Disposition": f'attachment; filename="floodshield_{name}.csv"'})
+
+
 @router.get("/nodes/{node_id}/report")
 def node_report(node_id: str):
     """Flood history of one upazila (Sentinel-1, 2017-2025) with the rain before each window."""

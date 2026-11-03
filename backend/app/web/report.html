@@ -3,89 +3,74 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Upazila Flood Report · FloodShield BD</title>
+  <title>Flood report · FloodShield BD</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e5a8a'/%3E%3Cpath d='M5 19c3-3 5-3 8 0s5 3 8 0 5-3 6-1v6H5z' fill='%23fff'/%3E%3Cpath d='M16 5l7 4v4c0 3-3 5-7 6-4-1-7-3-7-6V9z' fill='%2389d0f5'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
   <link rel="stylesheet" href="/static/report.css">
 </head>
 <body class="page">
   <header class="topbar">
-    <a class="brand" href="/">
-      <span class="mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M5 19c3-3 5-3 8 0s5 3 8 0 5-3 6-1v6H5z" fill="#fff"/><path d="M16 5l7 4v4c0 3-3 5-7 6-4-1-7-3-7-6V9z" fill="#89d0f5"/></svg>
-      </span>
-      <span class="brand-text"><b>FloodShield BD</b><small data-i18n="subtitle"></small></span>
+    <a class="back" href="/" data-i18n="back"></a>
+    <a class="brand small-brand" href="/">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M5 19c3-3 5-3 8 0s5 3 8 0 5-3 6-1v6H5z" fill="#fff"/><path d="M16 5l7 4v4c0 3-3 5-7 6-4-1-7-3-7-6V9z" fill="#89d0f5"/></svg></span>
+      <b>FloodShield BD</b>
     </a>
     <div class="top-actions">
-      <a href="/" class="btn ghost" data-i18n="back"></a>
-      <button id="print" class="btn ghost" data-i18n="print"></button>
-      <button id="lang" class="btn ghost">বাংলা</button>
+      <button id="print" class="icon-round" aria-label="Print">⎙</button>
+      <button id="lang" class="btn ghost small">বাংলা</button>
     </div>
   </header>
 
-  <div class="notice">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 1 21h22L12 2zm0 4.5L19.5 19h-15L12 6.5zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
-    <span data-i18n="official"></span>
-  </div>
-
-  <div class="report">
+  <main class="report">
     <section class="hero">
       <div>
-        <div class="eyebrow" data-i18n="eyebrow"></div>
+        <p class="crumb" id="crumb"></p>
         <h1 id="title">…</h1>
-        <p id="where" class="muted"></p>
+        <p class="lead" id="lead"></p>
       </div>
-      <div id="now" class="now"></div>
+      <div id="now"></div>
     </section>
 
-    <section class="kpis" id="kpis"></section>
+    <section class="tiles3" id="tiles"></section>
 
-    <section class="panel" id="insight-card">
-      <div class="panel-head"><h2 data-i18n="insightTitle"></h2></div>
-      <div id="insight"></div>
+    <section class="card">
+      <div class="card-head">
+        <h2 data-i18n="calTitle"></h2>
+        <div class="cal-legend" id="cal-legend"></div>
+      </div>
+      <p class="sub" data-i18n="calSub"></p>
+      <div class="cal-wrap"><table class="cal" id="cal"></table></div>
     </section>
 
     <div class="grid2">
-      <section class="panel">
-        <div class="panel-head"><h2 data-i18n="timelineTitle"></h2></div>
-        <p class="note" data-i18n="timelineNote"></p>
-        <canvas id="timeline" height="220"></canvas>
+      <section class="card">
+        <h2 data-i18n="rainTitle"></h2>
+        <div id="rain-story"></div>
       </section>
-      <section class="panel">
-        <div class="panel-head"><h2 data-i18n="scatterTitle"></h2></div>
-        <p class="note" data-i18n="scatterNote"></p>
-        <canvas id="scatter" height="220"></canvas>
-      </section>
-    </div>
-
-    <section class="panel">
-      <div class="panel-head">
-        <h2 data-i18n="tableTitle"></h2>
-        <label class="check"><input type="checkbox" id="only-floods"><span data-i18n="onlyFloods"></span></label>
-      </div>
-      <div class="table-wrap"><table id="table"></table></div>
-    </section>
-
-    <div class="grid2">
-      <section class="panel">
-        <div class="panel-head"><h2 data-i18n="monsoonTitle"></h2></div>
-        <p class="note chart-key"><i class="sw" style="background:#1b5f9e"></i><span data-i18n="here"></span><i class="sw" style="background:#86bde0;margin-left:8px"></i><span data-i18n="upstreamKey"></span></p>
-        <canvas id="monsoon" height="220"></canvas>
-      </section>
-      <section class="panel">
-        <div class="panel-head"><h2 data-i18n="wettestTitle"></h2></div>
-        <ol id="wettest" class="rank"></ol>
+      <section class="card">
+        <h2 data-i18n="monsoonTitle"></h2>
+        <p class="sub" data-i18n="monsoonSub"></p>
+        <div id="monsoon" class="ybars"></div>
       </section>
     </div>
 
-    <section class="panel">
-      <div class="panel-head"><h2 data-i18n="methodTitle"></h2></div>
-      <p class="note" data-i18n="method"></p>
-      <p class="small muted" id="sources"></p>
+    <section class="card" id="cyc-card" hidden>
+      <h2 data-i18n="cycTitle"></h2>
+      <div id="cyc"></div>
     </section>
-  </div>
+
+    <footer class="foot">
+      <details>
+        <summary data-i18n="howTitle"></summary>
+        <p data-i18n="how"></p>
+      </details>
+      <p class="credits"><span data-i18n="credits"></span> · <a id="csv" href="#" data-i18n="csv"></a></p>
+      <p class="credits" data-i18n="official"></p>
+    </footer>
+  </main>
+  <div id="tip" class="tip" hidden></div>
   <script src="/static/report.js"></script>
 </body>
 </html>

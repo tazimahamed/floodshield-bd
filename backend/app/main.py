@@ -72,3 +72,8 @@ def index():
 @app.get("/upazila/{node_id}", include_in_schema=False)
 def upazila_page(node_id: str):
     return FileResponse(WEB_DIR / "report.html")
+
+
+@app.get("/upazila/{district}/{name}", include_in_schema=False)
+def upazila_page_slug(district: str, name: str):
+    return FileResponse(WEB_DIR / "report.html")

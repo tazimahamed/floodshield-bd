@@ -3,14 +3,14 @@ const T = {
   en: {
     tagline: "Flood early warning · Bangladesh",
     searchPh: "Search an upazila or district…",
-    official: "Official warnings come first: follow FFWC (ffwc.gov.bd), BMD and your Upazila Disaster Management Committee. FloodShield supports them and does not replace them.",
+    official: "For official warnings, always follow FFWC, the Met Department (BMD) and your upazila office.",
     viewRisk: "Flood risk", viewRain: "Rainfall", viewPast: "Past floods", viewCyc: "Cyclones",
     cycEyebrow: "Cyclone history · NOAA IBTrACS", cycTop: "Closest to the track",
     cycBand: ["≤ 50 km", "50–100 km", "100–150 km"], cycScale: "Distance from the storm centre",
     cycFromTrack: km => `${km} km from the track`, cycWind: kt => `IMD wind nearby ${kt} kt (${Math.round(kt * 1.852)} km/h)`,
     cycPeak: "Peak (IMD)", cycLandfall: "Landfall", cycNoWind: "Wind not recorded in IBTrACS",
     cycJtwc: kt => `US JTWC estimate: ${kt} kt (1-min wind, a different measure)`, cycProvisional: "Provisional track (not yet final)",
-    cycNote: "Track: official best track of IMD New Delhi (the WMO regional centre for the Bay of Bengal), from NOAA IBTrACS. Upazilas are coloured by how close the storm centre passed; strong winds reach further than the centre.",
+    cycNote: "Path from the Indian Meteorological Department's official record. Strong winds reach well beyond the centre line.",
     cycHistTitle: "🌀 Cyclones since 1960",
     cats: ["Depression", "Deep depression", "Cyclone", "Severe cyclone", "Very severe cyclone", "Extremely severe cyclone", "Super cyclone"],
     catRange: ["31–49", "50–61", "62–88", "89–117", "118–166", "167–221", "222+"],
@@ -22,7 +22,7 @@ const T = {
     passedNear: "Areas the storm centre passed near", howToRead: "How to read the map",
     readTrack: "The line is the storm path; its colour shows how strong it was there.",
     readArea: "Coloured upazilas: how close the storm centre came (red = within 50 km).",
-    dataNote: "Official IMD New Delhi best track via NOAA IBTrACS. Wind = 3-minute average.",
+    dataNote: "Storm paths: Indian Meteorological Department official record (via NOAA). Wind is a 3-minute average.",
     noWindRec: "Wind speed was not recorded for this storm.",
     cycHist: (n50, n150) => `<b>${n50}</b> storm tracks passed within 50 km, <b>${n150}</b> within 150 km (IBTrACS, IMD best track).`,
     cycStrongest: "Strongest nearby",
@@ -38,10 +38,10 @@ const T = {
     headlineNone: "No elevated flood risk", headlineSome: (h, m) => h ? `${h} upazilas at high risk` : `${m} upazilas at medium risk`,
     period: (a, b) => `Next 15 days · ${a} – ${b}`,
     high: "High", medium: "Medium", low: "Low",
-    whatMeans: "Chance that at least 5% of an upazila goes under abnormal flood water (beyond normal monsoon water) in the next 15 days.",
-    skill: (m, b) => `Tested on years it never saw: <b>${m}</b> AUC, vs ${b} for “places that usually flood”.`,
+    whatMeans: "The chance that part of an upazila floods in the next 15 days, more than in a normal monsoon.",
+    skill: (m, b) => `Tested on 9 past monsoons it had not seen: it ranked a flooded upazila above a dry one <b>${Math.round(m * 100)}%</b> of the time (simply guessing “places that usually flood” scores ${Math.round(b * 100)}%).`,
     modelDetails: "Model & data details",
-    hindNote: "The model was run on actual (ERA5-Land) rain for this date, as if the rain forecast had been perfect. Future dates beyond today cannot be forecast.",
+    hindNote: "This is what the model would have said that day, using the rain that actually fell. Dates after today can't be shown.",
     observed: (name, hit, total) => `Satellite (Sentinel-1) saw <b>${total}</b> upazilas flooded in “${name}”. The model had <b>${hit}</b> of them at medium or high risk.`,
     noObserved: "No satellite flood map exists for this date (mapped: 1 Jun – 28 Sep, 2017–2025).",
     topRisk: "Highest flood risk", topRain: "Most rain expected", topRainPast: "Most rain, last 72h", topPast: "Most flooded",
@@ -69,14 +69,14 @@ const T = {
   bn: {
     tagline: "বন্যার আগাম সতর্কতা · বাংলাদেশ",
     searchPh: "উপজেলা বা জেলার নাম লিখুন…",
-    official: "সরকারি সতর্কবার্তা আগে: FFWC (ffwc.gov.bd), আবহাওয়া অধিদপ্তর ও উপজেলা দুর্যোগ ব্যবস্থাপনা কমিটির নির্দেশনা মেনে চলুন। FloodShield এগুলোর সহায়ক, বিকল্প নয়।",
+    official: "সরকারি সতর্কবার্তার জন্য সবসময় FFWC, আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের কথা মেনে চলুন।",
     viewRisk: "বন্যার ঝুঁকি", viewRain: "বৃষ্টি", viewPast: "অতীতের বন্যা", viewCyc: "ঘূর্ণিঝড়",
     cycEyebrow: "ঘূর্ণিঝড়ের ইতিহাস · NOAA IBTrACS", cycTop: "ঝড়ের পথের সবচেয়ে কাছে",
     cycBand: ["≤ ৫০ কিমি", "৫০–১০০ কিমি", "১০০–১৫০ কিমি"], cycScale: "ঝড়ের কেন্দ্র থেকে দূরত্ব",
     cycFromTrack: km => `ঝড়ের পথ থেকে ${km} কিমি`, cycWind: kt => `কাছাকাছি IMD বাতাস ${kt} নট (${Math.round(kt * 1.852)} কিমি/ঘণ্টা)`,
     cycPeak: "সর্বোচ্চ (IMD)", cycLandfall: "আঘাত হানে", cycNoWind: "IBTrACS-এ বাতাসের গতি রেকর্ড নেই",
     cycJtwc: kt => `মার্কিন JTWC-এর হিসাব: ${kt} নট (১ মিনিটের বাতাস, ভিন্ন মাপ)`, cycProvisional: "অস্থায়ী পথ (এখনো চূড়ান্ত নয়)",
-    cycNote: "পথ: IMD নয়াদিল্লির (বঙ্গোপসাগরের জন্য WMO-র আঞ্চলিক কেন্দ্র) অফিসিয়াল best track, NOAA IBTrACS থেকে। উপজেলার রঙ দেখায় ঝড়ের কেন্দ্র কত কাছ দিয়ে গেছে; জোরালো বাতাস কেন্দ্রের চেয়ে দূর পর্যন্ত যায়।",
+    cycNote: "পথ ভারতীয় আবহাওয়া অধিদপ্তরের অফিসিয়াল রেকর্ড থেকে। জোরালো বাতাস কেন্দ্রের অনেক দূর পর্যন্ত যায়।",
     cycHistTitle: "🌀 ১৯৬০ থেকে ঘূর্ণিঝড়",
     cats: ["নিম্নচাপ", "গভীর নিম্নচাপ", "ঘূর্ণিঝড়", "প্রবল ঘূর্ণিঝড়", "অতি প্রবল ঘূর্ণিঝড়", "অত্যন্ত প্রবল ঘূর্ণিঝড়", "সুপার সাইক্লোন"],
     catRange: ["৩১–৪৯", "৫০–৬১", "৬২–৮৮", "৮৯–১১৭", "১১৮–১৬৬", "১৬৭–২২১", "২২২+"],
@@ -88,7 +88,7 @@ const T = {
     passedNear: "ঝড়ের কেন্দ্র যেসব এলাকার কাছ দিয়ে গেছে", howToRead: "ম্যাপ কীভাবে বুঝবেন",
     readTrack: "রেখাটি ঝড়ের পথ; রঙ দেখায় সেখানে ঝড় কত শক্তিশালী ছিল।",
     readArea: "রঙিন উপজেলা: ঝড়ের কেন্দ্র কত কাছে এসেছিল (লাল = ৫০ কিমির মধ্যে)।",
-    dataNote: "IMD নয়াদিল্লির অফিসিয়াল best track, NOAA IBTrACS থেকে। বাতাস = ৩ মিনিটের গড়।",
+    dataNote: "ঝড়ের পথ: ভারতীয় আবহাওয়া অধিদপ্তরের অফিসিয়াল রেকর্ড (NOAA-র মাধ্যমে)। বাতাস ৩ মিনিটের গড়।",
     noWindRec: "এই ঝড়ের বাতাসের গতি রেকর্ডে নেই।",
     cycHist: (n50, n150) => `<b>${n50}</b>টি ঝড়ের পথ ৫০ কিমির মধ্যে, <b>${n150}</b>টি ১৫০ কিমির মধ্যে দিয়ে গেছে (IBTrACS, IMD best track)।`,
     cycStrongest: "কাছ দিয়ে যাওয়া সবচেয়ে শক্তিশালী",
@@ -104,10 +104,10 @@ const T = {
     headlineNone: "বন্যার বাড়তি ঝুঁকি নেই", headlineSome: (h, m) => h ? `${h}টি উপজেলায় উচ্চ ঝুঁকি` : `${m}টি উপজেলায় মাঝারি ঝুঁকি`,
     period: (a, b) => `আগামী ১৫ দিন · ${a} – ${b}`,
     high: "উচ্চ", medium: "মাঝারি", low: "নিম্ন",
-    whatMeans: "আগামী ১৫ দিনে উপজেলার অন্তত ৫% এলাকা অস্বাভাবিক বন্যার পানিতে (স্বাভাবিক বর্ষার পানির বাইরে) ডোবার সম্ভাবনা।",
-    skill: (m, b) => `যে বছরগুলো মডেল দেখেনি সেগুলোতে পরীক্ষা: AUC <b>${m}</b>, "যেখানে সাধারণত বন্যা হয়" পদ্ধতির ${b}।`,
+    whatMeans: "আগামী ১৫ দিনে উপজেলার কোনো অংশ স্বাভাবিক বর্ষার চেয়ে বেশি ডোবার সম্ভাবনা।",
+    skill: (m, b) => `মডেলকে না দেখানো ৯টি বর্ষায় পরীক্ষা: ডোবা উপজেলাকে শুকনো উপজেলার চেয়ে বেশি ঝুঁকিতে রেখেছে <b>${Math.round(m * 100)}%</b> ক্ষেত্রে ("যেখানে সাধারণত বন্যা হয়" ধরে নিলে ${Math.round(b * 100)}%)।`,
     modelDetails: "মডেল ও ডেটার বিস্তারিত",
-    hindNote: "এই তারিখের আসল বৃষ্টি (ERA5-Land) দিয়ে মডেল চালানো হয়েছে, যেন বৃষ্টির পূর্বাভাস নিখুঁত ছিল। আজকের পরের তারিখের পূর্বাভাস দেওয়া যায় না।",
+    hindNote: "সেদিনের আসল বৃষ্টি দিয়ে মডেল সেদিন কী বলত, তা দেখানো হচ্ছে। আজকের পরের তারিখ দেখানো যায় না।",
     observed: (name, hit, total) => `স্যাটেলাইট (Sentinel-1) “${name}”-এ <b>${total}</b>টি উপজেলায় বন্যা দেখেছে। মডেল এর <b>${hit}</b>টিকে মাঝারি বা উচ্চ ঝুঁকিতে রেখেছিল।`,
     noObserved: "এই তারিখের কোনো স্যাটেলাইট বন্যা-ম্যাপ নেই (ম্যাপ করা: ২০১৭–২০২৫, ১ জুন – ২৮ সেপ্টেম্বর)।",
     topRisk: "সর্বোচ্চ বন্যার ঝুঁকি", topRain: "সবচেয়ে বেশি বৃষ্টির পূর্বাভাস", topRainPast: "গত ৭২ ঘণ্টায় সবচেয়ে বেশি বৃষ্টি", topPast: "সবচেয়ে বেশি প্লাবিত",
@@ -143,6 +143,7 @@ let riverLayer = null, basinLayer = null, basinData = null, hiLayer = null, mask
 let mapDark = true;
 try { lang = localStorage.getItem("fs-lang") || "en"; mapDark = localStorage.getItem("fs-map") !== "light"; } catch (e) {}
 const t = () => T[lang];
+const slugify = s => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const $ = id => document.getElementById(id);
 const loc = () => lang === "bn" ? "bn-BD" : "en-GB";
 const nf = (v, d = 0) => Number(v).toLocaleString(loc(), { maximumFractionDigits: d, minimumFractionDigits: d });
@@ -583,7 +584,7 @@ function select(id, zoom = false) {
   if (zoom) safeFit(L.geoJSON(f).getBounds(), { maxZoom: 10, padding: [60, 60] });
   $("overview").hidden = true;
   $("detail").hidden = false;
-  $("report-link").href = `/upazila/${id}`;
+  $("report-link").href = `/upazila/${slugify(selected.district)}/${slugify(selected.name)}`;
   $("drawer-title").textContent = t().detailTitle;
   openDrawer();
   $("side").querySelector(".drawer-body").scrollTop = 0;

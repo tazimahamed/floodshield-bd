@@ -1,179 +1,166 @@
 /* FloodShield BD — upazila flood report */
 const T = {
   en: {
-    subtitle: "Upazila flood report", back: "← Back to map", print: "Print / PDF", eyebrow: "Upazila flood report",
-    official: "Official warnings come first: follow FFWC (ffwc.gov.bd), BMD and your Upazila Disaster Management Committee. FloodShield supports them and does not replace them.",
-    area: "Upazila area", catchment: "Area draining here", outside: "of that area is outside Bangladesh",
-    floodRate: "Monsoon periods with flooding", worst: "Worst flood seen",
-    now: "Now (next 15 days)", riskOf: { low: "Low risk", medium: "Medium risk", high: "High risk" }, chance: "chance of flooding",
-    insightTitle: "What the record shows",
-    lead: s => `In <b>${s.flooded_windows} of ${s.windows}</b> monsoon periods (15 days each) since 2017 — <b>${s.flood_rate_pct}%</b> — at least ${s.thr}% of this upazila was under <b>abnormal flood water</b>, as seen by the Sentinel-1 radar satellite.`,
-    rainBefore: "Rain here in the 15 days before", rainUp: "Rain upstream in the 15 days before",
-    whenFlood: "before floods", whenNot: "before normal periods", lowest: "Smallest rain still followed by a flood",
-    worstLine: w => `Worst: <b>${w.start} → ${w.end}</b> — ${w.flooded_pct}% of the upazila (${w.flooded_km2} km²) under abnormal water, after <b>${w.rain_local_15d_before} mm</b> in 15 days here and <b>${w.rain_up_15d_before} mm</b> upstream.`,
-    noHistory: "No satellite periods have been mapped for this upazila.",
-    timelineTitle: "Flooding in every monsoon period, 2017–2025",
-    timelineNote: "Each bar is one 15-day period: the share of the upazila under abnormal flood water. Red = flood (≥5%).",
-    scatterTitle: "How much rain led to flooding?",
-    scatterNote: "Each dot is one period: rain in the 15 days before it (→) and the share that flooded (↑). Red = flood; big dots = named floods.",
-    tableTitle: "Every mapped period", onlyFloods: "Floods only",
-    cols: ["Period", "Event", "Flood?", "Abnormal water", "All water", "Rain 7 d before", "Rain 15 d before",
-           "Upstream 15 d before", "Rain during", "Upstream during"],
-    yes: "Flood", no: "No",
-    monsoonTitle: "Monsoon rain (Jun–Sep) each year", here: "This upazila", upstreamKey: "Upstream area",
-    wettestTitle: "Wettest days since 2017",
-    methodTitle: "Method & sources",
-    method: "Flood extent: Sentinel-1 radar, change detection against the dry season and against the same period in other years (UN-SPIDER method), so normal monsoon water such as haors is not counted. Rain: ERA5-Land daily reanalysis, area-averaged over the upazila and over every basin that drains into it (HydroBASINS). Radar sees water extent, not depth, and a satellite pass every 12 days can miss short floods.",
-    mm: "mm", notFound: "Upazila not found",
+    back: "← Map", calTitle: "Flood calendar, 2017–2025",
+    calSub: "Each box is a 15-day stretch of the monsoon, starting on the date above it. The number is how much of the upazila was under unusual flood water, as seen from satellite. Red boxes were floods.",
+    rainTitle: "What brings floods here", monsoonTitle: "Monsoon rain each year", monsoonSub: "June to September, this upazila.",
+    cycTitle: "🌀 Cyclones that passed close by", howTitle: "How we measure floods",
+    how: "Every 12 days the Sentinel-1 radar satellite photographs Bangladesh, day or night, through clouds. For each half-month we compare the pictures with the same time in other years. Water that is there every year, like rivers and haors, is left out, so only unusual flood water is counted. Radar shows how far water spread, not how deep it was, and a short flood between two passes can be missed.",
+    credits: "Data: Sentinel-1 radar (ESA Copernicus) · rain from ERA5-Land (ECMWF) · river basins from HydroSHEDS · cyclone tracks from IMD via NOAA IBTrACS",
+    csv: "Download the numbers (CSV)",
+    official: "For official warnings, follow FFWC (ffwc.gov.bd), the Bangladesh Meteorological Department and your Upazila Disaster Management Committee.",
+    crumb: (d, v) => `${d} district · ${v} division`,
+    lead: (n, total, oneIn) => n
+      ? `Over the last nine monsoons, unusual flood water covered part of this upazila in <b>${n} of ${total}</b> half-months — about <b>1 in ${oneIn}</b>.`
+      : `Over the last nine monsoons the satellite saw no unusual flooding here in any of ${total} half-months.`,
+    nowTitle: "Next 15 days", risk: { low: "Low risk", medium: "Medium risk", high: "High risk" },
+    chance: p => `${p}% chance of flooding`,
+    tFloods: "Floods since 2017", tFloodsD: (n, total) => `${n} of ${total} monsoon half-months`,
+    tWorst: "Worst flood seen", tWorstD: (pct, km2) => `${pct}% of the upazila · ${km2} km²`, tNoFlood: "None seen",
+    tWater: "Water comes from", tWaterD: o => o > 0 ? `${o}% of that area is in India / upstream` : "all of it inside Bangladesh",
+    before: "Before floods", normal: "Normal times",
+    story: (f, n, low, up) => `Floods here have usually come after about <b>${f} mm</b> of rain in two weeks. In normal half-months it was about ${n} mm. The least rain that was still followed by a flood was ${low} mm.${up ? ` Upstream, rain before floods was about ${up} mm.` : ""}`,
+    noStory: "There were no floods here in the satellite record, so there is no rain pattern to show.",
+    legendLow: "none", legendHigh: "more water",
+    tipRange: (a, b) => `${a} – ${b}`, tipWater: p => `Unusual water: ${p}% of the upazila`,
+    tipRain: (b, u) => `Rain in the 2 weeks before: ${b} mm (upstream ${u} mm)`, tipFlood: "Flood",
+    cycSummary: (n50, n150) => `Since 1960, <b>${n50}</b> cyclone or depression centres passed within 50 km of this upazila, and ${n150} within 150 km.`,
+    cycItem: (km, kmh) => `${km} km away${kmh ? ` · ${kmh} km/h` : ""}`,
+    months: ["Jun", "Jul", "Aug", "Sep"], halves: ["1–15", "16–30"], notFound: "Upazila not found", mm: "mm",
   },
   bn: {
-    subtitle: "উপজেলা বন্যা রিপোর্ট", back: "← ম্যাপে ফিরুন", print: "প্রিন্ট / PDF", eyebrow: "উপজেলা বন্যা রিপোর্ট",
-    official: "সরকারি সতর্কবার্তা আগে: FFWC (ffwc.gov.bd), আবহাওয়া অধিদপ্তর ও উপজেলা দুর্যোগ ব্যবস্থাপনা কমিটির নির্দেশনা মেনে চলুন। FloodShield এগুলোর সহায়ক, বিকল্প নয়।",
-    area: "উপজেলার আয়তন", catchment: "যত এলাকার পানি এখানে আসে", outside: "ওই এলাকার যতটা বাংলাদেশের বাইরে",
-    floodRate: "বন্যা হওয়া বর্ষার সময়কাল", worst: "সবচেয়ে বড় বন্যা",
-    now: "এখন (আগামী ১৫ দিন)", riskOf: { low: "নিম্ন ঝুঁকি", medium: "মাঝারি ঝুঁকি", high: "উচ্চ ঝুঁকি" }, chance: "বন্যার সম্ভাবনা",
-    insightTitle: "অতীতের রেকর্ড যা বলে",
-    lead: s => `২০১৭ থেকে বর্ষার <b>${s.windows}টি</b> ১৫-দিনের সময়কালের মধ্যে <b>${s.flooded_windows}টিতে</b> (<b>${s.flood_rate_pct}%</b>) এই উপজেলার অন্তত ${s.thr}% এলাকা Sentinel-1 রাডার স্যাটেলাইটে <b>অস্বাভাবিক বন্যার পানির</b> নিচে দেখা গেছে।`,
-    rainBefore: "আগের ১৫ দিনে এখানে বৃষ্টি", rainUp: "আগের ১৫ দিনে উজানে বৃষ্টি",
-    whenFlood: "বন্যার আগে", whenNot: "স্বাভাবিক সময়ের আগে", lowest: "সবচেয়ে কম যে বৃষ্টির পরেও বন্যা হয়েছে",
-    worstLine: w => `সবচেয়ে বড়: <b>${w.start} → ${w.end}</b> — উপজেলার ${w.flooded_pct}% (${w.flooded_km2} km²) অস্বাভাবিক পানির নিচে; আগের ১৫ দিনে এখানে <b>${w.rain_local_15d_before} মিমি</b> ও উজানে <b>${w.rain_up_15d_before} মিমি</b> বৃষ্টি।`,
-    noHistory: "এই উপজেলার জন্য কোনো স্যাটেলাইট সময়কাল ম্যাপ করা হয়নি।",
-    timelineTitle: "প্রতিটি বর্ষার সময়কালে বন্যা, ২০১৭–২০২৫",
-    timelineNote: "প্রতিটি দণ্ড একটি ১৫-দিনের সময়কাল: উপজেলার কত অংশ অস্বাভাবিক বন্যার পানির নিচে। লাল = বন্যা (≥৫%)।",
-    scatterTitle: "কত বৃষ্টিতে বন্যা হয়েছে?",
-    scatterNote: "প্রতিটি বিন্দু একটি সময়কাল: আগের ১৫ দিনের বৃষ্টি (→) ও প্লাবিত অংশ (↑)। লাল = বন্যা; বড় বিন্দু = বড় বন্যা।",
-    tableTitle: "ম্যাপ করা সব সময়কাল", onlyFloods: "শুধু বন্যা",
-    cols: ["সময়কাল", "ঘটনা", "বন্যা?", "অস্বাভাবিক পানি", "মোট পানি", "আগের ৭ দিন বৃষ্টি", "আগের ১৫ দিন বৃষ্টি",
-           "উজানে আগের ১৫ দিন", "চলাকালীন বৃষ্টি", "উজানে চলাকালীন"],
-    yes: "বন্যা", no: "না",
-    monsoonTitle: "প্রতি বছর বর্ষার (জুন–সেপ্টেম্বর) বৃষ্টি", here: "এই উপজেলা", upstreamKey: "উজানের এলাকা",
-    wettestTitle: "২০১৭ থেকে সবচেয়ে বেশি বৃষ্টির দিন",
-    methodTitle: "পদ্ধতি ও উৎস",
-    method: "বন্যার বিস্তার: Sentinel-1 রাডার; শুকনো মৌসুম ও অন্য বছরের একই সময়ের সাথে তুলনা (UN-SPIDER পদ্ধতি), তাই হাওরের মতো স্বাভাবিক বর্ষার পানি গোনা হয় না। বৃষ্টি: ERA5-Land দৈনিক তথ্য, উপজেলা ও তার উজানের সব অববাহিকার গড় (HydroBASINS)। রাডার পানির বিস্তার দেখে, গভীরতা নয়; ১২ দিনে একবার ছবি তোলায় স্বল্পস্থায়ী বন্যা বাদ পড়তে পারে।",
-    mm: "মিমি", notFound: "উপজেলা পাওয়া যায়নি",
+    back: "← ম্যাপ", calTitle: "বন্যার ক্যালেন্ডার, ২০১৭–২০২৫",
+    calSub: "প্রতিটি ঘর বর্ষার ১৫ দিনের একটি সময়, উপরে লেখা তারিখ থেকে শুরু। সংখ্যাটি দেখায় স্যাটেলাইটে উপজেলার কতটা অংশ অস্বাভাবিক বন্যার পানির নিচে দেখা গেছে। লাল ঘর মানে বন্যা।",
+    rainTitle: "এখানে বন্যা কখন হয়", monsoonTitle: "প্রতি বছর বর্ষার বৃষ্টি", monsoonSub: "জুন থেকে সেপ্টেম্বর, এই উপজেলায়।",
+    cycTitle: "🌀 কাছ দিয়ে যাওয়া ঘূর্ণিঝড়", howTitle: "আমরা বন্যা কীভাবে মাপি",
+    how: "Sentinel-1 রাডার স্যাটেলাইট প্রতি ১২ দিনে দিন-রাত, মেঘ ভেদ করে বাংলাদেশের ছবি তোলে। প্রতিটি অর্ধমাসের ছবি অন্য বছরের একই সময়ের সাথে তুলনা করা হয়। নদী বা হাওরের মতো প্রতি বছর থাকা পানি বাদ যায়, শুধু অস্বাভাবিক বন্যার পানি গোনা হয়। রাডার দেখায় পানি কতদূর ছড়িয়েছে, কত গভীর তা নয়; দুই ছবির মাঝের স্বল্পস্থায়ী বন্যা বাদ পড়তে পারে।",
+    credits: "ডেটা: Sentinel-1 রাডার (ESA Copernicus) · বৃষ্টি ERA5-Land (ECMWF) · নদী-অববাহিকা HydroSHEDS · ঘূর্ণিঝড়ের পথ IMD, NOAA IBTrACS থেকে",
+    csv: "সংখ্যাগুলো ডাউনলোড করুন (CSV)",
+    official: "সরকারি সতর্কবার্তার জন্য FFWC (ffwc.gov.bd), আবহাওয়া অধিদপ্তর ও উপজেলা দুর্যোগ ব্যবস্থাপনা কমিটির নির্দেশনা মেনে চলুন।",
+    crumb: (d, v) => `${d} জেলা · ${v} বিভাগ`,
+    lead: (n, total, oneIn) => n
+      ? `গত নয় বর্ষায় এই উপজেলার একাংশ <b>${total}টি অর্ধমাসের ${n}টিতে</b> অস্বাভাবিক বন্যার পানিতে ডুবেছে — মোটামুটি <b>প্রতি ${oneIn}টিতে ১টি</b>।`
+      : `গত নয় বর্ষার ${total}টি অর্ধমাসে স্যাটেলাইট এখানে কোনো অস্বাভাবিক বন্যা দেখেনি।`,
+    nowTitle: "আগামী ১৫ দিন", risk: { low: "নিম্ন ঝুঁকি", medium: "মাঝারি ঝুঁকি", high: "উচ্চ ঝুঁকি" },
+    chance: p => `বন্যার সম্ভাবনা ${p}%`,
+    tFloods: "২০১৭ থেকে বন্যা", tFloodsD: (n, total) => `বর্ষার ${total}টি অর্ধমাসের ${n}টিতে`,
+    tWorst: "সবচেয়ে বড় বন্যা", tWorstD: (pct, km2) => `উপজেলার ${pct}% · ${km2} বর্গকিমি`, tNoFlood: "দেখা যায়নি",
+    tWater: "পানি আসে", tWaterD: o => o > 0 ? `এর ${o}% এলাকা ভারতে / উজানে` : "পুরোটাই বাংলাদেশের ভেতর থেকে",
+    before: "বন্যার আগে", normal: "স্বাভাবিক সময়ে",
+    story: (f, n, low, up) => `এখানে সাধারণত দুই সপ্তাহে প্রায় <b>${f} মিমি</b> বৃষ্টির পরে বন্যা হয়েছে। স্বাভাবিক সময়ে তা ছিল প্রায় ${n} মিমি। সবচেয়ে কম যে বৃষ্টির পরেও বন্যা হয়েছে: ${low} মিমি।${up ? ` উজানে বন্যার আগে বৃষ্টি ছিল প্রায় ${up} মিমি।` : ""}`,
+    noStory: "স্যাটেলাইটের রেকর্ডে এখানে কোনো বন্যা নেই, তাই বৃষ্টির ধরন দেখানো সম্ভব নয়।",
+    legendLow: "নেই", legendHigh: "বেশি পানি",
+    tipRange: (a, b) => `${a} – ${b}`, tipWater: p => `অস্বাভাবিক পানি: উপজেলার ${p}%`,
+    tipRain: (b, u) => `আগের ২ সপ্তাহে বৃষ্টি: ${b} মিমি (উজানে ${u} মিমি)`, tipFlood: "বন্যা",
+    cycSummary: (n50, n150) => `১৯৬০ থেকে <b>${n50}</b>টি ঘূর্ণিঝড় বা নিম্নচাপের কেন্দ্র এই উপজেলার ৫০ কিমির মধ্যে দিয়ে গেছে, আর ${n150}টি ১৫০ কিমির মধ্যে দিয়ে।`,
+    cycItem: (km, kmh) => `${km} কিমি দূরে${kmh ? ` · ${kmh} কিমি/ঘণ্টা` : ""}`,
+    months: ["জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর"], halves: ["১–১৫", "১৬–৩০"], notFound: "উপজেলা পাওয়া যায়নি", mm: "মিমি",
   },
 };
-let lang = "en", R = null;
+let lang = "en", R = null, CY = null, nodeId = null;
 try { lang = localStorage.getItem("fs-lang") || "en"; } catch (e) {}
 const $ = id => document.getElementById(id);
-const id = location.pathname.split("/").pop();
-const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const nf = (v, d = 0) => v == null ? "–" : Number(v).toLocaleString(lang === "bn" ? "bn-BD" : "en-GB", { maximumFractionDigits: d });
+const t = () => T[lang];
+const loc = () => lang === "bn" ? "bn-BD" : "en-GB";
+const nf = (v, d = 0) => v == null ? "–" : Number(v).toLocaleString(loc(), { maximumFractionDigits: d });
+const yearNum = y => String(y).replace(/\d/g, d => lang === "bn" ? "০১২৩৪৫৬৭৮৯"[d] : d);
+const monthYear = iso => new Date(iso).toLocaleDateString(loc(), { month: "long", year: "numeric" });
+const dayMonth = iso => new Date(iso).toLocaleDateString(loc(), { day: "numeric", month: "short" });
+// unusual-water scale for the calendar (share of the upazila, %)
+const CAL = [[0.5, "#e8eef3"], [2, "#cfe3f2"], [5, "#8fc1e3"], [10, "#f08a5d"], [20, "#d9472b"], [101, "#8f1420"]];
+const calColor = p => CAL.find(([max]) => p < max)[1];
+const CAT_KT = [17, 28, 34, 48, 64, 90, 120];
+const CAT_COLORS = ["#7fd0a8", "#3fb6a8", "#f2d43a", "#f39a2b", "#e8562c", "#c41d4a", "#7b1fa2"];
+const catColor = kt => kt == null ? "#9aa5ae" : CAT_COLORS[CAT_KT.filter(k => kt >= k).length - 1] || "#9aa5ae";
 
-function canvas(elId) {
-  const c = $(elId), ctx = c.getContext("2d"), H = +c.getAttribute("height");
-  c.width = c.clientWidth * devicePixelRatio; c.height = H * devicePixelRatio;
-  ctx.scale(devicePixelRatio, devicePixelRatio);
-  ctx.font = "11px Inter, sans-serif";
-  return [ctx, c.clientWidth, H];
-}
-
-function axisY(ctx, w, H, padL, padB, max, fmt) {
-  ctx.strokeStyle = css("--line"); ctx.fillStyle = css("--muted");
-  [0, 0.5, 1].forEach(k => {
-    const y = H - padB - k * (H - padB - 10);
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w, y); ctx.stroke();
-    ctx.fillText(fmt(max * k), 0, y + 4);
+function renderCalendar() {
+  // the monsoon windows are fixed 15-day blocks from 1 June (1 Jun, 16 Jun, 1 Jul, 16 Jul, 31 Jul, ...),
+  // so each year has the same eight columns; place them by order, not by calendar half-month
+  const tt = t(), byYear = {};
+  R.history.forEach((h, idx) => (byYear[h.start.slice(0, 4)] ??= []).push(idx));
+  const years = Object.keys(byYear).sort((a, b) => b - a);
+  const cols = Math.max(...Object.values(byYear).map(v => v.length));
+  const ref = byYear[years[0]].length === cols ? byYear[years[0]] : Object.values(byYear).find(v => v.length === cols);
+  const head = `<tr><th></th>${ref.map(i => `<th>${dayMonth(R.history[i].start)}</th>`).join("")}</tr>`;
+  $("cal").innerHTML = head + years.map(y => `<tr><th class="yr">${yearNum(y)}</th>${[...Array(cols).keys()].map(k => {
+    const idx = byYear[y][k];
+    if (idx == null) return `<td class="none">·</td>`;
+    const h = R.history[idx], p = h.flooded_pct;
+    return `<td class="${h.flooded ? "flood" : p < 0.5 ? "none" : ""}" style="background:${calColor(p)}" data-i="${idx}">${p < 0.5 ? "" : nf(p, p < 10 ? 1 : 0) + "%"}</td>`;
+  }).join("")}</tr>`).join("");
+  $("cal-legend").innerHTML = `${tt.legendLow} ${CAL.map(([, c]) => `<i style="background:${c}"></i>`).join("")} ${tt.legendHigh}`;
+  document.querySelectorAll(".cal td[data-i]").forEach(td => {
+    td.onmouseenter = e => showTip(e, R.history[+td.dataset.i]);
+    td.onmousemove = moveTip;
+    td.onmouseleave = () => $("tip").hidden = true;
   });
 }
 
-function drawTimeline(h) {
-  const [ctx, w, H] = canvas("timeline"), padL = 34, padB = 18;
-  const max = Math.max(10, ...h.map(r => r.flooded_pct));
-  axisY(ctx, w, H, padL, padB, max, v => `${Math.round(v)}%`);
-  const bw = (w - padL) / h.length;
-  h.forEach((r, i) => {
-    const bh = (r.flooded_pct / max) * (H - padB - 10);
-    ctx.fillStyle = r.flooded ? css("--high") : "#a9b4be";
-    ctx.fillRect(padL + i * bw + 0.5, H - padB - bh, Math.max(1, bw - 1.5), bh);
-    if (i === 0 || r.start.slice(0, 4) !== h[i - 1].start.slice(0, 4)) {
-      ctx.fillStyle = css("--muted"); ctx.fillText(r.start.slice(0, 4), padL + i * bw, H - 4);
-    }
-  });
+function showTip(e, h) {
+  const tt = t();
+  $("tip").innerHTML = `<b>${tt.tipRange(dayMonth(h.start), dayMonth(h.end))} ${yearNum(new Date(h.start).getFullYear())}</b>${h.flooded ? ` · ${tt.tipFlood}` : ""}<br>
+    ${tt.tipWater(nf(h.flooded_pct, 1))}<br>${tt.tipRain(nf(h.rain_local_15d_before), nf(h.rain_up_15d_before))}`;
+  $("tip").hidden = false;
+  moveTip(e);
+}
+function moveTip(e) {
+  const tip = $("tip");
+  tip.style.left = Math.min(innerWidth - tip.offsetWidth - 10, e.clientX + 14) + "px";
+  tip.style.top = (e.clientY + 16) + "px";
 }
 
-function drawScatter(h) {
-  const [ctx, w, H] = canvas("scatter"), padL = 34, padB = 22;
-  const pts = h.filter(r => r.rain_local_15d_before != null);
-  const mx = Math.max(100, ...pts.map(r => r.rain_local_15d_before)), my = Math.max(10, ...pts.map(r => r.flooded_pct));
-  axisY(ctx, w, H, padL, padB, my, v => `${Math.round(v)}%`);
-  ctx.fillStyle = css("--muted");
-  [0, 0.5, 1].forEach(k => ctx.fillText(`${Math.round(mx * k)}${k === 1 ? " " + T[lang].mm : ""}`, padL + k * (w - padL - 44), H - 6));
-  const ty = H - padB - (R.flood_threshold_pct / my) * (H - padB - 10);
-  ctx.strokeStyle = css("--high"); ctx.setLineDash([4, 4]);
-  ctx.beginPath(); ctx.moveTo(padL, ty); ctx.lineTo(w, ty); ctx.stroke(); ctx.setLineDash([]);
-  pts.forEach(r => {
-    ctx.fillStyle = r.flooded ? css("--high") : "#a9b4be";
-    ctx.globalAlpha = 0.85;
-    ctx.beginPath();
-    ctx.arc(padL + (r.rain_local_15d_before / mx) * (w - padL - 30), H - padB - (r.flooded_pct / my) * (H - padB - 10),
-            r.named_event ? 6.5 : 4, 0, 7);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-  });
+function renderRainStory() {
+  const tt = t(), s = R.summary;
+  if (!s || !s.flooded_windows) { $("rain-story").innerHTML = `<p class="story">${tt.noStory}</p>`; return; }
+  const f = s.median_rain_local_15d_before.flooded, n = s.median_rain_local_15d_before.not_flooded;
+  const max = Math.max(f, n, 1);
+  $("rain-story").innerHTML = `<div class="cmp">
+      <div class="row"><span>${tt.before}</span><div class="bar" style="width:${(f / max) * 100}%;background:#d9472b">${nf(f)} ${tt.mm}</div></div>
+      <div class="row"><span>${tt.normal}</span><div class="bar" style="width:${(n / max) * 100}%;background:#5aaee3">${nf(n)} ${tt.mm}</div></div>
+    </div>
+    <p class="story">${tt.story(nf(f), nf(n), nf(s.lowest_rain_local_15d_before_a_flood), R.node.outside_bd_pct > 0 ? nf(s.median_rain_up_15d_before.flooded) : null)}</p>`;
 }
 
-function drawMonsoon(m) {
-  const [ctx, w, H] = canvas("monsoon"), padL = 40, padB = 18;
-  const max = Math.max(1, ...m.flatMap(r => [r.local_mm || 0, r.upstream_mm || 0]));
-  axisY(ctx, w, H, padL, padB, max, v => `${Math.round(v)}`);
-  const gw = (w - padL) / m.length;
-  m.forEach((r, i) => {
-    [[r.local_mm, "#1b5f9e", 0], [r.upstream_mm, "#86bde0", 1]].forEach(([v, col, k]) => {
-      const bh = ((v || 0) / max) * (H - padB - 10), bw = Math.max(2, gw / 2 - 4);
-      ctx.fillStyle = col; ctx.fillRect(padL + i * gw + 3 + k * (bw + 1), H - padB - bh, bw, bh);
-    });
-    ctx.fillStyle = css("--muted"); ctx.fillText(`'${String(r.year).slice(2)}`, padL + i * gw + 4, H - 4);
-  });
+function renderMonsoon() {
+  const max = Math.max(1, ...R.monsoon_rain.map(r => r.local_mm || 0));
+  $("monsoon").innerHTML = [...R.monsoon_rain].reverse().map(r => `<div class="row"><span>${yearNum(r.year)}</span>
+    <div class="track"><div class="fill" style="width:${((r.local_mm || 0) / max) * 100}%"></div></div>
+    <span class="v">${nf(r.local_mm)} ${t().mm}</span></div>`).join("");
 }
 
-function renderTable() {
-  const t = T[lang], f = v => v == null ? "–" : nf(v, 1);
-  const rows = [...R.history].reverse().filter(r => !$("only-floods").checked || r.flooded);
-  $("table").innerHTML = `<thead><tr>${t.cols.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>` +
-    rows.map(r => `<tr class="${r.named_event ? "named" : ""}">
-      <td>${r.start} → ${r.end.slice(5)}</td><td>${r.named_event ? r.name : ""}</td>
-      <td><span class="pill ${r.flooded ? "yes" : "no"}">${r.flooded ? t.yes : t.no}</span></td>
-      <td>${nf(r.flooded_pct, 1)}%</td><td>${nf(r.all_water_pct, 1)}%</td>
-      <td>${f(r.rain_local_7d_before)}</td><td>${f(r.rain_local_15d_before)}</td><td>${f(r.rain_up_15d_before)}</td>
-      <td>${f(r.rain_local_during)}</td><td>${f(r.rain_up_during)}</td></tr>`).join("") + "</tbody>";
+function renderCyclones() {
+  const tt = t();
+  if (!CY || !CY.within_150km) { $("cyc-card").hidden = true; return; }
+  $("cyc-card").hidden = false;
+  const top = CY.cyclones.filter(c => c.max_wind_kt && c.min_km <= 100).sort((a, b) => b.max_wind_kt - a.max_wind_kt).slice(0, 3);
+  $("cyc").innerHTML = `<p class="story">${tt.cycSummary(nf(CY.within_50km), nf(CY.within_150km))}</p>` + (top.length ? `<ul class="cyc-list">${top.map(c =>
+    `<li style="--c:${catColor(c.max_wind_kt)}"><b>${c.name === "Unnamed" ? "—" : c.name} ${yearNum(c.season)}</b><span>${tt.cycItem(nf(c.min_km), nf(Math.round(c.max_wind_kt * 1.852)))}</span></li>`).join("")}</ul>` : "");
 }
 
 function render() {
-  const t = T[lang], n = R.node, s = R.summary, c = R.current;
+  const tt = t(), n = R.node, s = R.summary, c = R.current;
   document.documentElement.lang = lang;
   document.body.classList.toggle("bn", lang === "bn");
-  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t[el.dataset.i18n]);
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = tt[el.dataset.i18n]);
   $("lang").textContent = lang === "en" ? "বাংলা" : "English";
-  document.title = `${n.name} — ${t.subtitle} · FloodShield BD`;
+  document.title = `${n.name} — ${lang === "bn" ? "বন্যার রিপোর্ট" : "flood report"} · FloodShield BD`;
   $("title").textContent = n.name;
-  $("where").textContent = [n.district, n.division].filter(Boolean).join(" · ");
-  $("now").innerHTML = c ? `<div class="risk-card ${c.risk}"><span class="lvl">${t.riskOf[c.risk]}</span>
-    <div class="prob">${nf(c.flood_prob * 100)}% <small>${t.chance}</small></div>
-    <p>${t.now}: ${c.reference_day} → ${c.valid_until}</p></div>` : "";
-
-  $("kpis").innerHTML = `
-    <div><b>${nf(n.km2)} km²</b><small>${t.area}</small></div>
-    <div><b>${nf(n.catchment_km2)} km²</b><small>${t.catchment}</small></div>
-    <div><b>${nf(n.outside_bd_pct)}%</b><small>${t.outside}</small></div>
-    ${s ? `<div class="alert"><b>${nf(s.flooded_windows)} / ${nf(s.windows)}</b><small>${t.floodRate}</small></div>` : ""}
-    ${s && s.worst ? `<div class="alert"><b>${nf(s.worst.flooded_pct, 1)}%</b><small>${t.worst} · ${s.worst.start.slice(0, 7)}</small></div>` : ""}`;
-
-  if (s) {
-    const lr = s.median_rain_local_15d_before, ur = s.median_rain_up_15d_before;
-    $("insight").innerHTML = `<p class="big">${t.lead({ ...s, thr: R.flood_threshold_pct })}</p>
-      <div class="callouts">
-        <div><span class="muted small">${t.rainBefore}</span><b>${nf(lr.flooded)} ${t.mm}</b><span class="vs">${t.whenFlood} · ${nf(lr.not_flooded)} ${t.mm} ${t.whenNot}</span></div>
-        <div><span class="muted small">${t.rainUp}</span><b>${nf(ur.flooded)} ${t.mm}</b><span class="vs">${t.whenFlood} · ${nf(ur.not_flooded)} ${t.mm} ${t.whenNot}</span></div>
-        <div><span class="muted small">${t.lowest}</span><b>${nf(s.lowest_rain_local_15d_before_a_flood)} ${t.mm}</b></div>
-      </div>${s.worst ? `<p>${t.worstLine(s.worst)}</p>` : ""}`;
-  } else $("insight").innerHTML = `<p>${t.noHistory}</p>`;
-
-  renderTable();
-  $("wettest").innerHTML = R.wettest_days.map(d => `<li><span class="nm">${d.day}</span><span class="val">${nf(d.mm, 1)} ${t.mm}</span></li>`).join("");
-  $("sources").innerHTML = R.sources.join(" · ");
-  if (R.history.length) { drawTimeline(R.history); drawScatter(R.history); }
-  drawMonsoon(R.monsoon_rain);
+  $("crumb").textContent = tt.crumb(n.district, n.division);
+  const oneIn = s && s.flooded_windows ? Math.max(1, Math.round(s.windows / s.flooded_windows)) : 0;
+  $("lead").innerHTML = s ? tt.lead(nf(s.flooded_windows), nf(s.windows), nf(oneIn)) : "";
+  const now = $("now");
+  now.className = c ? `now ${c.risk}` : "";
+  now.innerHTML = c ? `<small>${tt.nowTitle}</small><b>${tt.risk[c.risk]}</b><span>${tt.chance(nf(Math.round(c.flood_prob * 100)))}</span>` : "";
+  const w = s && s.worst;
+  $("tiles").innerHTML = `
+    <div class="tile"><div class="k">${tt.tFloods}</div><div class="v">${s ? nf(s.flooded_windows) : "–"} <small>/ ${s ? nf(s.windows) : "–"}</small></div><div class="d">${s ? tt.tFloodsD(nf(s.flooded_windows), nf(s.windows)) : ""}</div></div>
+    <div class="tile"><div class="k">${tt.tWorst}</div><div class="v">${w ? monthYear(w.start) : tt.tNoFlood}</div><div class="d">${w ? `${dayMonth(w.start)} – ${dayMonth(w.end)}` : ""}</div><div class="d">${w ? tt.tWorstD(nf(w.flooded_pct, 0), nf(w.flooded_km2)) : ""}</div></div>
+    <div class="tile"><div class="k">${tt.tWater}</div><div class="v">${nf(n.catchment_km2)} <small>km²</small></div><div class="d">${tt.tWaterD(n.outside_bd_pct)}</div></div>`;
+  renderCalendar();
+  renderRainStory();
+  renderMonsoon();
+  renderCyclones();
+  $("csv").href = `/api/v1/nodes/${nodeId}/report.csv`;
 }
 
 $("lang").onclick = () => {
@@ -182,14 +169,19 @@ $("lang").onclick = () => {
   render();
 };
 $("print").onclick = () => window.print();
-$("only-floods").onchange = () => R && renderTable();
-let resizeTimer;
-window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => R && render(), 150); });
 
 (async () => {
-  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = T[lang][el.dataset.i18n]);
-  const res = await fetch(`/api/v1/nodes/${id}/report`);
-  if (!res.ok) { $("title").textContent = T[lang].notFound; return; }
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t()[el.dataset.i18n]);
+  const parts = location.pathname.split("/").filter(Boolean);  // ["upazila", district, name] or ["upazila", id]
+  if (parts.length === 3) {
+    const r = await fetch(`/api/v1/upazila-slug/${parts[1]}/${parts[2]}`);
+    if (r.ok) nodeId = (await r.json()).id;
+  } else nodeId = parts[1];
+  const res = nodeId && await fetch(`/api/v1/nodes/${nodeId}/report`);
+  if (!res || !res.ok) { $("title").textContent = t().notFound; return; }
   R = await res.json();
+  if (parts.length !== 3) history.replaceState(null, "", `/upazila/${R.slug}`);  // old id links get the readable URL
   render();
+  CY = await (await fetch(`/api/v1/nodes/${nodeId}/cyclones`)).json();
+  renderCyclones();
 })();
