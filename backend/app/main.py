@@ -5,6 +5,7 @@ from pathlib import Path
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -48,6 +49,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="FloodShield BD", version="0.1.0", lifespan=lifespan)
+app.add_middleware(GZipMiddleware, minimum_size=2048)  # GeoJSON and the rain timeline compress ~8x
 app.include_router(router)
 
 

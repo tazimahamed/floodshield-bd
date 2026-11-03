@@ -1,14 +1,16 @@
-/* FloodShield BD — map app */
+/* FloodShield BD — map app (full-screen map, dark HUD, time slider) */
 const T = {
   en: {
     tagline: "Flood early warning · Bangladesh",
     searchPh: "Search an upazila or district…",
     official: "Official warnings come first: follow FFWC (ffwc.gov.bd), BMD and your Upazila Disaster Management Committee. FloodShield supports them and does not replace them.",
     viewRisk: "Flood risk", viewRain: "Rainfall", viewPast: "Past floods",
-    dateLabel: "Date", today: "Today", past72: "Last 72h", next24: "Next 24h", next72: "Next 72h",
+    dateLabel: "Date", today: "Today", hourly: "Hourly ▶", total24: "Next 24h", total72: "Next 72h",
+    past72: "Last 72h", next24: "Next 24h", next72: "Next 72h",
     allDivisions: "All Bangladesh", rivers: "Rivers", upstream: "Upstream basins (India, Nepal…)",
-    loading: "Loading…", runningModel: "Running the model for this date…",
-    live: t => `Live · updated ${t}`, pastMode: d => `Past date · ${d}`,
+    layersTitle: "Map layers", loading: "Loading…", runningModel: "Running the model for this date…",
+    tHome: "Show all Bangladesh", tSearch: "Search", tLayers: "Layers", tTheme: "Dark / light map", tPanel: "Details panel",
+    overviewTitle: "National overview", detailTitle: "Upazila details",
     statusEyebrow: "National flood outlook", statusEyebrowPast: "Model check for a past date",
     headlineNone: "No elevated flood risk", headlineSome: (h, m) => h ? `${h} upazilas at high risk` : `${m} upazilas at medium risk`,
     period: (a, b) => `Next 15 days · ${a} – ${b}`,
@@ -22,9 +24,10 @@ const T = {
     atRisk: "Exposed in medium/high-risk upazilas (OpenStreetMap, incomplete)", roadKm: "km major roads",
     powerRipple: "upazilas may lose power", healthRipple: "lose hospital access",
     topRisk: "Highest flood risk", topRain: "Most rain expected", topRainPast: "Most rain, last 72h", topPast: "Most flooded",
+    topHourly: t => `Heaviest rain at ${t}`,
     howTitle: "How to use",
     how1: "Search or click an upazila to see its flood risk, rainfall and facilities.",
-    how2: "Switch the view to Rainfall or Past floods at the top of the map; pick a past date to check the model.",
+    how2: "Rainfall ▶ plays the hourly forecast; Flood risk takes a past date to check the model.",
     how3: "Open the full report for an upazila's flood history since 2017 and what happens if it floods.",
     backOverview: "← National overview", reportBtn: "Open flood history & impact report",
     riskOf: { low: "Low risk", medium: "Medium risk", high: "High risk" },
@@ -33,26 +36,27 @@ const T = {
     noForecast: "No flood forecast for this upazila yet.",
     rainTitle: "Rainfall", chartPast: "Past", chartFuture: "Forecast",
     upTitle: "Where its water comes from", upArea: "Area draining here", upOut: "Outside Bangladesh",
-    upRain: "Rain forecast over that area (72h)", basins: "basins",
+    upRain: "Rain forecast over that area (72h)",
     assetsTitle: "Facilities mapped in OpenStreetMap", noAssets: "None mapped in OpenStreetMap yet.",
     osmNote: "Volunteer-mapped and incomplete for Bangladesh: real numbers are higher. Not an official count.",
     kinds: { hospital: "Hospitals", clinic: "Clinics", school: "Schools", college: "Colleges",
              shelter: "Shelters", substation: "Substations", power_plant: "Power plants" },
-    flooded: "flooded", abnormal: "Abnormal flood water", allWater: "All water incl. seasonal",
-    scenes: "Satellite scenes", pastPick: "Choose a past flood", mm: "mm",
-    legendRisk: "Flood risk (15 days)", legendRain: h => `Rainfall, ${h}`, legendPast: "Area flooded",
+    flooded: "flooded", pastPick: "Choose a past flood", mm: "mm", mmh: "mm/h",
+    stripRain: v => `Next 72h rain ${v}`, risk: "risk",
     source: (r, issued) => `Rain: NOAA GFS via Open-Meteo, run #${r} (${issued} BST) · History: ERA5-Land · Floods: Sentinel-1 · Rivers: HydroSHEDS · Boundaries: BBS/OCHA · Facilities: © OpenStreetMap`,
-    noResults: "No matching upazila", district: "district", upazila: "upazila",
+    noResults: "No matching upazila", now: "Now",
   },
   bn: {
     tagline: "বন্যার আগাম সতর্কতা · বাংলাদেশ",
     searchPh: "উপজেলা বা জেলার নাম লিখুন…",
     official: "সরকারি সতর্কবার্তা আগে: FFWC (ffwc.gov.bd), আবহাওয়া অধিদপ্তর ও উপজেলা দুর্যোগ ব্যবস্থাপনা কমিটির নির্দেশনা মেনে চলুন। FloodShield এগুলোর সহায়ক, বিকল্প নয়।",
     viewRisk: "বন্যার ঝুঁকি", viewRain: "বৃষ্টি", viewPast: "অতীতের বন্যা",
-    dateLabel: "তারিখ", today: "আজ", past72: "গত ৭২ ঘণ্টা", next24: "আগামী ২৪ ঘণ্টা", next72: "আগামী ৭২ ঘণ্টা",
+    dateLabel: "তারিখ", today: "আজ", hourly: "ঘণ্টাভিত্তিক ▶", total24: "আগামী ২৪ ঘণ্টা", total72: "আগামী ৭২ ঘণ্টা",
+    past72: "গত ৭২ ঘণ্টা", next24: "আগামী ২৪ ঘণ্টা", next72: "আগামী ৭২ ঘণ্টা",
     allDivisions: "সমগ্র বাংলাদেশ", rivers: "নদী", upstream: "উজানের অববাহিকা (ভারত, নেপাল…)",
-    loading: "লোড হচ্ছে…", runningModel: "এই তারিখের জন্য মডেল চলছে…",
-    live: t => `চলমান · হালনাগাদ ${t}`, pastMode: d => `অতীত তারিখ · ${d}`,
+    layersTitle: "ম্যাপের স্তর", loading: "লোড হচ্ছে…", runningModel: "এই তারিখের জন্য মডেল চলছে…",
+    tHome: "পুরো বাংলাদেশ", tSearch: "খুঁজুন", tLayers: "স্তর", tTheme: "গাঢ় / হালকা ম্যাপ", tPanel: "বিস্তারিত প্যানেল",
+    overviewTitle: "জাতীয় পরিস্থিতি", detailTitle: "উপজেলার বিস্তারিত",
     statusEyebrow: "জাতীয় বন্যা পরিস্থিতি", statusEyebrowPast: "অতীত তারিখে মডেল যাচাই",
     headlineNone: "বন্যার বাড়তি ঝুঁকি নেই", headlineSome: (h, m) => h ? `${h}টি উপজেলায় উচ্চ ঝুঁকি` : `${m}টি উপজেলায় মাঝারি ঝুঁকি`,
     period: (a, b) => `আগামী ১৫ দিন · ${a} – ${b}`,
@@ -66,9 +70,10 @@ const T = {
     atRisk: "মাঝারি/উচ্চ ঝুঁকির উপজেলায় যা ঝুঁকিতে (OpenStreetMap, অসম্পূর্ণ)", roadKm: "কিমি প্রধান সড়ক",
     powerRipple: "উপজেলায় বিদ্যুৎ যেতে পারে", healthRipple: "হাসপাতাল-সুবিধা হারাতে পারে",
     topRisk: "সর্বোচ্চ বন্যার ঝুঁকি", topRain: "সবচেয়ে বেশি বৃষ্টির পূর্বাভাস", topRainPast: "গত ৭২ ঘণ্টায় সবচেয়ে বেশি বৃষ্টি", topPast: "সবচেয়ে বেশি প্লাবিত",
+    topHourly: t => `${t}-এ সবচেয়ে বেশি বৃষ্টি`,
     howTitle: "কীভাবে ব্যবহার করবেন",
     how1: "উপজেলা খুঁজুন বা ম্যাপে ক্লিক করুন — বন্যার ঝুঁকি, বৃষ্টি ও স্থাপনা দেখতে পাবেন।",
-    how2: "ম্যাপের উপরে বৃষ্টি বা অতীতের বন্যা দেখুন; অতীত তারিখ বেছে মডেল যাচাই করুন।",
+    how2: "বৃষ্টি ▶ চাপলে ঘণ্টায় ঘণ্টায় পূর্বাভাস চলবে; বন্যার ঝুঁকিতে অতীত তারিখ বেছে মডেল যাচাই করুন।",
     how3: "পূর্ণ রিপোর্টে ২০১৭ থেকে উপজেলার বন্যার ইতিহাস ও ডুবলে কী হবে তা দেখুন।",
     backOverview: "← জাতীয় পরিস্থিতি", reportBtn: "বন্যার ইতিহাস ও প্রভাবের রিপোর্ট দেখুন",
     riskOf: { low: "নিম্ন ঝুঁকি", medium: "মাঝারি ঝুঁকি", high: "উচ্চ ঝুঁকি" },
@@ -77,133 +82,127 @@ const T = {
     noForecast: "এই উপজেলার জন্য এখনো পূর্বাভাস নেই।",
     rainTitle: "বৃষ্টি", chartPast: "অতীত", chartFuture: "পূর্বাভাস",
     upTitle: "পানি কোথা থেকে আসে", upArea: "যত এলাকার পানি এখানে আসে", upOut: "বাংলাদেশের বাইরে",
-    upRain: "ওই এলাকায় বৃষ্টির পূর্বাভাস (৭২ ঘণ্টা)", basins: "টি অববাহিকা",
+    upRain: "ওই এলাকায় বৃষ্টির পূর্বাভাস (৭২ ঘণ্টা)",
     assetsTitle: "OpenStreetMap-এ চিহ্নিত স্থাপনা", noAssets: "OpenStreetMap-এ এখনো কিছু চিহ্নিত নেই।",
     osmNote: "স্বেচ্ছাসেবকদের আঁকা, বাংলাদেশে অসম্পূর্ণ: আসল সংখ্যা এর চেয়ে বেশি। এটি সরকারি হিসাব নয়।",
     kinds: { hospital: "হাসপাতাল", clinic: "ক্লিনিক", school: "স্কুল", college: "কলেজ",
              shelter: "আশ্রয়কেন্দ্র", substation: "সাবস্টেশন", power_plant: "বিদ্যুৎকেন্দ্র" },
-    flooded: "প্লাবিত", abnormal: "অস্বাভাবিক বন্যার পানি", allWater: "মৌসুমি পানিসহ মোট",
-    scenes: "স্যাটেলাইট ছবি", pastPick: "একটি অতীতের বন্যা বাছুন", mm: "মিমি",
-    legendRisk: "বন্যার ঝুঁকি (১৫ দিন)", legendRain: h => `বৃষ্টি, ${h}`, legendPast: "প্লাবিত এলাকা",
+    flooded: "প্লাবিত", pastPick: "একটি অতীতের বন্যা বাছুন", mm: "মিমি", mmh: "মিমি/ঘণ্টা",
+    stripRain: v => `আগামী ৭২ ঘণ্টায় বৃষ্টি ${v}`, risk: "ঝুঁকি",
     source: (r, issued) => `বৃষ্টি: NOAA GFS (Open-Meteo), রান #${r} (${issued}) · ইতিহাস: ERA5-Land · বন্যা: Sentinel-1 · নদী: HydroSHEDS · সীমানা: BBS/OCHA · স্থাপনা: © OpenStreetMap`,
-    noResults: "কোনো উপজেলা মেলেনি", district: "জেলা", upazila: "উপজেলা",
+    noResults: "কোনো উপজেলা মেলেনি", now: "এখন",
   },
 };
 
 /* ---------- state ---------- */
-let lang = "en", view = "risk", lead = "rain_72h_mm";
+let lang = "en", view = "risk", lead = "hourly";
 let data = null, layer = null, selected = null, selectedLayer = null;
-let hind = null, events = [], eventLabels = null, eventInfo = null;
-let riverLayer = null, basinLayer = null, basinData = null, hiLayer = null, assetLayer = null;
-try { lang = localStorage.getItem("fs-lang") || "en"; } catch (e) {}
+let hind = null, events = [], eventLabels = null;
+let riverLayer = null, basinLayer = null, basinData = null, hiLayer = null, assetLayer = null, maskLayer = null;
+let timeline = null, tIndex = 0, playTimer = null;
+let mapDark = true;
+try { lang = localStorage.getItem("fs-lang") || "en"; mapDark = localStorage.getItem("fs-map") !== "light"; } catch (e) {}
 const t = () => T[lang];
 const $ = id => document.getElementById(id);
-const nf = (v, d = 0) => Number(v).toLocaleString(lang === "bn" ? "bn-BD" : "en-GB", { maximumFractionDigits: d, minimumFractionDigits: d });
+const loc = () => lang === "bn" ? "bn-BD" : "en-GB";
+const nf = (v, d = 0) => Number(v).toLocaleString(loc(), { maximumFractionDigits: d, minimumFractionDigits: d });
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const dateFmt = s => new Date(s).toLocaleDateString(lang === "bn" ? "bn-BD" : "en-GB", { day: "numeric", month: "short", year: "numeric" });
+const dateFmt = s => new Date(s).toLocaleDateString(loc(), { day: "numeric", month: "short", year: "numeric" });
+const timeFmt = iso => new Date(iso + "Z").toLocaleString(loc(), { timeZone: "Asia/Dhaka", weekday: "short", hour: "2-digit", minute: "2-digit" });
 
 /* ---------- colour scales ---------- */
-const RISK = { low: "#cfe9d8", medium: "#f6c453", high: "#e0503e" };
+const RISK = { low: "#5bbf7e", medium: "#f4b740", high: "#e5483a" };
 const riskOf = p => p == null ? null : p >= 0.5 ? "high" : p >= 0.25 ? "medium" : "low";
-const RAIN_BREAKS = [0, 5, 20, 50, 100, 200];
-const RAIN_COLORS = ["#eef5fb", "#c6dff0", "#86bde0", "#3f8fc9", "#1b5f9e", "#0b2f6b"];
-const FLOOD_BREAKS = [0, 0.02, 0.05, 0.1, 0.2, 0.4];
-const FLOOD_COLORS = ["#fbf3ef", "#fbd0b9", "#f6a582", "#ec6f4f", "#cf3a2b", "#8f1420"];
-const step = (v, breaks, colors) => v == null ? "#d5dbe1" : colors[breaks.filter(b => v >= b).length - 1];
-const KIND_COLORS = { hospital: "#d4382a", clinic: "#e45f9b", school: "#2f7fc1", college: "#7462c4",
-                      shelter: "#2e9e5b", substation: "#e08a00", power_plant: "#8a5a2b" };
+// rain colours tuned for a dark map: dry stays nearly invisible, heavy rain glows
+const HOURLY = { breaks: [0, 0.1, 0.5, 1, 2, 5, 10, 20], colors: ["rgba(0,0,0,0)", "#3a6ea5", "#2f8fd8", "#33b3a6", "#7dcf3c", "#f2d43a", "#f07c2a", "#d42e5a"] };
+const TOTAL = { breaks: [0, 1, 5, 10, 20, 50, 100, 200], colors: ["rgba(0,0,0,0)", "#3a6ea5", "#2f8fd8", "#33b3a6", "#7dcf3c", "#f2d43a", "#f07c2a", "#d42e5a"] };
+const FLOOD = { breaks: [0, 0.02, 0.05, 0.1, 0.2, 0.4], colors: ["rgba(0,0,0,0)", "#f6c9a8", "#f39b6d", "#ea6a45", "#cf3a2b", "#8f1420"] };
+const step = (v, s) => v == null ? "rgba(0,0,0,0)" : s.colors[s.breaks.filter(b => v >= b).length - 1];
+const KIND_COLORS = { hospital: "#e5483a", clinic: "#e45f9b", school: "#4aa3e0", college: "#9b87e8",
+                      shelter: "#5bbf7e", substation: "#f4b740", power_plant: "#c08a5b" };
 
+const hourlyValue = p => timeline?.upazilas[p.id]?.[tIndex];
 function fillFor(p) {
-  if (view === "past") return step(eventLabels?.[p.id]?.abnormal_frac, FLOOD_BREAKS, FLOOD_COLORS);
-  if (view === "rain") return step(p[lead], RAIN_BREAKS, RAIN_COLORS);
+  if (view === "past") return step(eventLabels?.[p.id]?.abnormal_frac, FLOOD);
+  if (view === "rain") return lead === "hourly" ? step(hourlyValue(p), HOURLY) : step(p[lead], TOTAL);
   const r = riskOf(p.flood_prob);
-  return r ? RISK[r] : "#d5dbe1";
+  return r ? RISK[r] : "rgba(0,0,0,0)";
 }
 function valueFor(p) {
-  if (view === "past") {
-    const v = eventLabels?.[p.id];
-    return v ? `${nf(v.abnormal_frac * 100, 1)}% ${t().flooded}` : "–";
+  const tt = t();
+  if (view === "past") { const v = eventLabels?.[p.id]; return v ? `${nf(v.abnormal_frac * 100, 1)}% ${tt.flooded}` : "–"; }
+  if (view === "rain") {
+    const v = lead === "hourly" ? hourlyValue(p) : p[lead];
+    return v == null ? "–" : `${nf(v, 1)} ${lead === "hourly" ? tt.mmh : tt.mm}`;
   }
-  if (view === "rain") return p[lead] == null ? "–" : `${nf(p[lead], 1)} ${t().mm}`;
   return p.flood_prob == null ? "–" : `${nf(p.flood_prob * 100)}%`;
 }
 function sortKey(p) {
   if (view === "past") return eventLabels?.[p.id]?.abnormal_frac ?? -1;
-  if (view === "rain") return p[lead] ?? -1;
+  if (view === "rain") return (lead === "hourly" ? hourlyValue(p) : p[lead]) ?? -1;
   return p.flood_prob ?? -1;
 }
 
 /* ---------- map ---------- */
-const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-// keep the view on Bangladesh and its upstream region; never let it shrink to a dot
 const BD_BOUNDS = L.latLngBounds([20.55, 88.0], [26.65, 92.7]);
 const REGION_BOUNDS = L.latLngBounds([14.5, 76.0], [33.5, 101.0]);
-const map = L.map("map", { zoomSnap: 0.25, zoomControl: false, minZoom: 6, maxBounds: REGION_BOUNDS,
-                           maxBoundsViscosity: 0.8 });
-map.fitBounds(BD_BOUNDS, { padding: [12, 12] });
-const fitBangladesh = () => map.fitBounds(BD_BOUNDS, { padding: [12, 12] });
-new ResizeObserver(() => { map.invalidateSize(); }).observe(document.getElementById("map"));
-L.control.zoom({ position: "bottomright" }).addTo(map);
-const home = L.control({ position: "bottomright" });
-home.onAdd = () => {
-  const b = L.DomUtil.create("a", "leaflet-bar home-btn");
-  b.href = "#"; b.title = "Show all Bangladesh"; b.innerHTML = "⤢";
-  L.DomEvent.on(b, "click", e => { L.DomEvent.preventDefault(e); fitBangladesh(); });
-  return b;
-};
-home.addTo(map);
+const map = L.map("map", { zoomSnap: 0.25, zoomControl: false, minZoom: 6, maxBounds: REGION_BOUNDS, maxBoundsViscosity: 0.8 });
+map.setView([23.7, 90.3], 7);
+function fitBangladesh() {
+  // keep the country clear of the floating panels, but only when the map is wide enough for that
+  const { x: w, y: h } = map.getSize();
+  const left = w > 900 ? 360 : 10, bottom = h > 500 ? 90 : 20;
+  if (w - left - 70 < 200 || h - bottom - 10 < 200) { map.fitBounds(BD_BOUNDS); return; }
+  map.fitBounds(BD_BOUNDS, { paddingTopLeft: [left, 10], paddingBottomRight: [70, bottom] });
+}
+fitBangladesh();
+new ResizeObserver(() => map.invalidateSize()).observe($("map"));
 const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services";
-// light: Ocean basemap (blue sea, soft terrain) — dark: dark grey canvas
-L.tileLayer(`${ESRI}/${dark ? "Canvas/World_Dark_Gray_Base" : "Ocean/World_Ocean_Base"}/MapServer/tile/{z}/{y}/{x}`, {
-  maxZoom: 16, maxNativeZoom: 13, attribution: "Basemap © Esri, GEBCO, NOAA, Garmin, HERE, © OpenStreetMap contributors · Boundaries BBS/OCHA · Rivers HydroSHEDS",
-}).addTo(map);
 map.createPane("labels").style.zIndex = 640;
 map.getPane("labels").style.pointerEvents = "none";
-L.tileLayer(`${ESRI}/${dark ? "Canvas/World_Dark_Gray_Reference" : "Ocean/World_Ocean_Reference"}/MapServer/tile/{z}/{y}/{x}`,
-  { pane: "labels", maxZoom: 16, maxNativeZoom: 13, opacity: 0.9 }).addTo(map);
 map.createPane("mask").style.zIndex = 460;
 map.getPane("mask").style.pointerEvents = "none";
 map.createPane("geo").style.zIndex = 650;
 map.getPane("geo").style.pointerEvents = "none";
 map.createPane("rivers").style.zIndex = 450;
-let maskLayer = null;
-const MASK = dark ? 0.5 : 0.38;  // neighbours stay readable, Bangladesh stands out
+map.createPane("assets").style.zIndex = 620;
+let baseLayers = [];
+function setBasemap() {
+  baseLayers.forEach(l => l.remove());
+  const base = mapDark ? "Canvas/World_Dark_Gray_Base" : "Ocean/World_Ocean_Base";
+  const ref = mapDark ? "Canvas/World_Dark_Gray_Reference" : "Ocean/World_Ocean_Reference";
+  baseLayers = [
+    L.tileLayer(`${ESRI}/${base}/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 16, maxNativeZoom: mapDark ? 16 : 13,
+      attribution: "Basemap © Esri, GEBCO, NOAA, Garmin, HERE, © OpenStreetMap contributors · Boundaries BBS/OCHA · Rivers HydroSHEDS" }),
+    L.tileLayer(`${ESRI}/${ref}/MapServer/tile/{z}/{y}/{x}`, { pane: "labels", maxZoom: 16, maxNativeZoom: mapDark ? 16 : 13, opacity: 0.9 }),
+  ];
+  baseLayers.forEach(l => l.addTo(map));
+  $("map").style.background = mapDark ? "#1b232c" : "#cfe0ec";
+  $("r-theme").classList.toggle("on", !mapDark);
+  if (maskLayer) maskLayer.setStyle({ fillColor: mapDark ? "#0b1015" : "#ffffff", fillOpacity: maskOpacity() });
+  restyleRivers();
+  if (layer) restyle();
+}
+const maskOpacity = () => $("show-basins").checked ? 0.15 : (mapDark ? 0.45 : 0.38);
 
-/* soften everything outside Bangladesh and draw a crisp national border */
 async function drawCountry() {
   const f = await (await fetch("/api/v1/country-outline")).json();
   const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
   const ll = ring => ring.map(([x, y]) => [y, x]);
-  const world = [[-89, -179], [-89, 179], [89, 179], [89, -179]];
-  maskLayer = L.polygon([world, ...polys.map(p => ll(p[0]))], {
-    pane: "mask", stroke: false, fillColor: dark ? "#0b1218" : "#ffffff", fillOpacity: MASK, interactive: false,
-  }).addTo(map);
-  // border only for the mainland and larger islands: hundreds of tiny Sundarbans islets
-  // drawn with a thick line turn the coast into a dark blob at country zoom
+  maskLayer = L.polygon([[[-89, -179], [-89, 179], [89, 179], [89, -179]], ...polys.map(p => ll(p[0]))], {
+    pane: "mask", stroke: false, fillColor: mapDark ? "#0b1015" : "#ffffff", fillOpacity: maskOpacity(), interactive: false }).addTo(map);
   const big = p => { const b = L.latLngBounds(ll(p[0])); return b.getNorth() - b.getSouth() + b.getEast() - b.getWest() > 0.6; };
   const rings = polys.filter(big).map(p => ll(p[0]));
-  L.polyline(rings, { pane: "geo", color: dark ? "#0b1218" : "#ffffff", weight: 4, opacity: 0.85, interactive: false }).addTo(map);
-  L.polyline(rings, { pane: "geo", color: dark ? "#9fb3c6" : "#3d5266", weight: 1.3, opacity: 0.95, interactive: false }).addTo(map);
+  L.polyline(rings, { pane: "geo", color: "#000", weight: 4, opacity: 0.35, interactive: false }).addTo(map);
+  L.polyline(rings, { pane: "geo", color: "#e9eef3", weight: 1.4, opacity: 0.9, interactive: false }).addTo(map);
 }
-map.createPane("assets").style.zIndex = 620;
 
 function baseStyle(f) {
-  return { fillColor: fillFor(f.properties), fillOpacity: 0.85, weight: 0.6, color: dark ? "#0d141b" : "#ffffff", opacity: 1 };
-}
-
-function renderLegend() {
-  const el = $("legend"), tt = t();
-  if (view === "risk") {
-    el.innerHTML = `<h4>${tt.legendRisk}</h4>` + [["high", "≥ 50%"], ["medium", "25–50%"], ["low", "< 25%"]]
-      .map(([k, r]) => `<div class="row"><i style="background:${RISK[k]}"></i>${tt[k]} <span class="muted">${r}</span></div>`).join("");
-  } else if (view === "rain") {
-    const label = { rain_24h_mm: tt.next24, rain_48h_mm: "48h", rain_72h_mm: tt.next72, rain_past_72h_mm: tt.past72 }[lead];
-    el.innerHTML = `<h4>${tt.legendRain(label)}</h4><div class="ramp">${RAIN_COLORS.map(c => `<span style="background:${c}"></span>`).join("")}</div>
-      <div class="ramp-labels"><span>0</span><span>20</span><span>100</span><span>200+ ${tt.mm}</span></div>`;
-  } else {
-    el.innerHTML = `<h4>${tt.legendPast}</h4><div class="ramp">${FLOOD_COLORS.map(c => `<span style="background:${c}"></span>`).join("")}</div>
-      <div class="ramp-labels"><span>0%</span><span>5%</span><span>20%</span><span>40%+</span></div>`;
-  }
+  const fill = fillFor(f.properties), empty = fill === "rgba(0,0,0,0)";
+  // low risk stays a soft tint so medium/high areas are what the eye catches
+  const soft = view === "risk" && riskOf(f.properties.flood_prob) === "low";
+  return { fillColor: fill, fillOpacity: empty ? 0 : soft ? 0.3 : 0.82, weight: 0.4, opacity: 0.5,
+           color: mapDark ? "#6d7c8a" : "#ffffff" };
 }
 
 async function load(reframe = false) {
@@ -216,13 +215,13 @@ async function load(reframe = false) {
     style: baseStyle,
     onEachFeature: (f, l) => {
       l.bindTooltip(() => `<div class="tt-name">${f.properties.name}</div><div class="tt-sub">${f.properties.district ?? ""}</div><b>${valueFor(f.properties)}</b>`, { sticky: true, direction: "top", offset: [0, -6] });
-      l.on("mouseover", () => { if (l !== selectedLayer) l.setStyle({ weight: 2, color: css("--text") }); });
+      l.on("mouseover", () => { if (l !== selectedLayer) l.setStyle({ weight: 1.6, color: "#ffffff", opacity: 1 }); });
       l.on("mouseout", () => { if (l !== selectedLayer) layer.resetStyle(l); });
       l.on("click", () => select(f.properties.id));
     },
   }).addTo(map);
   if (riverLayer && map.hasLayer(riverLayer)) riverLayer.bringToFront();
-  if (div) map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+  if (div) map.fitBounds(layer.getBounds(), { padding: [30, 30] });
   else if (reframe) fitBangladesh();
   if (selected) highlight(selected.id);
   renderSide();
@@ -231,8 +230,8 @@ async function load(reframe = false) {
 function restyle() {
   layer && layer.setStyle(baseStyle);
   if (selected) highlight(selected.id);
-  basinLayer && basinLayer.setStyle(f => ({ fillColor: step(f.properties[view === "rain" ? lead : "rain_72h_mm"], RAIN_BREAKS, RAIN_COLORS) }));
-  renderLegend();
+  basinLayer && basinLayer.setStyle(f => ({ fillColor: step(f.properties.rain_72h_mm, TOTAL) }));
+  renderScale();
   renderSide();
 }
 
@@ -240,21 +239,39 @@ function highlight(id) {
   if (selectedLayer) layer.resetStyle(selectedLayer);
   selectedLayer = null;
   layer.eachLayer(l => { if (l.feature.properties.id === id) selectedLayer = l; });
-  if (selectedLayer) selectedLayer.setStyle({ weight: 3, color: css("--brand") }).bringToFront();
+  if (selectedLayer) selectedLayer.setStyle({ weight: 3, color: "#f2a90f", opacity: 1 }).bringToFront();
+}
+
+/* ---------- bottom colour scale ---------- */
+function renderScale() {
+  const tt = t();
+  let s, labels, unit;
+  if (view === "risk") {
+    $("scale").innerHTML = [["low", `${tt.low} < 25%`], ["medium", `${tt.medium} 25–50%`], ["high", `${tt.high} ≥ 50%`]]
+      .map(([k, l]) => `<span style="background:${RISK[k]}">${l}</span>`).join("") + `<span class="unit">${tt.viewRisk}</span>`;
+    return;
+  }
+  if (view === "past") { s = FLOOD; labels = ["0", "2%", "5%", "10%", "20%", "40%+"]; unit = tt.flooded; }
+  else if (lead === "hourly") { s = HOURLY; labels = ["0", "0.1", "0.5", "1", "2", "5", "10", "20+"]; unit = tt.mmh; }
+  else { s = TOTAL; labels = ["0", "1", "5", "10", "20", "50", "100", "200+"]; unit = tt.mm; }
+  $("scale").innerHTML = s.colors.map((c, i) => `<span style="background:${i ? c : "#2a333d"}">${labels[i]}</span>`).join("")
+    + `<span class="unit">${unit}</span>`;
 }
 
 /* ---------- views ---------- */
 function setView(v) {
   view = v;
   document.querySelectorAll("#view button").forEach(b => b.classList.toggle("on", b.dataset.view === v));
-  document.querySelectorAll(".view-panel .sub").forEach(s => s.hidden = s.dataset.for !== v);
+  document.querySelectorAll(".top-left .sub").forEach(s => s.hidden = s.dataset.for !== v);
+  stopPlay();
+  updateTimelineVisibility();
+  if (v === "rain" && lead === "hourly") ensureTimeline();
   if (v === "past" && !eventLabels && events.length) { $("event").value = events[events.length - 1].id; selectEvent(); return; }
   restyle();
 }
 
 async function selectEvent() {
   const id = $("event").value;
-  eventInfo = events.find(e => e.id === id) || null;
   eventLabels = id ? await (await fetch(`/api/v1/flood-events/${id}`)).json() : null;
   restyle();
 }
@@ -267,7 +284,7 @@ async function selectDay() {
   const day = $("day").value;
   const live = !day || day >= new Date().toISOString().slice(0, 10);
   $("day-clear").hidden = live;
-  if (live) { hind = null; $("day").value = ""; await load(); renderFreshness(); return; }
+  if (live) { hind = null; $("day").value = ""; await load(); return; }
   $("map-loading").hidden = false;
   $("map-loading").lastElementChild.textContent = t().runningModel;
   try {
@@ -276,11 +293,63 @@ async function selectDay() {
     hind = await res.json();
     applyHindcast();
     if (view !== "risk") setView("risk"); else restyle();
-    renderFreshness();
+    openDrawer();
   } finally { $("map-loading").hidden = true; }
 }
 
-/* ---------- side panel ---------- */
+/* ---------- time slider ---------- */
+function updateTimelineVisibility() { $("timeline").hidden = !(view === "rain" && lead === "hourly"); }
+
+async function ensureTimeline() {
+  if (!timeline) {
+    $("map-loading").hidden = false;
+    try { timeline = await (await fetch("/api/v1/rain-timeline")).json(); } finally { $("map-loading").hidden = true; }
+    tIndex = timeline.now_index;
+    $("t-range").max = timeline.times_utc.length - 1;
+  }
+  $("t-range").value = tIndex;
+  renderDays();
+  setTime(tIndex);
+}
+
+function renderDays() {
+  const n = timeline.times_utc.length - 1, out = [];
+  timeline.times_utc.forEach((iso, i) => {
+    const local = new Date(new Date(iso + "Z").toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+    if (local.getHours() === 0 || i === 0) {
+      const label = new Date(iso + "Z").toLocaleDateString(loc(), { timeZone: "Asia/Dhaka", weekday: "short", day: "numeric" });
+      out.push(`<span style="left:${(i / n) * 100}%">${label}</span>`);
+    }
+  });
+  out.push(`<span class="now" style="left:${(timeline.now_index / n) * 100}%">▲ ${t().now}</span>`);
+  $("t-days").innerHTML = out.join("");
+}
+
+function setTime(i) {
+  tIndex = +i;
+  const n = timeline.times_utc.length - 1;
+  $("t-label").textContent = timeFmt(timeline.times_utc[tIndex]);
+  $("t-label").style.left = `${(tIndex / n) * 100}%`;
+  restyle();
+  if (selected) renderStrip();
+}
+
+function togglePlay() {
+  if (playTimer) { stopPlay(); return; }
+  if (tIndex >= timeline.times_utc.length - 1) tIndex = 0;
+  $("play").textContent = "❚❚";
+  playTimer = setInterval(() => {
+    const next = tIndex + 1 > timeline.times_utc.length - 1 ? 0 : tIndex + 1;
+    $("t-range").value = next;
+    setTime(next);
+  }, 400);
+}
+function stopPlay() { clearInterval(playTimer); playTimer = null; $("play").textContent = "▶"; }
+
+/* ---------- drawer ---------- */
+const openDrawer = () => { document.body.classList.add("drawer-open"); $("r-panel").classList.add("on"); };
+const closeDrawer = () => { document.body.classList.remove("drawer-open"); $("r-panel").classList.remove("on"); };
+
 function counts() {
   const c = { high: 0, medium: 0, low: 0 };
   data.features.forEach(f => { const r = riskOf(f.properties.flood_prob); if (r) c[r]++; });
@@ -289,8 +358,7 @@ function counts() {
 
 function renderStatus() {
   const el = $("status"), tt = t(), r = data.flood_forecast_run, c = counts();
-  const lvl = c.high ? "high" : c.medium ? "medium" : "low";
-  el.className = `panel status ${lvl}`;
+  el.className = `panel status ${c.high ? "high" : c.medium ? "medium" : "low"}`;
   if (!r && !hind) { el.innerHTML = `<div class="eyebrow">${tt.statusEyebrow}</div><p class="note">${tt.noForecast}</p>`; return; }
   let extra;
   if (hind) {
@@ -300,22 +368,17 @@ function renderStatus() {
       <p class="note">${tt.hindNote}</p>`;
   } else {
     const m = r.metrics || {}, b = r.baseline || {};
-    extra = `<p class="note">${tt.whatMeans}</p>
-      <div class="skill">${tt.skill(m.auc ?? "–", b.auc ?? "–")}</div>
-      <details class="more"><summary>${tt.modelDetails}</summary>
-        ${r.model_version}<br>GFS run #${r.rain_run_id} · ERA5-Land → ${r.era5_last_day}<br>
-        P(≥5% abnormal flood) · ${(r.thresholds && `medium ≥ ${r.thresholds.medium * 100}%, high ≥ ${r.thresholds.high * 100}%`) || ""}</details>`;
+    extra = `<p class="note">${tt.whatMeans}</p><div class="skill">${tt.skill(m.auc ?? "–", b.auc ?? "–")}</div>
+      <details class="more"><summary>${tt.modelDetails}</summary>${r.model_version}<br>GFS run #${r.rain_run_id} · ERA5-Land → ${r.era5_last_day}</details>`;
   }
   el.innerHTML = `<div class="eyebrow">${hind ? tt.statusEyebrowPast : tt.statusEyebrow}</div>
     <div class="headline">${c.high + c.medium ? tt.headlineSome(c.high, c.medium) : tt.headlineNone}</div>
     <div class="period">${hind ? dateFmt(hind.day) : tt.period(dateFmt(r.reference_day), dateFmt(r.valid_until))}</div>
-    <div class="counts">
-      <div class="h"><b>${nf(c.high)}</b><small>${tt.high}</small></div>
+    <div class="counts"><div class="h"><b>${nf(c.high)}</b><small>${tt.high}</small></div>
       <div class="m"><b>${nf(c.medium)}</b><small>${tt.medium}</small></div>
-      <div class="l"><b>${nf(c.low)}</b><small>${tt.low}</small></div>
-    </div>${extra}`;
+      <div class="l"><b>${nf(c.low)}</b><small>${tt.low}</small></div></div>${extra}`;
   const box = $("at-risk");
-  box.hidden = hind || !(c.high + c.medium);
+  box.hidden = !!hind || !(c.high + c.medium);
   if (!box.hidden) showAtRisk();
 }
 
@@ -326,23 +389,23 @@ async function showAtRisk() {
   const road = Object.values(r.road_km).reduce((a, b) => a + b, 0);
   $("at-risk").innerHTML = `<div class="panel-head"><h2>${tt.atRisk}</h2></div><div class="chips">
     ${Object.entries(r.direct).map(([k, v]) => `<span><i style="background:${KIND_COLORS[k]}"></i>${nf(v)} ${tt.kinds[k] ?? k}</span>`).join("")}
-    <span>${nf(road)} ${tt.roadKm}</span>
-    <span>${nf(r.power_ripple.length)} ${tt.powerRipple}</span>
+    <span>${nf(road)} ${tt.roadKm}</span><span>${nf(r.power_ripple.length)} ${tt.powerRipple}</span>
     <span>${nf(r.health_ripple.length)} ${tt.healthRipple}</span></div>`;
 }
 
 function renderTop() {
   const tt = t();
   $("top-title").textContent = view === "past" ? tt.topPast : view === "rain"
-    ? (lead === "rain_past_72h_mm" ? tt.topRainPast : tt.topRain) : tt.topRisk;
-  const rows = [...data.features].filter(f => sortKey(f.properties) >= 0)
+    ? (lead === "hourly" && timeline ? tt.topHourly(timeFmt(timeline.times_utc[tIndex]))
+       : lead === "rain_past_72h_mm" ? tt.topRainPast : tt.topRain) : tt.topRisk;
+  const rows = [...data.features].filter(f => sortKey(f.properties) > 0 || view === "risk")
     .sort((a, b) => sortKey(b.properties) - sortKey(a.properties)).slice(0, 10);
   const max = Math.max(1e-9, ...rows.map(f => sortKey(f.properties)));
   $("top").innerHTML = rows.map(f => {
-    const p = f.properties;
+    const p = f.properties, fill = fillFor(p);
     return `<li data-id="${p.id}"><span class="nm">${p.name} <small>${p.district ?? ""}</small></span>
       <span class="val">${valueFor(p)}</span>
-      <span class="bar"><span style="width:${(sortKey(p) / max) * 100}%;background:${fillFor(p)}"></span></span></li>`;
+      <span class="bar"><span style="width:${(sortKey(p) / max) * 100}%;background:${fill === "rgba(0,0,0,0)" ? "#9aa5ae" : fill}"></span></span></li>`;
   }).join("") || `<li class="empty">–</li>`;
   document.querySelectorAll("#top li[data-id]").forEach(li => li.onclick = () => select(li.dataset.id, true));
 }
@@ -353,19 +416,11 @@ function renderSide() {
   renderTop();
   const run = data.rain_run;
   if (run) {
-    const issued = new Date(run.issued_at).toLocaleString(lang === "bn" ? "bn-BD" : "en-GB",
-      { timeZone: "Asia/Dhaka", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    const issued = new Date(run.issued_at).toLocaleString(loc(), { timeZone: "Asia/Dhaka", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
     $("source").innerHTML = t().source(run.id, issued);
   }
   if (selected) renderDetail();
-}
-
-function renderFreshness() {
-  const el = $("freshness"), run = data?.rain_run;
-  if (hind) { el.className = "chip live past"; el.textContent = t().pastMode(dateFmt(hind.day)); return; }
-  el.className = "chip live";
-  el.textContent = run ? t().live(new Date(run.issued_at).toLocaleTimeString(lang === "bn" ? "bn-BD" : "en-GB",
-    { timeZone: "Asia/Dhaka", hour: "2-digit", minute: "2-digit" })) : "";
+  $("drawer-title").textContent = selected ? t().detailTitle : t().overviewTitle;
 }
 
 /* ---------- selected upazila ---------- */
@@ -374,12 +429,15 @@ function select(id, zoom = false) {
   if (!f) return;
   selected = f.properties;
   highlight(id);
-  if (zoom) map.fitBounds(L.geoJSON(f).getBounds(), { maxZoom: 10, padding: [40, 40] });
+  if (zoom) map.fitBounds(L.geoJSON(f).getBounds(), { maxZoom: 10, padding: [60, 60] });
   $("overview").hidden = true;
   $("detail").hidden = false;
-  $("side").scrollTop = 0;
   $("report-link").href = `/upazila/${id}`;
+  $("drawer-title").textContent = t().detailTitle;
+  openDrawer();
+  $("side").querySelector(".drawer-body").scrollTop = 0;
   renderDetail();
+  renderStrip();
   loadRain(id);
   showUpstream(id);
   showAssets(id);
@@ -392,6 +450,38 @@ function closeDetail() {
   [hiLayer, assetLayer].forEach(l => l && l.remove());
   $("detail").hidden = true;
   $("overview").hidden = false;
+  $("strip").hidden = true;
+  $("drawer-title").textContent = t().overviewTitle;
+}
+
+function renderStrip() {
+  const p = selected, tt = t(), r = riskOf(p.flood_prob);
+  $("strip").hidden = false;
+  $("s-name").textContent = p.name;
+  $("s-where").textContent = [p.district, p.division].filter(Boolean).join(" · ");
+  $("s-risk").innerHTML = (r ? `<span class="dot" style="background:${RISK[r]}"></span>${tt.riskOf[r]} · ${nf(p.flood_prob * 100)}%` : "")
+    + (p.rain_72h_mm != null ? ` <span style="opacity:.7">· ${tt.stripRain(`${nf(p.rain_72h_mm, 1)} ${tt.mm}`)}</span>` : "");
+  drawSpark();
+}
+
+async function drawSpark() {
+  if (!timeline) { try { timeline = await (await fetch("/api/v1/rain-timeline")).json(); tIndex = timeline.now_index; $("t-range").max = timeline.times_utc.length - 1; } catch (e) { return; } }
+  const vals = timeline.upazilas[selected?.id];
+  if (!vals) return;
+  const c = $("s-spark"), ctx = c.getContext("2d"), H = 46;
+  c.width = c.clientWidth * devicePixelRatio; c.height = H * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  const w = c.clientWidth, n = vals.length, bw = w / n, max = Math.max(1, ...vals.map(v => v ?? 0));
+  ctx.clearRect(0, 0, w, H);
+  vals.forEach((v, i) => {
+    const bh = ((v ?? 0) / max) * (H - 12);
+    ctx.fillStyle = i < timeline.now_index ? "rgba(255,255,255,.28)" : step(Math.max(v ?? 0, 0.1), HOURLY);
+    ctx.fillRect(i * bw, H - bh - 2, Math.max(1, bw - 0.5), Math.max(bh, 1));
+  });
+  ctx.fillStyle = "#f2a90f";
+  ctx.fillRect(tIndex * bw, 0, 2, H);
+  ctx.fillStyle = "#a7b3be"; ctx.font = "10px Inter, sans-serif";
+  ctx.fillText(`${nf(max, 1)} ${t().mmh}`, 2, 9);
 }
 
 function renderDetail() {
@@ -433,7 +523,7 @@ function drawChart(h) {
     ctx.fillText((max * k).toFixed(k ? 1 : 0), 0, y + 4);
   });
   let nowX = null;
-  const labelEvery = Math.max(1, Math.ceil(52 / (bw * 24)));  // ~52 px per date label
+  const labelEvery = Math.max(1, Math.ceil(52 / (bw * 24)));
   h.precipitation.forEach((v, i) => {
     const ts = Date.parse(h.time[i] + "Z"), x = padL + i * bw;
     if (nowX == null && ts >= now) nowX = x;
@@ -442,7 +532,7 @@ function drawChart(h) {
     ctx.fillRect(x, H - padB - bh, Math.max(1, bw - 0.6), bh);
     if (h.time[i].endsWith("T00:00") && Math.round(i / 24) % labelEvery === 0) {
       ctx.fillStyle = css("--muted");
-      ctx.fillText(new Date(ts).toLocaleDateString(lang === "bn" ? "bn-BD" : "en-GB", { day: "numeric", month: "short" }), x + 2, H - 4);
+      ctx.fillText(new Date(ts).toLocaleDateString(loc(), { day: "numeric", month: "short" }), x + 2, H - 4);
     }
   });
   if (nowX != null) {
@@ -464,7 +554,7 @@ async function showUpstream(id) {
   if (!basinData) basinData = await (await fetch("/api/v1/basins")).json();
   const ids = new Set(u.basins);
   hiLayer = L.geoJSON({ type: "FeatureCollection", features: basinData.features.filter(f => ids.has(f.properties.id)) },
-    { style: { color: "#e08a00", weight: 1.2, dashArray: "4 3", fillColor: "#f5a623", fillOpacity: 0.08 }, interactive: false }).addTo(map);
+    { style: { color: "#f2a90f", weight: 1.2, dashArray: "4 3", fillColor: "#f2a90f", fillOpacity: 0.06 }, interactive: false }).addTo(map);
   hiLayer.bringToBack();
 }
 
@@ -474,25 +564,28 @@ async function showAssets(id) {
   if (!res.ok || selected?.id !== id) return;
   const fc = await res.json(), n = {};
   fc.features.forEach(f => n[f.properties.kind] = (n[f.properties.kind] || 0) + 1);
-  $("d-assets").innerHTML = fc.features.length
+  $("d-assets").innerHTML = (fc.features.length
     ? `<div class="chips">${Object.entries(n).sort((a, b) => b[1] - a[1]).map(([k, c]) =>
         `<span><i style="background:${KIND_COLORS[k]}"></i>${nf(c)} ${tt.kinds[k] ?? k}</span>`).join("")}</div>`
-    : `<p class="empty">${tt.noAssets}</p>`;
-  $("d-assets").insertAdjacentHTML("beforeend", `<p class="note" style="margin:8px 0 0">${tt.osmNote}</p>`);
+    : `<p class="empty">${tt.noAssets}</p>`) + `<p class="note" style="margin:8px 0 0">${tt.osmNote}</p>`;
   assetLayer = L.geoJSON(fc, {
-    pointToLayer: (f, ll) => L.circleMarker(ll, { pane: "assets", radius: 5, color: "#fff", weight: 1.5, fillOpacity: 1,
+    pointToLayer: (f, ll) => L.circleMarker(ll, { pane: "assets", radius: 5, color: "#10161d", weight: 1.5, fillOpacity: 1,
                                                   fillColor: KIND_COLORS[f.properties.kind] }),
     onEachFeature: (f, l) => l.bindTooltip(`<div class="tt-name">${(lang === "bn" && f.properties.name_bn) || f.properties.name || "—"}</div><div class="tt-sub">${tt.kinds[f.properties.kind]}</div>`),
   }).addTo(map);
 }
 
 /* ---------- layers ---------- */
+function restyleRivers() {
+  riverLayer && riverLayer.setStyle(f => ({ color: mapDark ? "#5fb3ff" : "#2b7bbf", opacity: mapDark ? 0.75 : 0.85,
+    weight: Math.max(0.8, Math.log10(f.properties.upland_km2) - 2.8) }));
+}
 async function toggleRivers() {
   if (!$("show-rivers").checked) { riverLayer && riverLayer.remove(); return; }
   if (!riverLayer) {
     const r = await (await fetch("/api/v1/rivers")).json();
-    riverLayer = L.geoJSON(r, { pane: "rivers", interactive: false, style: f => ({
-      color: dark ? "#5aaee3" : "#2b7bbf", opacity: 0.85, weight: Math.max(0.8, Math.log10(f.properties.upland_km2) - 2.8) }) });
+    riverLayer = L.geoJSON(r, { pane: "rivers", interactive: false });
+    restyleRivers();
   }
   riverLayer.addTo(map);
 }
@@ -500,16 +593,16 @@ async function toggleRivers() {
 async function toggleBasins() {
   if (!$("show-basins").checked) {
     basinLayer && basinLayer.remove();
-    maskLayer && maskLayer.setStyle({ fillOpacity: MASK });
+    maskLayer && maskLayer.setStyle({ fillOpacity: maskOpacity() });
     return;
   }
   if (!basinData) basinData = await (await fetch("/api/v1/basins")).json();
   if (!basinLayer) basinLayer = L.geoJSON(basinData, {
-    style: f => ({ fillColor: step(f.properties.rain_72h_mm, RAIN_BREAKS, RAIN_COLORS), weight: 0.4, color: "#8a96a3", fillOpacity: 0.55 }),
+    style: f => ({ fillColor: step(f.properties.rain_72h_mm, TOTAL), weight: 0.4, color: "#8a96a3", fillOpacity: 0.55 }),
     onEachFeature: (f, l) => l.bindTooltip(() => `<div class="tt-name">${f.properties.name}</div><div class="tt-sub">${f.properties.region}</div>${t().next72}: <b>${f.properties.rain_72h_mm == null ? "–" : nf(f.properties.rain_72h_mm, 1) + " " + t().mm}</b>`, { sticky: true }),
   });
   basinLayer.addTo(map).bringToBack();
-  maskLayer && maskLayer.setStyle({ fillOpacity: 0.15 });
+  maskLayer && maskLayer.setStyle({ fillOpacity: maskOpacity() });
   map.fitBounds(basinLayer.getBounds());
 }
 
@@ -556,18 +649,25 @@ function applyLang() {
   document.documentElement.lang = lang;
   document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = tt[el.dataset.i18n]);
   document.querySelectorAll("[data-i18n-ph]").forEach(el => el.placeholder = tt[el.dataset.i18nPh]);
-  $("lang").textContent = lang === "en" ? "বাংলা" : "English";
-  $("event").firstElementChild && ($("event").firstElementChild.textContent = tt.pastPick);
-  renderLegend();
-  if (data) { renderSide(); renderFreshness(); }
+  document.querySelectorAll("[data-i18n-title]").forEach(el => { el.title = tt[el.dataset.i18nTitle]; el.setAttribute("aria-label", el.title); });
+  $("lang").textContent = lang === "en" ? "বাং" : "EN";
+  if ($("event").firstElementChild) $("event").firstElementChild.textContent = tt.pastPick;
+  renderScale();
+  if (timeline && !$("timeline").hidden) { renderDays(); setTime(tIndex); }
+  if (data) { renderSide(); if (selected) renderStrip(); }
 }
 
 /* ---------- wiring ---------- */
 document.querySelectorAll("#view button").forEach(b => b.onclick = () => setView(b.dataset.view));
 document.querySelectorAll("#lead button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#lead button").forEach(x => x.classList.toggle("on", x === b));
-  lead = b.dataset.lead; restyle();
+  lead = b.dataset.lead;
+  stopPlay();
+  updateTimelineVisibility();
+  if (lead === "hourly") ensureTimeline(); else restyle();
 });
+$("t-range").oninput = e => { stopPlay(); setTime(e.target.value); };
+$("play").onclick = togglePlay;
 $("event").onchange = selectEvent;
 $("day").onchange = selectDay;
 $("day").max = new Date().toISOString().slice(0, 10);
@@ -576,21 +676,30 @@ $("division").onchange = () => load(true);
 $("show-rivers").onchange = toggleRivers;
 $("show-basins").onchange = toggleBasins;
 $("detail-close").onclick = closeDetail;
+$("strip-close").onclick = closeDetail;
+$("drawer-close").onclick = closeDrawer;
+$("r-panel").onclick = () => document.body.classList.contains("drawer-open") ? closeDrawer() : openDrawer();
+$("r-home").onclick = fitBangladesh;
+$("r-search").onclick = () => $("search").focus();
+$("r-layers").onclick = () => { $("layers").hidden = !$("layers").hidden; $("r-layers").classList.toggle("on", !$("layers").hidden); };
+$("r-theme").onclick = () => {
+  mapDark = !mapDark;
+  try { localStorage.setItem("fs-map", mapDark ? "dark" : "light"); } catch (e) {}
+  setBasemap();
+};
 $("lang").onclick = () => {
   lang = lang === "en" ? "bn" : "en";
   try { localStorage.setItem("fs-lang", lang); } catch (e) {}
   applyLang();
 };
-$("notice-close").onclick = () => {
-  $("notice").hidden = true;
-  try { sessionStorage.setItem("fs-notice", "off"); } catch (e) {}
-  map.invalidateSize();
-};
-try { if (sessionStorage.getItem("fs-notice") === "off") $("notice").hidden = true; } catch (e) {}
-document.addEventListener("keydown", e => { if (e.key === "Escape" && selected) closeDetail(); });
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (selected) closeDetail(); else closeDrawer();
+});
 
 (async () => {
   $("event").innerHTML = `<option value=""></option>`;
+  setBasemap();
   applyLang();
   $("map-loading").hidden = false;
   const [divs, evs] = await Promise.all([
@@ -599,11 +708,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && selected) 
   ]);
   divs.forEach(d => $("division").insertAdjacentHTML("beforeend", `<option value="${d.name}">${d.name}</option>`));
   events = evs.filter(e => !e.id.startsWith("auto_"));  // monsoon windows are training labels only
-  events.forEach(e => $("event").insertAdjacentHTML("beforeend",
-    `<option value="${e.id}">${e.name}</option>`));
+  events.forEach(e => $("event").insertAdjacentHTML("beforeend", `<option value="${e.id}">${e.name}</option>`));
   drawCountry();
   await load();
   $("map-loading").hidden = true;
-  renderFreshness();
   toggleRivers();
+  if (innerWidth > 1100) openDrawer();
 })();
