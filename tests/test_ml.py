@@ -31,3 +31,21 @@ def test_osm_asset_kinds():
     assert _kind({"building": "cyclone_shelter"}) == "shelter"
     assert _kind({"power": "substation"}) == "substation"
     assert _kind({"amenity": "restaurant"}) is None
+
+
+def test_alert_levels_and_bangla_message():
+    from types import SimpleNamespace
+
+    from app.services.alerts import handle_message, level_for, render  # noqa: F401
+
+    assert level_for("low", True) == "none"
+    assert level_for("medium", True) == "watch"
+    assert level_for("high", False) == "warning"
+    assert level_for("high", True) == "severe"
+
+    node = SimpleNamespace(name="Chhatak", district="Sunamganj")
+    fc = SimpleNamespace(flood_prob=0.62, flood_frac=0.18, frac_p10=0.05, frac_p90=0.35)
+    run = SimpleNamespace(reference_day="2026-07-01", valid_until="2026-07-15")
+    msg = render("bn", "warning", node, fc, run, {"hospital": 1, "school": 20})
+    assert "বন্যা সতর্কবার্তা" in msg and "62%" in msg and "১ হাসপাতাল" not in msg and "1 হাসপাতাল" in msg
+    assert "FFWC" in msg

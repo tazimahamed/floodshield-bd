@@ -201,3 +201,31 @@ class Road(Base):
     ref: Mapped[str | None] = mapped_column(String(64))
     name: Mapped[str | None] = mapped_column(String(256))
     geom = mapped_column(Geometry("LINESTRING", srid=4326))
+
+
+class Subscriber(Base):
+    """A Telegram chat that asked for alerts for some upazilas."""
+
+    __tablename__ = "subscribers"
+
+    chat_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    lang: Mapped[str] = mapped_column(String(2), default="bn")
+    node_ids: Mapped[list] = mapped_column(JSON, default=list)
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AlertLog(Base):
+    """Every alert sent (or attempted), so nothing is sent twice and delivery can be audited."""
+
+    __tablename__ = "alert_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    forecast_run_id: Mapped[int | None] = mapped_column(ForeignKey("flood_forecast_runs.id", ondelete="SET NULL"))
+    chat_id: Mapped[int] = mapped_column(BigInteger, index=True)
+    node_id: Mapped[str] = mapped_column(String(64), index=True)
+    level: Mapped[str] = mapped_column(String(8))
+    message: Mapped[str] = mapped_column(String(4096))
+    status: Mapped[str] = mapped_column(String(16))  # sent / failed / test
+    error: Mapped[str | None] = mapped_column(String(1000))
+    sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
