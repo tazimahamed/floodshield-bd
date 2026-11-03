@@ -32,6 +32,9 @@ const T = {
     likelyRange: (f, a, b) => `Expected flooded share ${f}% · likely range ${a}–${b}%`,
     noForecast: "No flood forecast for this upazila yet.",
     rainTitle: "Rainfall", chartPast: "Past", chartFuture: "Forecast",
+    hospTitle: "🏥 Government hospitals",
+    hospNote: (d) => `Official DGHS Facility Registry (Ministry of Health). Shown only where the registry's location falls inside this upazila. Fetched ${d}.`,
+    beds: "beds", call: "Call", profile: "DGHS profile",
     upTitle: "Where its water comes from", upArea: "Area draining here", upOut: "Outside Bangladesh",
     upRain: "Rain forecast over that area (72h)",
     flooded: "flooded", pastPick: "Choose a past flood", mm: "mm", mmh: "mm/h",
@@ -72,6 +75,9 @@ const T = {
     likelyRange: (f, a, b) => `প্রত্যাশিত প্লাবিত অংশ ${f}% · সম্ভাব্য পরিসর ${a}–${b}%`,
     noForecast: "এই উপজেলার জন্য এখনো পূর্বাভাস নেই।",
     rainTitle: "বৃষ্টি", chartPast: "অতীত", chartFuture: "পূর্বাভাস",
+    hospTitle: "🏥 সরকারি হাসপাতাল",
+    hospNote: (d) => `সরকারি উৎস: স্বাস্থ্য অধিদপ্তরের (DGHS) ফ্যাসিলিটি রেজিস্ট্রি। রেজিস্ট্রির অবস্থান এই উপজেলার ভেতরে পড়লে তবেই দেখানো হয়। সংগ্রহ: ${d}।`,
+    beds: "শয্যা", call: "ফোন", profile: "DGHS প্রোফাইল",
     upTitle: "পানি কোথা থেকে আসে", upArea: "যত এলাকার পানি এখানে আসে", upOut: "বাংলাদেশের বাইরে",
     upRain: "ওই এলাকায় বৃষ্টির পূর্বাভাস (৭২ ঘণ্টা)",
     flooded: "প্লাবিত", pastPick: "একটি অতীতের বন্যা বাছুন", mm: "মিমি", mmh: "মিমি/ঘণ্টা",
@@ -86,7 +92,7 @@ const T = {
 let lang = "en", view = "risk", lead = "rain_24h_mm";
 let data = null, layer = null, selected = null, selectedLayer = null;
 let hind = null, events = [], eventLabels = null;
-let riverLayer = null, basinLayer = null, basinData = null, hiLayer = null, maskLayer = null;
+let riverLayer = null, basinLayer = null, basinData = null, hiLayer = null, maskLayer = null, hospLayer = null;
 let mapDark = true;
 try { lang = localStorage.getItem("fs-lang") || "en"; mapDark = localStorage.getItem("fs-map") !== "light"; } catch (e) {}
 const t = () => T[lang];
@@ -357,13 +363,14 @@ function select(id, zoom = false) {
   renderStrip();
   loadRain(id);
   showUpstream(id);
+  showHospitals(id);
 }
 
 function closeDetail() {
   selected = null;
   if (selectedLayer) layer.resetStyle(selectedLayer);
   selectedLayer = null;
-  hiLayer && hiLayer.remove();
+  [hiLayer, hospLayer].forEach(l => l && l.remove());
   $("detail").hidden = true;
   $("overview").hidden = false;
   $("strip").hidden = true;
@@ -451,6 +458,23 @@ async function showUpstream(id) {
   hiLayer = L.geoJSON({ type: "FeatureCollection", features: basinData.features.filter(f => ids.has(f.properties.id)) },
     { style: { color: "#f2a90f", weight: 1.2, dashArray: "4 3", fillColor: "#f2a90f", fillOpacity: 0.06 }, interactive: false }).addTo(map);
   hiLayer.bringToBack();
+}
+
+async function showHospitals(id) {
+  if (hospLayer) hospLayer.remove();
+  const res = await fetch(`/api/v1/nodes/${id}/hospitals`), tt = t();
+  if (!res.ok || selected?.id !== id) return;
+  const r = await res.json();
+  // no verified record: the section stays hidden rather than implying there is no hospital
+  $("hosp-panel").hidden = !r.hospitals.length;
+  if (!r.hospitals.length) return;
+  $("d-hosp").innerHTML = r.hospitals.map(h => `<li><b>${(lang === "bn" && h.name_bn) || h.name}</b>
+    <span class="meta">${h.type}${h.beds ? ` · ${nf(h.beds)} ${tt.beds}` : ""}</span><br>
+    ${h.mobile ? `<a href="tel:${h.mobile}">📞 ${tt.call} ${h.mobile}</a> · ` : ""}<a href="${h.profile_url}" target="_blank" rel="noopener">${tt.profile}</a></li>`).join("");
+  $("hosp-note").textContent = tt.hospNote(r.fetched_at ? dateFmt(r.fetched_at) : "–");
+  hospLayer = L.layerGroup(r.hospitals.map(h => L.marker([h.lat, h.lon], {
+    icon: L.divIcon({ className: "hosp-pin", html: "🏥", iconSize: [26, 26], iconAnchor: [13, 13] }) })
+    .bindTooltip(`<div class="tt-name">${(lang === "bn" && h.name_bn) || h.name}</div><div class="tt-sub">${h.type}</div>`))).addTo(map);
 }
 
 /* ---------- layers ---------- */

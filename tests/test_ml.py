@@ -52,6 +52,9 @@ def test_alert_levels_and_messages():
     assert "আশ্রয়কেন্দ্র" not in calm and "shelter" not in calm  # no alarming advice at low risk
 
     high = SimpleNamespace(flood_prob=0.62, flood_frac=0.18, frac_p10=0.05, frac_p90=0.35, risk="high")
+    hosp = [SimpleNamespace(name="Chhatak Upazila Health Complex", name_bn=None, mobile="01730324741")]
+    assert "হাসপাতাল" not in render("none", node, low, run, None, hosp)  # no hospital list at low risk
+    assert "01730324741" in render("warning", node, high, run, None, hosp)
     msg = render("warning", node, high, run)
     assert "স্কুল" not in msg and "school" not in msg  # OSM counts are incomplete: never in alerts
     assert "৬২%" in msg and "62%" in msg and "এখনই" in msg and "act now" in msg and "FFWC" in msg
@@ -63,3 +66,12 @@ def test_place_names_normalise_spellings():
     assert norm("Jashore") == "jessore"
     assert norm("Cumilla Sadar") == "comilla"
     assert norm("  Chhatak upazila ") == "chhatak"
+
+
+def test_dghs_upazila_cross_check():
+    from app.services.dghs import _same_upazila
+
+    assert _same_upazila("Char Bhadrasan", "Char Bhadrasan")
+    assert _same_upazila("Madhukhali", "Madhukhali")
+    assert not _same_upazila("Dhamrai", "Savar")  # registry point lies in the wrong upazila: rejected
+    assert not _same_upazila("Fenchuganj", "Khaliajuri")

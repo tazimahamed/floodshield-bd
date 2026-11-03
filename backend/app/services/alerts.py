@@ -21,7 +21,7 @@ import httpx
 from sqlalchemy import select
 
 from app.core.config import settings
-from app.db.models import AlertLog, FloodForecast, FloodForecastRun, Node, RainForecast, Subscriber
+from app.db.models import AlertLog, FloodForecast, HealthFacility, FloodForecastRun, Node, RainForecast, Subscriber
 from app.db.session import SessionLocal
 from app.services.places import find
 
@@ -103,7 +103,8 @@ def _mm(v, bn: bool) -> str:
     return f"{_bn(s)} মিমি" if bn else f"{s} mm"
 
 
-def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, rain: dict | None = None) -> str:
+def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, rain: dict | None = None,
+           hospitals: list | None = None) -> str:
     """One organised message (HTML): Bangla first, then English, worded for the risk level."""
     rain = rain or {}
     start, end = run.reference_day, run.valid_until
@@ -133,6 +134,11 @@ def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, rai
         en.append(f"• May flood: about {frac}% of the upazila (likely {p10}–{p90}%)")
     bn += ["", f"<b>✅ করণীয়</b>: {ADVICE[level][0]}"]
     en += ["", f"<b>✅ What to do</b>: {ADVICE[level][1]}"]
+    if level != "none" and hospitals:  # DGHS registry, location-verified only
+        bn += ["", "<b>🏥 সরকারি হাসপাতাল</b> (স্বাস্থ্য অধিদপ্তর):"] + [
+            f"• {html.escape(h.name_bn or h.name)}" + (f" — ☎️ {h.mobile}" if h.mobile else "") for h in hospitals]
+        en += ["", "<b>🏥 Government hospitals</b> (DGHS):"] + [
+            f"• {html.escape(h.name)}" + (f" — ☎️ {h.mobile}" if h.mobile else "") for h in hospitals]
     return ("\n".join(bn) + "\n\n━━━━━━━━━━ English ━━━━━━━━━━\n" + "\n".join(en) +
             f"\n\n<i>ℹ️ {FOOT[0]}\n{FOOT[1]}</i>")
 
@@ -206,6 +212,11 @@ def _rain(db, node_id: str) -> dict:
             "up72": sum(v * a for v, a in got) / area if area else None}
 
 
+def _hospitals(db, node_id: str, n: int = 2) -> list:
+    return db.scalars(select(HealthFacility).where(HealthFacility.node_id == node_id, HealthFacility.verified)
+                      .order_by(HealthFacility.beds.desc().nullslast()).limit(n)).all()
+
+
 def _latest_run(db) -> FloodForecastRun | None:
     return db.scalars(select(FloodForecastRun).order_by(FloodForecastRun.id.desc()).limit(1)).first()
 
@@ -240,7 +251,7 @@ def dispatch_alerts() -> int:
                 if last and LEVEL_RANK[last.level] >= LEVEL_RANK[level] and now - last.sent_at < REPEAT_AFTER:
                     continue
                 node, rain = db.get(Node, node_id), _rain(db, node_id)
-                text = render(level, node, fc, run, rain)
+                text = render(level, node, fc, run, rain, _hospitals(db, node.id))
                 entry = AlertLog(forecast_run_id=run.id, chat_id=sub.chat_id, node_id=node_id, level=level,
                                  message=text, status="sent")
                 try:
@@ -277,7 +288,7 @@ def _status_messages(db, sub: Subscriber, node_ids: list[str]) -> list[tuple[str
         if fc and node:
             level = level_for(fc.risk, fc.flood_prob)
             rain = _rain(db, i)
-            out.append((render(level, node, fc, run, rain), voice_script(level, node, rain)))
+            out.append((render(level, node, fc, run, rain, _hospitals(db, node.id)), voice_script(level, node, rain)))
     return out
 
 

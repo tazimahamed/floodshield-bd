@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select, text
 
-from app.db.models import Asset, Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, IngestRun, ModelVersion, Node, RainForecast, River
+from app.db.models import Asset, Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, HealthFacility, IngestRun, ModelVersion, Node, RainForecast, River
 from app.db.session import SessionLocal
 from app.services.impact import impact
 
@@ -241,6 +241,28 @@ def node_report(node_id: str):
     if not r:
         raise HTTPException(404, "Unknown upazila")
     return r
+
+
+@router.get("/nodes/{node_id}/hospitals")
+def node_hospitals(node_id: str):
+    """Government hospitals in this upazila from the official DGHS Facility Registry, only those whose
+    registry coordinates fall inside this upazila AND whose registry upazila name matches it."""
+    with SessionLocal() as db:
+        rows = db.execute(select(HealthFacility, func.ST_X(HealthFacility.geom), func.ST_Y(HealthFacility.geom))
+                          .where(HealthFacility.node_id == node_id, HealthFacility.verified)
+                          .order_by(HealthFacility.beds.desc().nullslast(), HealthFacility.name)).all()
+        run = db.scalars(select(IngestRun).where(IngestRun.source == "dghs-facility-registry", IngestRun.status == "done")
+                         .order_by(IngestRun.id.desc()).limit(1)).first()
+        return {
+            "source": "DGHS Facility Registry (Ministry of Health and Family Welfare)",
+            "source_url": "https://hrm.dghs.gov.bd/public/facility-registry",
+            "fetched_at": run.finished_at.isoformat() if run else None,
+            "hospitals": [{
+                "id": h.id, "name": h.name, "name_bn": h.name_bn, "type": h.facility_type, "beds": h.beds,
+                "mobile": h.mobile, "lat": y, "lon": x, "dghs_updated_at": h.dghs_updated_at,
+                "profile_url": f"https://hrm.dghs.gov.bd/public/facility-registry/facilities/{h.id}/profile",
+            } for h, x, y in rows],
+        }
 
 
 @router.get("/hindcast")

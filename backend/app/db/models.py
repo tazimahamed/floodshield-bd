@@ -230,3 +230,26 @@ class AlertLog(Base):
     status: Mapped[str] = mapped_column(String(16))  # sent / failed / test
     error: Mapped[str | None] = mapped_column(String(1000))
     sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class HealthFacility(Base):
+    """Government hospital from the official DGHS Facility Registry. Only `verified` rows are shown."""
+
+    __tablename__ = "health_facilities"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)  # DGHS facility id
+    code: Mapped[str | None] = mapped_column(String(32))
+    name: Mapped[str] = mapped_column(String(256))
+    name_bn: Mapped[str | None] = mapped_column(String(256))
+    facility_type: Mapped[str | None] = mapped_column(String(96), index=True)
+    is_active: Mapped[bool] = mapped_column(Boolean)
+    beds: Mapped[int | None] = mapped_column(Integer)
+    has_emergency: Mapped[str | None] = mapped_column(String(16))
+    mobile: Mapped[str | None] = mapped_column(String(32))
+    dghs_division: Mapped[str | None] = mapped_column(String(64))
+    dghs_district: Mapped[str | None] = mapped_column(String(64))
+    dghs_upazila: Mapped[str | None] = mapped_column(String(96))
+    node_id: Mapped[str | None] = mapped_column(ForeignKey("nodes.id", ondelete="SET NULL"), index=True)
+    geom = mapped_column(Geometry("POINT", srid=4326))
+    dghs_updated_at: Mapped[str | None] = mapped_column(String(40))
+    verified: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
