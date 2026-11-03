@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -9,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.routes import health_payload, router
 from app.core.config import settings
+from app.ml.features import graph_tables
 from app.ml.forecast import safe_run_forecast
 from app.services.alerts import dispatch_alerts, poll_updates
 from app.services.era5 import refresh_recent
@@ -31,8 +33,10 @@ def gfs_then_flood_forecast() -> None:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     scheduler = BackgroundScheduler(timezone="UTC")
+    # first run right after start, so a restarted server never shows an old forecast
     scheduler.add_job(gfs_then_flood_forecast, "interval", hours=settings.ingest_interval_hours,
-                      id="gfs_ingest", max_instances=1, coalesce=True)
+                      id="gfs_ingest", max_instances=1, coalesce=True, next_run_time=datetime.now(timezone.utc))
+    scheduler.add_job(graph_tables, id="warm_graph")  # build the upstream graph cache in the background
     if settings.telegram_bot_token:
         scheduler.add_job(poll_updates, "interval", seconds=30, id="telegram_poll", max_instances=1, coalesce=True)
     scheduler.add_job(refresh_recent, "cron", hour=3, id="era5_refresh", max_instances=1, coalesce=True)
@@ -59,3 +63,8 @@ app.mount("/static", StaticFiles(directory=WEB_DIR / "static"), name="static")
 @app.get("/", include_in_schema=False)
 def index():
     return FileResponse(WEB_DIR / "index.html")
+
+
+@app.get("/upazila/{node_id}", include_in_schema=False)
+def upazila_page(node_id: str):
+    return FileResponse(WEB_DIR / "report.html")

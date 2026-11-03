@@ -1,5 +1,5 @@
 import json
-from datetime import date
+from datetime import date, timedelta
 
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select, text
@@ -228,6 +228,47 @@ def simulate_ripple(ids: str = Query(..., description="Comma-separated upazila i
     if unknown := [i for i in node_ids if i not in known]:
         raise HTTPException(404, f"Unknown upazila ids: {unknown[:5]}")
     return impact(node_ids)
+
+
+@router.get("/nodes/{node_id}/report")
+def node_report(node_id: str):
+    """Flood history of one upazila (Sentinel-1, 2017-2025) with the rain before each window."""
+    from app.services.report import upazila_report
+
+    r = upazila_report(node_id)
+    if not r:
+        raise HTTPException(404, "Unknown upazila")
+    return r
+
+
+@router.get("/hindcast")
+def hindcast_day(day: date = Query(...)):
+    """Model output for a past day (ERA5-Land inputs), plus what Sentinel-1 actually saw in the
+    15-day window containing that day, when one was mapped."""
+    from app.ml.forecast import hindcast, risk_level
+
+    with SessionLocal() as db:
+        era5_last = db.scalar(select(func.max(Era5Daily.day)))
+        first = db.scalar(select(func.min(Era5Daily.day))) + timedelta(days=31)
+        last = era5_last - timedelta(days=2)
+        if not first <= day <= last:
+            raise HTTPException(400, f"Pick a day between {first} and {last} (ERA5-Land history).")
+        event = db.scalars(select(FloodEvent).where(FloodEvent.post_start <= day, FloodEvent.post_end >= day)
+                           .order_by(FloodEvent.id.like("auto_%"), FloodEvent.post_start.desc()).limit(1)).first()
+        observed = {}
+        if event:
+            observed = dict(db.execute(select(FloodLabel.node_id, FloodLabel.abnormal_frac)
+                                       .where(FloodLabel.event_id == event.id)).all())
+    version, pred = hindcast(day)
+    return {
+        "day": day.isoformat(), "model_version": version, "range": [first.isoformat(), last.isoformat()],
+        "inputs": "ERA5-Land reanalysis for the past 30 days and the next 3 days (perfect rain forecast)",
+        "observed_event": None if not event else {
+            "id": event.id, "name": event.name, "start": event.post_start.isoformat(), "end": event.post_end.isoformat()},
+        "upazilas": {n: {"flood_prob": round(float(r.prob), 4), "flood_frac": round(float(r.frac), 4),
+                         "flood_risk": risk_level(r.prob), "observed_frac": observed.get(n)}
+                     for n, r in pred.iterrows()},
+    }
 
 
 @router.get("/models")

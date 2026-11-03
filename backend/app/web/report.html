@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upazila Flood Report · FloodShield BD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/report.css">
+</head>
+<body>
+  <div class="official" data-i18n="official"></div>
+  <header>
+    <div class="brand">
+      <a href="/" class="back" data-i18n="back"></a>
+      <div>
+        <h1 id="title">…</h1>
+        <p id="where"></p>
+      </div>
+    </div>
+    <div class="controls"><button id="lang" class="ghost">বাংলা</button></div>
+  </header>
+
+  <div class="report">
+    <section class="kpis" id="kpis"></section>
+
+    <section class="card" id="insight-card">
+      <h2 data-i18n="insightTitle"></h2>
+      <div id="insight"></div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="timelineTitle"></h2>
+      <p class="muted small" data-i18n="timelineNote"></p>
+      <canvas id="timeline" height="200"></canvas>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="scatterTitle"></h2>
+      <p class="muted small" data-i18n="scatterNote"></p>
+      <canvas id="scatter" height="260"></canvas>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="whatIfTitle"></h2>
+      <div id="whatif"></div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="tableTitle"></h2>
+      <div class="table-wrap"><table id="table"></table></div>
+    </section>
+
+    <section class="card two">
+      <div>
+        <h2 data-i18n="monsoonTitle"></h2>
+        <canvas id="monsoon" height="200"></canvas>
+        <p class="muted small" data-i18n="monsoonNote"></p>
+      </div>
+      <div>
+        <h2 data-i18n="wettestTitle"></h2>
+        <ol id="wettest"></ol>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="sourcesTitle"></h2>
+      <p class="small muted" id="sources"></p>
+    </section>
+  </div>
+  <script src="/static/report.js"></script>
+</body>
+</html>

@@ -56,3 +56,5 @@ canvas { width: 100%; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .chips span { background: var(--bg); border-radius: 12px; padding: 2px 8px; font-size: 13px; }
 .asset-dot { border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 0 2px #000; }
+.report-link { display: block; text-align: center; text-decoration: none; border-radius: 8px; padding: 8px; font-size: 14px; }
+#day { padding: 5px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); font: inherit; font-size: 14px; }

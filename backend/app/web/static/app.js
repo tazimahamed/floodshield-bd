@@ -9,7 +9,13 @@ const T = {
     chartNote: "Hourly precipitation (mm), NOAA GFS via Open-Meteo. Grey = past, blue = forecast.",
     noRain: "No rainfall run yet. Waiting for the first ingest.",
     assetsTitle: "Critical facilities here (OpenStreetMap)", noAssets: "None mapped in OpenStreetMap",
-    rippleBtn: "What if this upazila floods?", rippleTitle: "If it floods",
+    rippleBtn: "Flood history & what-if report →",
+    dateLabel: "Date", today: "Back to today",
+    hindTitle: d => `Model check for ${d} (past date)`,
+    hindNote: "Past date: the model is run on ERA5-Land reanalysis (actual rain), as if the rain forecast were perfect. Future dates beyond today cannot be forecast; the live forecast covers the next 15 days.",
+    observed: (name, hit, total) => `Sentinel-1 saw ${total} upazilas flooded (≥5%) in “${name}”; the model put ${hit} of them at medium/high risk.`,
+    noObserved: "No Sentinel-1 window was mapped for this date (only 1 Jun – 28 Sep 2017–2025 and the 5 named floods).",
+    loading: "Running the model for this date…", rippleTitle: "If it floods",
     powerRipple: "Upazilas fed by a substation here (may lose power)",
     healthRipple: "Upazilas whose every hospital within 25 km is here",
     roadKm: "major road under water", atRisk: "In medium/high-risk upazilas", none: "none", assumptions: "Assumptions",
@@ -37,7 +43,13 @@ const T = {
     chartNote: "ঘণ্টাভিত্তিক বৃষ্টিপাত (মিমি), NOAA GFS (Open-Meteo)। ধূসর = অতীত, নীল = পূর্বাভাস।",
     noRain: "এখনো বৃষ্টির ডেটা আনা হয়নি। প্রথম ইনজেস্টের অপেক্ষায়।",
     assetsTitle: "এখানকার গুরুত্বপূর্ণ স্থাপনা (OpenStreetMap)", noAssets: "OpenStreetMap-এ কিছু চিহ্নিত নেই",
-    rippleBtn: "এই উপজেলা ডুবলে কী হবে?", rippleTitle: "ডুবে গেলে",
+    rippleBtn: "বন্যার ইতিহাস ও \"ডুবলে কী হবে\" রিপোর্ট →",
+    dateLabel: "তারিখ", today: "আজকে ফিরুন",
+    hindTitle: d => `${d} তারিখের জন্য মডেল যাচাই (অতীত তারিখ)`,
+    hindNote: "অতীত তারিখ: মডেল ERA5-Land-এর আসল বৃষ্টি দিয়ে চালানো হয়েছে, যেন বৃষ্টির পূর্বাভাস নিখুঁত ছিল। আজকের পরের তারিখের পূর্বাভাস দেওয়া যায় না; চলমান পূর্বাভাস আগামী ১৫ দিনের।",
+    observed: (name, hit, total) => `“${name}”-এ Sentinel-1 ${total}টি উপজেলায় বন্যা (≥৫%) দেখেছে; মডেল এর ${hit}টিকে মাঝারি/উচ্চ ঝুঁকিতে রেখেছিল।`,
+    noObserved: "এই তারিখের জন্য কোনো Sentinel-1 সময়কাল ম্যাপ করা হয়নি (শুধু ২০১৭–২০২৫-এর ১ জুন – ২৮ সেপ্টেম্বর ও ৫টি বড় বন্যা)।",
+    loading: "এই তারিখের জন্য মডেল চলছে…", rippleTitle: "ডুবে গেলে",
     powerRipple: "এখানকার সাবস্টেশন থেকে বিদ্যুৎ পায় এমন উপজেলা (বিদ্যুৎ যেতে পারে)",
     healthRipple: "যেসব উপজেলার ২৫ কিমির মধ্যে সব হাসপাতাল এখানে",
     roadKm: "প্রধান সড়ক পানির নিচে", atRisk: "মাঝারি/উচ্চ ঝুঁকির উপজেলায়", none: "নেই", assumptions: "অনুমান",
@@ -56,6 +68,7 @@ const T = {
     abnormal: "অস্বাভাবিক বন্যা (স্বাভাবিক বর্ষার পানির বাইরে)", total: "মৌসুমি পানিসহ মোট",
   },
 };
+let hind = null;  // hindcast for a past date, or null for the live forecast
 let lang = "en", lead = "rain_72h_mm", data = null, layer = null, selected = null;
 let riverLayer = null, basinLayer = null, hiLayer = null;
 let events = [], eventLabels = null;
@@ -115,6 +128,7 @@ async function load() {
   const div = document.getElementById("division").value;
   const res = await fetch("/api/v1/upazilas" + (div ? `?division=${encodeURIComponent(div)}` : ""));
   data = await res.json();
+  if (hind) applyHindcast();
   if (layer) layer.remove();
   layer = L.geoJSON(data, {
     style: f => ({ fillColor: fill(f.properties), weight: 0.6, color: "#555", fillOpacity: 0.85 }),
@@ -134,8 +148,41 @@ function restyle() {
   renderSidebar();
 }
 
+function applyHindcast() {
+  data.features.forEach(f => Object.assign(f.properties, hind.upazilas[f.properties.id] || {}));
+}
+
+async function selectDay() {
+  const day = document.getElementById("day").value, box = document.getElementById("flood-summary"), t = T[lang];
+  const live = !day || day >= new Date().toISOString().slice(0, 10);
+  document.getElementById("day-clear").hidden = live;
+  if (live) { hind = null; document.getElementById("day").value = ""; await load(); return; }
+  box.innerHTML = `<p>${t.loading}</p>`;
+  const res = await fetch(`/api/v1/hindcast?day=${day}`);
+  if (!res.ok) { box.innerHTML = `<p>${(await res.json()).detail}</p>`; return; }
+  hind = await res.json();
+  document.querySelectorAll("#lead button").forEach(x => x.classList.toggle("on", x.dataset.lead === "flood_prob"));
+  lead = "flood_prob"; legend.remove(); legend.addTo(map);
+  applyHindcast(); restyle();
+}
+
+function renderHindSummary(box, t) {
+  const n = k => data.features.filter(f => f.properties.flood_risk === k).length;
+  const obs = Object.entries(hind.upazilas).filter(([, v]) => v.observed_frac != null && v.observed_frac >= 0.05);
+  const hit = obs.filter(([, v]) => v.flood_risk !== "low").length;
+  box.innerHTML = `<p><b>${t.hindTitle(hind.day)}</b></p>
+    <div class="stats">
+      <div><span style="color:#d7301f">${n("high")}</span><small>${t.high}</small></div>
+      <div><span style="color:#b37f00">${n("medium")}</span><small>${t.medium}</small></div>
+      <div><span>${n("low")}</span><small>${t.low}</small></div>
+    </div>
+    <p class="small">${hind.observed_event ? t.observed(hind.observed_event.name, hit, obs.length) : t.noObserved}</p>
+    <p class="small muted">${t.hindNote}<br>${hind.model_version}</p>`;
+}
+
 function renderFloodSummary() {
   const r = data.flood_forecast_run, box = document.getElementById("flood-summary"), t = T[lang];
+  if (hind) { renderHindSummary(box, t); return; }
   if (!r) { box.innerHTML = `<p>${t.floodEmpty}</p>`; return; }
   const n = k => data.features.filter(f => f.properties.flood_risk === k).length;
   const m = r.metrics || {}, b = r.baseline || {};
@@ -190,7 +237,7 @@ async function showDetail(p) {
   document.getElementById("d-72").textContent = fmt(p.rain_72h_mm);
   showUpstream(p.id);
   showAssets(p.id);
-  document.getElementById("ripple").hidden = true;
+  document.getElementById("report-link").href = `/upazila/${p.id}`;
   const res = await fetch(`/api/v1/nodes/${p.id}/rain`);
   if (!res.ok) return;
   drawChart((await res.json()).hourly);
@@ -237,19 +284,8 @@ async function showAssets(id) {
   }).addTo(map);
 }
 
-async function showRipple() {
-  const box = document.getElementById("ripple"), t = T[lang];
-  const r = await (await fetch(`/api/v1/simulate/ripple?ids=${selected.id}`)).json();
-  const list = rows => rows.length ? rows.map(u => `${u.name} <span class="muted">(${u.district})</span>`).join(", ") : t.none;
-  const road = Object.values(r.road_km).reduce((a, b) => a + b, 0);
-  box.hidden = false;
-  box.innerHTML = `<h3>${t.rippleTitle}: ${selected.name}</h3>
-    <b>${road.toFixed(1)} km</b> ${t.roadKm}<br>
-    <b>${t.powerRipple}:</b> ${list(r.power_ripple)}<br>
-    <b>${t.healthRipple}:</b> ${list(r.health_ripple)}
-    <details class="small muted"><summary>${t.assumptions}</summary>${r.assumptions.join("<br>")}</details>`;
-}
-document.getElementById("ripple-btn").onclick = showRipple;
+document.getElementById("day").onchange = selectDay;
+document.getElementById("day-clear").onclick = () => { document.getElementById("day").value = ""; selectDay(); };
 
 async function toggleRivers() {
   if (!document.getElementById("show-rivers").checked) { riverLayer && riverLayer.remove(); return; }
@@ -295,7 +331,13 @@ document.querySelectorAll("#lead button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#lead button").forEach(x => x.classList.remove("on"));
   b.classList.add("on"); lead = b.dataset.lead; legend.remove(); legend.addTo(map); restyle();
 });
-document.getElementById("lang").onclick = () => { lang = lang === "en" ? "bn" : "en"; applyLang(); };
+document.getElementById("lang").onclick = () => {
+  lang = lang === "en" ? "bn" : "en";
+  try { localStorage.setItem("fs-lang", lang); } catch (e) {}
+  applyLang();
+};
+try { lang = localStorage.getItem("fs-lang") || "en"; } catch (e) {}
+document.getElementById("day").max = new Date().toISOString().slice(0, 10);
 document.getElementById("division").onchange = load;
 async function selectEvent() {
   const id = document.getElementById("event").value, info = document.getElementById("event-info"), t = T[lang];

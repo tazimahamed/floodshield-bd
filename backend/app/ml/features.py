@@ -5,6 +5,7 @@ ERA5-Land for the forecast days (a "perfect forecast"); live forecasts use NOAA 
 """
 
 from datetime import date, timedelta
+from functools import lru_cache
 
 import numpy as np
 import pandas as pd
@@ -25,6 +26,7 @@ def load_daily(start: date, end: date) -> dict[str, pd.DataFrame]:
     return {v: df.pivot(index="day", columns="node_id", values=v).sort_index() for v in VARS}
 
 
+@lru_cache(maxsize=1)  # the graph only changes when scripts/build_graph.py is re-run (then restart)
 def graph_tables() -> tuple[pd.DataFrame, pd.DataFrame]:
     """(static upazila table, upstream weights). Weights: rows = upazila, columns = basin,
     value = basin area km2 if the basin drains into the upazila, so a weighted mean over the
@@ -34,15 +36,26 @@ def graph_tables() -> tuple[pd.DataFrame, pd.DataFrame]:
             select id as node_id, point_lat as lat, point_lon as lon,
                    st_area(geom::geography) / 1e6 as area_km2
             from nodes where node_type = 'upazila' order by id"""), c).set_index("node_id")
-        up = pd.read_sql(text("""
-            with recursive up(upz, id) as (
-                select src, dst from edges where edge_type = 'in_basin'
-                union
-                select up.upz, e.src from edges e join up on e.dst = up.id where e.edge_type = 'drains_to'
-            )
-            select up.upz, up.id as basin, st_area(n.geom::geography) / 1e6 as km2,
-                   1 - coalesce(n.bd_share, 0) as outside
-            from up join nodes n on n.id = up.id"""), c)
+        edges = c.execute(text("select src, dst, edge_type from edges")).all()
+        basins = pd.read_sql(text("""
+            select id as basin, st_area(geom::geography) / 1e6 as km2, 1 - coalesce(bd_share, 0) as outside
+            from nodes where node_type = 'basin'"""), c).set_index("basin")
+    # walk the drainage graph upstream in Python (1.7k edges; far faster than a recursive CTE)
+    feeders: dict[str, list[str]] = {}
+    for src, dst, kind in edges:
+        if kind == "drains_to":
+            feeders.setdefault(dst, []).append(src)
+    rows = []
+    for upz, first in ((s_, d) for s_, d, k in edges if k == "in_basin"):
+        stack = [first]
+        seen = {first}
+        while stack:
+            for f in feeders.get(stack.pop(), []):
+                if f not in seen:
+                    seen.add(f)
+                    stack.append(f)
+        rows += [(upz, b) for b in seen]
+    up = pd.DataFrame(rows, columns=["upz", "basin"]).drop_duplicates().join(basins, on="basin")
     w = up.pivot_table(index="upz", columns="basin", values="km2", fill_value=0.0)
     w_out = (up.assign(km2=up.km2 * up.outside)
                .pivot_table(index="upz", columns="basin", values="km2", fill_value=0.0)

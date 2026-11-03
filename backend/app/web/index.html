@@ -30,6 +30,9 @@
       </div>
       <label class="tog"><input type="checkbox" id="show-rivers" checked> <span data-i18n="rivers"></span></label>
       <label class="tog"><input type="checkbox" id="show-basins"> <span data-i18n="upstream"></span></label>
+      <label class="tog" title=""><span data-i18n="dateLabel"></span>
+        <input type="date" id="day" min="2017-01-31"></label>
+      <button id="day-clear" class="ghost" data-i18n="today" hidden></button>
       <button id="lang" class="ghost">বাংলা</button>
     </div>
   </header>
@@ -60,8 +63,7 @@
         <p class="muted small" data-i18n="chartNote"></p>
         <div id="d-up" class="upbox"></div>
         <div id="d-assets" class="upbox"></div>
-        <button id="ripple-btn" class="ripple-btn" data-i18n="rippleBtn"></button>
-        <div id="ripple" class="upbox" hidden></div>
+        <a id="report-link" class="ripple-btn report-link" target="_blank" data-i18n="rippleBtn"></a>
       </section>
 
       <section class="card">

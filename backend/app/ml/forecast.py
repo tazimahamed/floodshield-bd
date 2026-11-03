@@ -6,7 +6,8 @@ Soil moisture comes from the last ERA5-Land day.
 """
 
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
+from functools import lru_cache
 
 import joblib
 import pandas as pd
@@ -83,6 +84,21 @@ def run_forecast() -> int:
         db.commit()
         log.info("flood forecast %d: model %s, rain run %d", run.id, run.model_version, rain_run.id)
         return run.id
+
+
+@lru_cache(maxsize=64)
+def hindcast(day: date) -> tuple[str, pd.DataFrame]:
+    """What the active model says for a past reference day, using ERA5-Land for everything
+    (including the 3 "forecast" days, i.e. a perfect rain forecast). Returns (version, predictions)."""
+    model = load_model()
+    if model is None:
+        raise RuntimeError("No active flood model")
+    t0 = pd.Timestamp(day)
+    daily = load_daily((t0 - timedelta(days=32)).date(), (t0 + timedelta(days=FORECAST_DAYS)).date())
+    if daily["precip_mm"].index.max() < t0 + timedelta(days=FORECAST_DAYS - 1):
+        raise ValueError("ERA5-Land does not cover this date yet")
+    static, weights = graph_tables()
+    return model["info"]["version"], model["model"].predict(features_at(t0, daily, static, weights))
 
 
 def safe_run_forecast() -> None:
