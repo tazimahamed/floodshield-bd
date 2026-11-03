@@ -1,20 +1,28 @@
-"""Bangla text-to-speech for voice alerts, fully local and free: Meta MMS-TTS (facebook/mms-tts-ben,
-VITS). Licence CC-BY-NC 4.0 — fine for this non-commercial service; swap the model before any
-commercial use. Output is OGG/Opus so Telegram shows it as a playable voice note.
+"""Bangla text-to-speech for voice alerts. Output is OGG/Opus so Telegram shows a voice note.
+
+1. Microsoft "Nabanita" (bn-BD female neural voice) through the free edge-tts endpoint — the
+   most natural voice, but an unofficial endpoint that could stop working at any time.
+2. Fallback, fully local: Meta MMS-TTS (facebook/mms-tts-ben, single male voice, CC-BY-NC 4.0),
+   so a voice note is always produced even without that endpoint.
 """
 
 import hashlib
+import logging
 import io
 import subprocess
 import threading
 import wave
+from pathlib import Path
 
 import numpy as np
 
 from app.core.config import settings
 
 MODEL_ID = "facebook/mms-tts-ben"
+EDGE_VOICE = "bn-BD-NabanitaNeural"
+EDGE_RATE = "-8%"  # a little slower than default: easier to follow for elderly listeners
 CACHE = settings.data_dir / "processed" / "tts"
+log = logging.getLogger(__name__)
 _lock = threading.Lock()
 _model = None
 
@@ -48,18 +56,54 @@ def _wav(text: str) -> bytes:
     return buf.getvalue()
 
 
+def _edge_mp3(text: str) -> bytes:
+    import asyncio
+
+    import edge_tts
+
+    async def run() -> bytes:
+        out = bytearray()
+        async for chunk in edge_tts.Communicate(text, EDGE_VOICE, rate=EDGE_RATE).stream():
+            if chunk["type"] == "audio":
+                out += chunk["data"]
+        return bytes(out)
+
+    audio = asyncio.run(run())
+    if not audio:
+        raise RuntimeError("edge-tts returned no audio")
+    return audio
+
+
+def _to_ogg(audio: bytes, fmt: str, path) -> None:
+    """Convert via a temp file: reading MP3 from a pipe on Windows truncated the audio."""
+    import tempfile
+
+    import imageio_ffmpeg
+    with tempfile.TemporaryDirectory() as tmp:
+        src = Path(tmp) / f"in.{fmt}"
+        src.write_bytes(audio)
+        out = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-loglevel", "error", "-i", str(src),
+                              "-c:a", "libopus", "-b:a", "32k", "-ar", "48000", str(path)], capture_output=True)
+    if out.returncode != 0:
+        raise RuntimeError(out.stderr.decode(errors="replace")[:500])
+
+
 def bangla_voice_ogg(text: str) -> bytes:
-    """OGG/Opus voice note for a Bangla text, cached by content."""
+    """OGG/Opus voice note for a Bangla text: female Nabanita voice, local MMS voice as fallback."""
     CACHE.mkdir(parents=True, exist_ok=True)
-    path = CACHE / f"{hashlib.sha256((MODEL_ID + text).encode()).hexdigest()[:24]}.ogg"
-    if not path.exists():
-        import imageio_ffmpeg
-        out = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-loglevel", "error", "-f", "wav", "-i", "pipe:0",
-                              "-c:a", "libopus", "-b:a", "32k", "-ar", "48000", str(path)],
-                             input=_wav(text), capture_output=True)
-        if out.returncode != 0:
-            raise RuntimeError(out.stderr.decode(errors="replace")[:500])
-    return path.read_bytes()
+    key = lambda v: CACHE / f"{hashlib.sha256((v + text).encode()).hexdigest()[:24]}.ogg"  # noqa: E731
+    edge_path = key(EDGE_VOICE + EDGE_RATE)
+    if edge_path.exists():
+        return edge_path.read_bytes()
+    try:
+        _to_ogg(_edge_mp3(text), "mp3", edge_path)
+        return edge_path.read_bytes()
+    except Exception:
+        log.warning("Nabanita voice unavailable, using the local MMS voice", exc_info=True)
+    mms_path = key(MODEL_ID)
+    if not mms_path.exists():
+        _to_ogg(_wav(text), "wav", mms_path)
+    return mms_path.read_bytes()
 
 
 def warm() -> None:
