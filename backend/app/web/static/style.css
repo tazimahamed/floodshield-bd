@@ -182,7 +182,9 @@ details.more summary { cursor: pointer; }
 .how { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
 .how li { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted); }
 .how b { width: 22px; height: 22px; border-radius: 50%; background: var(--brand-50); color: var(--brand); display: grid; place-items: center; font-size: 12px; flex-shrink: 0; }
-.side-foot { padding: 4px 4px 10px; line-height: 1.6; }
+.sources { padding: 4px 4px 10px; line-height: 1.7; }
+.sources summary { cursor: pointer; font-weight: 600; }
+.sources div { margin-top: 6px; }
 .d-name { font-size: 22px; font-weight: 700; margin-top: 8px; }
 .risk-card { margin-top: 12px; border-radius: var(--radius); padding: 14px; background: var(--low-bg); }
 .risk-card.medium { background: var(--med-bg); } .risk-card.high { background: var(--high-bg); }

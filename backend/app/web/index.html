@@ -94,7 +94,6 @@
         </div>
         <div id="overview">
           <section class="panel status" id="status"></section>
-          <section class="panel" id="at-risk" hidden></section>
           <section class="panel">
             <div class="panel-head"><h2 id="top-title"></h2></div>
             <ol id="top" class="rank"></ol>
@@ -130,12 +129,11 @@
             <div class="panel-head"><h2 data-i18n="upTitle"></h2></div>
             <div id="d-up"></div>
           </section>
-          <section class="panel">
-            <div class="panel-head"><h2 data-i18n="assetsTitle"></h2></div>
-            <div id="d-assets"></div>
-          </section>
         </div>
-        <footer class="side-foot small muted" id="source"></footer>
+        <details class="sources small muted" id="sources-box">
+          <summary data-i18n="sourcesTitle"></summary>
+          <div id="source"></div>
+        </details>
       </div>
     </aside>
   </main>

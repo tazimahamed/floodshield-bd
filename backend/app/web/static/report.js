@@ -16,10 +16,6 @@ const T = {
     timelineNote: "Each bar is one 15-day period: the share of the upazila under abnormal flood water. Red = flood (≥5%).",
     scatterTitle: "How much rain led to flooding?",
     scatterNote: "Each dot is one period: rain in the 15 days before it (→) and the share that flooded (↑). Red = flood; big dots = named floods.",
-    whatIfTitle: "If this upazila floods", whatIfSub: "OpenStreetMap (volunteer-mapped, incomplete: real numbers are higher) · modelled ripple effects",
-    facilities: "Facilities in the upazila", roads: "Major road under water", power: "May lose power",
-    powerSub: "Upazilas fed by a substation here", health: "May lose hospital access",
-    healthSub: "Every hospital within 25 km is here", none: "None", assumptions: "Assumptions behind these numbers",
     tableTitle: "Every mapped period", onlyFloods: "Floods only",
     cols: ["Period", "Event", "Flood?", "Abnormal water", "All water", "Rain 7 d before", "Rain 15 d before",
            "Upstream 15 d before", "Rain during", "Upstream during"],
@@ -28,8 +24,6 @@ const T = {
     wettestTitle: "Wettest days since 2017",
     methodTitle: "Method & sources",
     method: "Flood extent: Sentinel-1 radar, change detection against the dry season and against the same period in other years (UN-SPIDER method), so normal monsoon water such as haors is not counted. Rain: ERA5-Land daily reanalysis, area-averaged over the upazila and over every basin that drains into it (HydroBASINS). Radar sees water extent, not depth, and a satellite pass every 12 days can miss short floods.",
-    kinds: { hospital: "Hospitals", clinic: "Clinics", school: "Schools", college: "Colleges", shelter: "Shelters",
-             substation: "Substations", power_plant: "Power plants" },
     mm: "mm", notFound: "Upazila not found",
   },
   bn: {
@@ -48,10 +42,6 @@ const T = {
     timelineNote: "প্রতিটি দণ্ড একটি ১৫-দিনের সময়কাল: উপজেলার কত অংশ অস্বাভাবিক বন্যার পানির নিচে। লাল = বন্যা (≥৫%)।",
     scatterTitle: "কত বৃষ্টিতে বন্যা হয়েছে?",
     scatterNote: "প্রতিটি বিন্দু একটি সময়কাল: আগের ১৫ দিনের বৃষ্টি (→) ও প্লাবিত অংশ (↑)। লাল = বন্যা; বড় বিন্দু = বড় বন্যা।",
-    whatIfTitle: "এই উপজেলা ডুবলে", whatIfSub: "OpenStreetMap (স্বেচ্ছাসেবকদের আঁকা, অসম্পূর্ণ: আসল সংখ্যা বেশি) · আনুমানিক প্রভাব",
-    facilities: "উপজেলার স্থাপনা", roads: "প্রধান সড়ক পানির নিচে", power: "বিদ্যুৎ যেতে পারে",
-    powerSub: "এখানকার সাবস্টেশন থেকে বিদ্যুৎ পায় এমন উপজেলা", health: "হাসপাতাল-সুবিধা হারাতে পারে",
-    healthSub: "২৫ কিমির মধ্যে সব হাসপাতাল এখানে", none: "নেই", assumptions: "এই হিসাবের অনুমানগুলো",
     tableTitle: "ম্যাপ করা সব সময়কাল", onlyFloods: "শুধু বন্যা",
     cols: ["সময়কাল", "ঘটনা", "বন্যা?", "অস্বাভাবিক পানি", "মোট পানি", "আগের ৭ দিন বৃষ্টি", "আগের ১৫ দিন বৃষ্টি",
            "উজানে আগের ১৫ দিন", "চলাকালীন বৃষ্টি", "উজানে চলাকালীন"],
@@ -60,13 +50,9 @@ const T = {
     wettestTitle: "২০১৭ থেকে সবচেয়ে বেশি বৃষ্টির দিন",
     methodTitle: "পদ্ধতি ও উৎস",
     method: "বন্যার বিস্তার: Sentinel-1 রাডার; শুকনো মৌসুম ও অন্য বছরের একই সময়ের সাথে তুলনা (UN-SPIDER পদ্ধতি), তাই হাওরের মতো স্বাভাবিক বর্ষার পানি গোনা হয় না। বৃষ্টি: ERA5-Land দৈনিক তথ্য, উপজেলা ও তার উজানের সব অববাহিকার গড় (HydroBASINS)। রাডার পানির বিস্তার দেখে, গভীরতা নয়; ১২ দিনে একবার ছবি তোলায় স্বল্পস্থায়ী বন্যা বাদ পড়তে পারে।",
-    kinds: { hospital: "হাসপাতাল", clinic: "ক্লিনিক", school: "স্কুল", college: "কলেজ", shelter: "আশ্রয়কেন্দ্র",
-             substation: "সাবস্টেশন", power_plant: "বিদ্যুৎকেন্দ্র" },
     mm: "মিমি", notFound: "উপজেলা পাওয়া যায়নি",
   },
 };
-const KIND_COLORS = { hospital: "#d4382a", clinic: "#e45f9b", school: "#2f7fc1", college: "#7462c4",
-                      shelter: "#2e9e5b", substation: "#e08a00", power_plant: "#8a5a2b" };
 let lang = "en", R = null;
 try { lang = localStorage.getItem("fs-lang") || "en"; } catch (e) {}
 const $ = id => document.getElementById(id);
@@ -182,18 +168,6 @@ function render() {
         <div><span class="muted small">${t.lowest}</span><b>${nf(s.lowest_rain_local_15d_before_a_flood)} ${t.mm}</b></div>
       </div>${s.worst ? `<p>${t.worstLine(s.worst)}</p>` : ""}`;
   } else $("insight").innerHTML = `<p>${t.noHistory}</p>`;
-
-  const rp = R.ripple, road = Object.values(rp.road_km).reduce((a, b) => a + b, 0);
-  const list = rows => rows.length ? rows.map(u => `${u.name} <span class="muted">(${u.district})</span>`).join(", ") : t.none;
-  $("whatif").innerHTML = `
-    <div class="chips">${Object.entries(R.facilities).sort((a, b) => b[1] - a[1]).map(([k, v]) =>
-      `<span><i style="background:${KIND_COLORS[k]}"></i>${nf(v)} ${t.kinds[k] ?? k}</span>`).join("") || `<span>${t.none}</span>`}</div>
-    <div class="impact">
-      <div><h3>${t.roads}</h3><b class="big">${nf(road, 1)} km</b></div>
-      <div><h3>${t.power}</h3><b class="big">${nf(rp.power_ripple.length)}</b><span class="small muted">${t.powerSub}</span><br>${list(rp.power_ripple)}</div>
-      <div><h3>${t.health}</h3><b class="big">${nf(rp.health_ripple.length)}</b><span class="small muted">${t.healthSub}</span><br>${list(rp.health_ripple)}</div>
-    </div>
-    <details class="more"><summary>${t.assumptions}</summary>${rp.assumptions.join("<br>")}</details>`;
 
   renderTable();
   $("wettest").innerHTML = R.wettest_days.map(d => `<li><span class="nm">${d.day}</span><span class="val">${nf(d.mm, 1)} ${t.mm}</span></li>`).join("");

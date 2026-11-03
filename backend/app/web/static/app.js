@@ -21,14 +21,12 @@ const T = {
     hindNote: "The model was run on actual (ERA5-Land) rain for this date, as if the rain forecast had been perfect. Future dates beyond today cannot be forecast.",
     observed: (name, hit, total) => `Satellite (Sentinel-1) saw <b>${total}</b> upazilas flooded in “${name}”. The model had <b>${hit}</b> of them at medium or high risk.`,
     noObserved: "No satellite flood map exists for this date (mapped: 1 Jun – 28 Sep, 2017–2025).",
-    atRisk: "Exposed in medium/high-risk upazilas (OpenStreetMap, incomplete)", roadKm: "km major roads",
-    powerRipple: "upazilas may lose power", healthRipple: "lose hospital access",
     topRisk: "Highest flood risk", topRain: "Most rain expected", topRainPast: "Most rain, last 72h", topPast: "Most flooded",
     howTitle: "How to use",
     how1: "Search or click an upazila to see its flood risk, rainfall and facilities.",
     how2: "Switch to Rainfall or Past floods at the top; pick a past date under Flood risk to check the model.",
-    how3: "Open the full report for an upazila's flood history since 2017 and what happens if it floods.",
-    backOverview: "← National overview", reportBtn: "Open flood history & impact report",
+    how3: "Open the full report for an upazila's flood history since 2017 and the rain behind each flood.",
+    backOverview: "← National overview", reportBtn: "Open flood history report",
     riskOf: { low: "Low risk", medium: "Medium risk", high: "High risk" },
     chance: "chance of flooding",
     likelyRange: (f, a, b) => `Expected flooded share ${f}% · likely range ${a}–${b}%`,
@@ -36,13 +34,10 @@ const T = {
     rainTitle: "Rainfall", chartPast: "Past", chartFuture: "Forecast",
     upTitle: "Where its water comes from", upArea: "Area draining here", upOut: "Outside Bangladesh",
     upRain: "Rain forecast over that area (72h)",
-    assetsTitle: "Facilities mapped in OpenStreetMap", noAssets: "None mapped in OpenStreetMap yet.",
-    osmNote: "Volunteer-mapped and incomplete for Bangladesh: real numbers are higher. Not an official count.",
-    kinds: { hospital: "Hospitals", clinic: "Clinics", school: "Schools", college: "Colleges",
-             shelter: "Shelters", substation: "Substations", power_plant: "Power plants" },
     flooded: "flooded", pastPick: "Choose a past flood", mm: "mm", mmh: "mm/h",
     stripRain: v => `Next 72h rain ${v}`, risk: "risk",
-    source: (r, issued) => `Rain: NOAA GFS via Open-Meteo, run #${r} (${issued} BST) · History: ERA5-Land · Floods: Sentinel-1 · Rivers: HydroSHEDS · Boundaries: BBS/OCHA · Facilities: © OpenStreetMap`,
+    sourcesTitle: "ⓘ Data sources",
+    source: (r, issued) => `<b>Rain forecast</b>: NOAA GFS via Open-Meteo, run #${r} (${issued} BST)<br><b>Rain & soil history</b>: ERA5-Land (ECMWF)<br><b>Past floods</b>: Sentinel-1 radar (ESA/Copernicus)<br><b>Rivers & basins</b>: HydroSHEDS<br><b>Boundaries</b>: BBS/OCHA (geoBoundaries)<br><b>Basemap</b>: Esri`,
     noResults: "No matching upazila", now: "Now",
   },
   bn: {
@@ -66,14 +61,12 @@ const T = {
     hindNote: "এই তারিখের আসল বৃষ্টি (ERA5-Land) দিয়ে মডেল চালানো হয়েছে, যেন বৃষ্টির পূর্বাভাস নিখুঁত ছিল। আজকের পরের তারিখের পূর্বাভাস দেওয়া যায় না।",
     observed: (name, hit, total) => `স্যাটেলাইট (Sentinel-1) “${name}”-এ <b>${total}</b>টি উপজেলায় বন্যা দেখেছে। মডেল এর <b>${hit}</b>টিকে মাঝারি বা উচ্চ ঝুঁকিতে রেখেছিল।`,
     noObserved: "এই তারিখের কোনো স্যাটেলাইট বন্যা-ম্যাপ নেই (ম্যাপ করা: ২০১৭–২০২৫, ১ জুন – ২৮ সেপ্টেম্বর)।",
-    atRisk: "মাঝারি/উচ্চ ঝুঁকির উপজেলায় যা ঝুঁকিতে (OpenStreetMap, অসম্পূর্ণ)", roadKm: "কিমি প্রধান সড়ক",
-    powerRipple: "উপজেলায় বিদ্যুৎ যেতে পারে", healthRipple: "হাসপাতাল-সুবিধা হারাতে পারে",
     topRisk: "সর্বোচ্চ বন্যার ঝুঁকি", topRain: "সবচেয়ে বেশি বৃষ্টির পূর্বাভাস", topRainPast: "গত ৭২ ঘণ্টায় সবচেয়ে বেশি বৃষ্টি", topPast: "সবচেয়ে বেশি প্লাবিত",
     howTitle: "কীভাবে ব্যবহার করবেন",
     how1: "উপজেলা খুঁজুন বা ম্যাপে ক্লিক করুন — বন্যার ঝুঁকি, বৃষ্টি ও স্থাপনা দেখতে পাবেন।",
     how2: "উপরে বৃষ্টি বা অতীতের বন্যা দেখুন; বন্যার ঝুঁকিতে অতীত তারিখ বেছে মডেল যাচাই করুন।",
-    how3: "পূর্ণ রিপোর্টে ২০১৭ থেকে উপজেলার বন্যার ইতিহাস ও ডুবলে কী হবে তা দেখুন।",
-    backOverview: "← জাতীয় পরিস্থিতি", reportBtn: "বন্যার ইতিহাস ও প্রভাবের রিপোর্ট দেখুন",
+    how3: "পূর্ণ রিপোর্টে ২০১৭ থেকে উপজেলার বন্যার ইতিহাস ও প্রতিটি বন্যার আগের বৃষ্টি দেখুন।",
+    backOverview: "← জাতীয় পরিস্থিতি", reportBtn: "বন্যার ইতিহাসের রিপোর্ট দেখুন",
     riskOf: { low: "নিম্ন ঝুঁকি", medium: "মাঝারি ঝুঁকি", high: "উচ্চ ঝুঁকি" },
     chance: "বন্যার সম্ভাবনা",
     likelyRange: (f, a, b) => `প্রত্যাশিত প্লাবিত অংশ ${f}% · সম্ভাব্য পরিসর ${a}–${b}%`,
@@ -81,13 +74,10 @@ const T = {
     rainTitle: "বৃষ্টি", chartPast: "অতীত", chartFuture: "পূর্বাভাস",
     upTitle: "পানি কোথা থেকে আসে", upArea: "যত এলাকার পানি এখানে আসে", upOut: "বাংলাদেশের বাইরে",
     upRain: "ওই এলাকায় বৃষ্টির পূর্বাভাস (৭২ ঘণ্টা)",
-    assetsTitle: "OpenStreetMap-এ চিহ্নিত স্থাপনা", noAssets: "OpenStreetMap-এ এখনো কিছু চিহ্নিত নেই।",
-    osmNote: "স্বেচ্ছাসেবকদের আঁকা, বাংলাদেশে অসম্পূর্ণ: আসল সংখ্যা এর চেয়ে বেশি। এটি সরকারি হিসাব নয়।",
-    kinds: { hospital: "হাসপাতাল", clinic: "ক্লিনিক", school: "স্কুল", college: "কলেজ",
-             shelter: "আশ্রয়কেন্দ্র", substation: "সাবস্টেশন", power_plant: "বিদ্যুৎকেন্দ্র" },
     flooded: "প্লাবিত", pastPick: "একটি অতীতের বন্যা বাছুন", mm: "মিমি", mmh: "মিমি/ঘণ্টা",
     stripRain: v => `আগামী ৭২ ঘণ্টায় বৃষ্টি ${v}`, risk: "ঝুঁকি",
-    source: (r, issued) => `বৃষ্টি: NOAA GFS (Open-Meteo), রান #${r} (${issued}) · ইতিহাস: ERA5-Land · বন্যা: Sentinel-1 · নদী: HydroSHEDS · সীমানা: BBS/OCHA · স্থাপনা: © OpenStreetMap`,
+    sourcesTitle: "ⓘ ডেটার উৎস",
+    source: (r, issued) => `<b>বৃষ্টির পূর্বাভাস</b>: NOAA GFS (Open-Meteo), রান #${r} (${issued})<br><b>বৃষ্টি ও মাটির ইতিহাস</b>: ERA5-Land (ECMWF)<br><b>অতীতের বন্যা</b>: Sentinel-1 রাডার (ESA/Copernicus)<br><b>নদী ও অববাহিকা</b>: HydroSHEDS<br><b>সীমানা</b>: BBS/OCHA (geoBoundaries)<br><b>ম্যাপ</b>: Esri`,
     noResults: "কোনো উপজেলা মেলেনি", now: "এখন",
   },
 };
@@ -96,7 +86,7 @@ const T = {
 let lang = "en", view = "risk", lead = "rain_24h_mm";
 let data = null, layer = null, selected = null, selectedLayer = null;
 let hind = null, events = [], eventLabels = null;
-let riverLayer = null, basinLayer = null, basinData = null, hiLayer = null, assetLayer = null, maskLayer = null;
+let riverLayer = null, basinLayer = null, basinData = null, hiLayer = null, maskLayer = null;
 let mapDark = true;
 try { lang = localStorage.getItem("fs-lang") || "en"; mapDark = localStorage.getItem("fs-map") !== "light"; } catch (e) {}
 const t = () => T[lang];
@@ -113,8 +103,6 @@ const riskOf = p => p == null ? null : p >= 0.5 ? "high" : p >= 0.25 ? "medium" 
 const TOTAL = { breaks: [0, 1, 5, 10, 20, 50, 100, 200], colors: ["rgba(0,0,0,0)", "#3a6ea5", "#2f8fd8", "#33b3a6", "#7dcf3c", "#f2d43a", "#f07c2a", "#d42e5a"] };
 const FLOOD = { breaks: [0, 0.02, 0.05, 0.1, 0.2, 0.4], colors: ["rgba(0,0,0,0)", "#f6c9a8", "#f39b6d", "#ea6a45", "#cf3a2b", "#8f1420"] };
 const step = (v, s) => v == null ? "rgba(0,0,0,0)" : s.colors[s.breaks.filter(b => v >= b).length - 1];
-const KIND_COLORS = { hospital: "#e5483a", clinic: "#e45f9b", school: "#4aa3e0", college: "#9b87e8",
-                      shelter: "#5bbf7e", substation: "#f4b740", power_plant: "#c08a5b" };
 
 function fillFor(p) {
   if (view === "past") return step(eventLabels?.[p.id]?.abnormal_frac, FLOOD);
@@ -163,7 +151,6 @@ map.getPane("mask").style.pointerEvents = "none";
 map.createPane("geo").style.zIndex = 650;
 map.getPane("geo").style.pointerEvents = "none";
 map.createPane("rivers").style.zIndex = 450;
-map.createPane("assets").style.zIndex = 620;
 let baseLayers = [];
 function setBasemap() {
   baseLayers.forEach(l => l.remove());
@@ -322,20 +309,6 @@ function renderStatus() {
     <div class="counts"><div class="h"><b>${nf(c.high)}</b><small>${tt.high}</small></div>
       <div class="m"><b>${nf(c.medium)}</b><small>${tt.medium}</small></div>
       <div class="l"><b>${nf(c.low)}</b><small>${tt.low}</small></div></div>${extra}`;
-  const box = $("at-risk");
-  box.hidden = !!hind || !(c.high + c.medium);
-  if (!box.hidden) showAtRisk();
-}
-
-async function showAtRisk() {
-  const res = await fetch("/api/v1/assets/at-risk?min_risk=medium");
-  if (!res.ok) return;
-  const r = await res.json(), tt = t();
-  const road = Object.values(r.road_km).reduce((a, b) => a + b, 0);
-  $("at-risk").innerHTML = `<div class="panel-head"><h2>${tt.atRisk}</h2></div><div class="chips">
-    ${Object.entries(r.direct).map(([k, v]) => `<span><i style="background:${KIND_COLORS[k]}"></i>${nf(v)} ${tt.kinds[k] ?? k}</span>`).join("")}
-    <span>${nf(road)} ${tt.roadKm}</span><span>${nf(r.power_ripple.length)} ${tt.powerRipple}</span>
-    <span>${nf(r.health_ripple.length)} ${tt.healthRipple}</span></div>`;
 }
 
 function renderTop() {
@@ -384,14 +357,13 @@ function select(id, zoom = false) {
   renderStrip();
   loadRain(id);
   showUpstream(id);
-  showAssets(id);
 }
 
 function closeDetail() {
   selected = null;
   if (selectedLayer) layer.resetStyle(selectedLayer);
   selectedLayer = null;
-  [hiLayer, assetLayer].forEach(l => l && l.remove());
+  hiLayer && hiLayer.remove();
   $("detail").hidden = true;
   $("overview").hidden = false;
   $("strip").hidden = true;
@@ -479,23 +451,6 @@ async function showUpstream(id) {
   hiLayer = L.geoJSON({ type: "FeatureCollection", features: basinData.features.filter(f => ids.has(f.properties.id)) },
     { style: { color: "#f2a90f", weight: 1.2, dashArray: "4 3", fillColor: "#f2a90f", fillOpacity: 0.06 }, interactive: false }).addTo(map);
   hiLayer.bringToBack();
-}
-
-async function showAssets(id) {
-  const res = await fetch(`/api/v1/nodes/${id}/assets`), tt = t();
-  if (assetLayer) assetLayer.remove();
-  if (!res.ok || selected?.id !== id) return;
-  const fc = await res.json(), n = {};
-  fc.features.forEach(f => n[f.properties.kind] = (n[f.properties.kind] || 0) + 1);
-  $("d-assets").innerHTML = (fc.features.length
-    ? `<div class="chips">${Object.entries(n).sort((a, b) => b[1] - a[1]).map(([k, c]) =>
-        `<span><i style="background:${KIND_COLORS[k]}"></i>${nf(c)} ${tt.kinds[k] ?? k}</span>`).join("")}</div>`
-    : `<p class="empty">${tt.noAssets}</p>`) + `<p class="note" style="margin:8px 0 0">${tt.osmNote}</p>`;
-  assetLayer = L.geoJSON(fc, {
-    pointToLayer: (f, ll) => L.circleMarker(ll, { pane: "assets", radius: 5, color: "#10161d", weight: 1.5, fillOpacity: 1,
-                                                  fillColor: KIND_COLORS[f.properties.kind] }),
-    onEachFeature: (f, l) => l.bindTooltip(`<div class="tt-name">${(lang === "bn" && f.properties.name_bn) || f.properties.name || "—"}</div><div class="tt-sub">${tt.kinds[f.properties.kind]}</div>`),
-  }).addTo(map);
 }
 
 /* ---------- layers ---------- */
