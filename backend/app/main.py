@@ -69,6 +69,11 @@ def index():
     return FileResponse(WEB_DIR / "index.html")
 
 
+@app.get("/about", include_in_schema=False)
+def about_page():
+    return FileResponse(WEB_DIR / "about.html")
+
+
 @app.get("/upazila/{node_id}", include_in_schema=False)
 def upazila_page(node_id: str):
     return FileResponse(WEB_DIR / "report.html")

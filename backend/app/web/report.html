@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Flood report · FloodShield BD</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e5a8a'/%3E%3Cpath d='M5 19c3-3 5-3 8 0s5 3 8 0 5-3 6-1v6H5z' fill='%23fff'/%3E%3Cpath d='M16 5l7 4v4c0 3-3 5-7 6-4-1-7-3-7-6V9z' fill='%2389d0f5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
@@ -17,60 +18,60 @@
       <span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M5 19c3-3 5-3 8 0s5 3 8 0 5-3 6-1v6H5z" fill="#fff"/><path d="M16 5l7 4v4c0 3-3 5-7 6-4-1-7-3-7-6V9z" fill="#89d0f5"/></svg></span>
       <b>FloodShield BD</b>
     </a>
+    <nav class="secnav" id="secnav">
+      <a href="#overview" data-i18n="navOverview"></a>
+      <a href="#calendar" data-i18n="navCalendar"></a>
+      <a href="#rain" data-i18n="navRain"></a>
+      <a href="#cyclones" id="nav-cyc" data-i18n="navCyc"></a>
+    </nav>
     <div class="top-actions">
-      <button id="print" class="icon-round" aria-label="Print">⎙</button>
+      <a class="btn ghost small" href="/about" data-i18n="about"></a>
+      <button id="print" class="btn small print-btn" data-i18n="print"></button>
       <button id="lang" class="btn ghost small">বাংলা</button>
     </div>
   </header>
 
   <main class="report">
-    <section class="hero">
-      <div>
+    <section class="hero" id="overview">
+      <div class="hero-text">
         <p class="crumb" id="crumb"></p>
         <h1 id="title">…</h1>
         <p class="lead" id="lead"></p>
+        <div id="now"></div>
       </div>
-      <div id="now"></div>
+      <div class="mini-map-wrap"><div id="mini-map"></div></div>
     </section>
 
     <section class="tiles3" id="tiles"></section>
 
-    <section class="card">
+    <section class="card reveal" id="calendar">
       <div class="card-head">
-        <h2 data-i18n="calTitle"></h2>
-        <div class="cal-legend" id="cal-legend"></div>
+        <div><h2 data-i18n="calTitle"></h2><p class="sub" data-i18n="calSub"></p></div>
+        <a id="csv" class="btn ghost small" href="#" data-i18n="csv"></a>
       </div>
-      <p class="sub" data-i18n="calSub"></p>
+      <div class="cal-legend" id="cal-legend"></div>
       <div class="cal-wrap"><table class="cal" id="cal"></table></div>
     </section>
 
-    <div class="grid2">
-      <section class="card">
+    <div class="grid2" id="rain">
+      <section class="card reveal">
         <h2 data-i18n="rainTitle"></h2>
         <div id="rain-story"></div>
       </section>
-      <section class="card">
+      <section class="card reveal">
         <h2 data-i18n="monsoonTitle"></h2>
         <p class="sub" data-i18n="monsoonSub"></p>
         <div id="monsoon" class="ybars"></div>
       </section>
     </div>
 
-    <section class="card" id="cyc-card" hidden>
+    <section class="card reveal" id="cyclones" hidden>
       <h2 data-i18n="cycTitle"></h2>
       <div id="cyc"></div>
     </section>
-
-    <footer class="foot">
-      <details>
-        <summary data-i18n="howTitle"></summary>
-        <p data-i18n="how"></p>
-      </details>
-      <p class="credits"><span data-i18n="credits"></span> · <a id="csv" href="#" data-i18n="csv"></a></p>
-      <p class="credits" data-i18n="official"></p>
-    </footer>
   </main>
   <div id="tip" class="tip" hidden></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="/static/report.js"></script>
 </body>
 </html>

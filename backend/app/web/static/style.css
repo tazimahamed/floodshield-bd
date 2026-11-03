@@ -294,3 +294,7 @@ body.page .notice svg { width: 16px; height: 16px; fill: var(--brand); flex-shri
 .scale.cats span { flex-direction: column; line-height: 1.1; padding: 0 4px; text-overflow: ellipsis; min-width: 0; }
 .scale.cats span b { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .scale.cats span small { font-size: 10px; font-weight: 600; opacity: .9; }
+.rail .rail-link { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--hud-line); background: var(--hud);
+  color: var(--hud-text); font-size: 19px; display: grid; place-items: center; text-decoration: none; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
+.about-link { display: block; text-align: center; font-size: 13px; color: var(--muted); padding: 6px 0 12px; text-decoration: none; }
+.about-link:hover { color: var(--brand); }

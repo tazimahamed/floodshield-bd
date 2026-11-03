@@ -62,8 +62,7 @@ const T = {
     upRain: "Rain forecast over that area (72h)",
     flooded: "flooded", pastPick: "Choose a past flood", mm: "mm", mmh: "mm/h",
     stripRain: v => `Next 72h rain ${v}`, risk: "risk",
-    sourcesTitle: "ⓘ Data sources",
-    source: (r, issued) => `<b>Rain forecast</b>: NOAA GFS via Open-Meteo, run #${r} (${issued} BST)<br><b>Rain & soil history</b>: ERA5-Land (ECMWF)<br><b>Past floods</b>: Sentinel-1 radar (ESA/Copernicus)<br><b>Rivers & basins</b>: HydroSHEDS<br><b>Boundaries</b>: BBS/OCHA (geoBoundaries)<br><b>Basemap</b>: Esri`,
+    sourcesTitle: "ⓘ Data sources", aboutLink: "ⓘ About the data & official warnings",
     noResults: "No matching upazila", now: "Now",
   },
   bn: {
@@ -128,8 +127,7 @@ const T = {
     upRain: "ওই এলাকায় বৃষ্টির পূর্বাভাস (৭২ ঘণ্টা)",
     flooded: "প্লাবিত", pastPick: "একটি অতীতের বন্যা বাছুন", mm: "মিমি", mmh: "মিমি/ঘণ্টা",
     stripRain: v => `আগামী ৭২ ঘণ্টায় বৃষ্টি ${v}`, risk: "ঝুঁকি",
-    sourcesTitle: "ⓘ ডেটার উৎস",
-    source: (r, issued) => `<b>বৃষ্টির পূর্বাভাস</b>: NOAA GFS (Open-Meteo), রান #${r} (${issued})<br><b>বৃষ্টি ও মাটির ইতিহাস</b>: ERA5-Land (ECMWF)<br><b>অতীতের বন্যা</b>: Sentinel-1 রাডার (ESA/Copernicus)<br><b>নদী ও অববাহিকা</b>: HydroSHEDS<br><b>সীমানা</b>: BBS/OCHA (geoBoundaries)<br><b>ম্যাপ</b>: Esri`,
+    sourcesTitle: "ⓘ ডেটার উৎস", aboutLink: "ⓘ ডেটা ও সরকারি সতর্কবার্তা সম্পর্কে",
     noResults: "কোনো উপজেলা মেলেনি", now: "এখন",
   },
 };
@@ -566,11 +564,6 @@ function renderSide() {
   if (!data) return;
   renderStatus();
   renderTop();
-  const run = data.rain_run;
-  if (run) {
-    const issued = new Date(run.issued_at).toLocaleString(loc(), { timeZone: "Asia/Dhaka", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-    $("source").innerHTML = t().source(run.id, issued);
-  }
   if (selected) renderDetail();
   $("drawer-title").textContent = selected ? t().detailTitle : t().overviewTitle;
 }

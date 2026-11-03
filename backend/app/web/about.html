@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About the data · FloodShield BD</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e5a8a'/%3E%3Cpath d='M5 19c3-3 5-3 8 0s5 3 8 0 5-3 6-1v6H5z' fill='%23fff'/%3E%3Cpath d='M16 5l7 4v4c0 3-3 5-7 6-4-1-7-3-7-6V9z' fill='%2389d0f5'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/report.css">
+</head>
+<body class="page">
+  <header class="topbar">
+    <a class="back" href="/" data-i18n="back"></a>
+    <a class="brand small-brand" href="/">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M5 19c3-3 5-3 8 0s5 3 8 0 5-3 6-1v6H5z" fill="#fff"/><path d="M16 5l7 4v4c0 3-3 5-7 6-4-1-7-3-7-6V9z" fill="#89d0f5"/></svg></span>
+      <b>FloodShield BD</b>
+    </a>
+    <div class="top-actions"><button id="lang" class="btn ghost small">বাংলা</button></div>
+  </header>
+  <main class="report about">
+    <section class="hero"><div><h1 data-i18n="title"></h1><p class="lead" data-i18n="intro"></p></div></section>
+    <section class="warn-strip"><span>⚠️</span><p data-i18n="official"></p></section>
+    <div class="about-grid" id="cards"></div>
+    <section class="card"><h2 data-i18n="limitsTitle"></h2><ul class="limits" id="limits"></ul></section>
+  </main>
+  <script>
+    const T = {
+      en: {
+        back: "← Map", title: "About the data",
+        intro: "FloodShield BD shows flood risk, rainfall, flood history and cyclone history for every upazila in Bangladesh. Every number comes from a public scientific or official source, listed below.",
+        official: "This site does not replace official warnings. In an emergency, follow the Flood Forecasting and Warning Centre (ffwc.gov.bd), the Bangladesh Meteorological Department and your upazila administration. Emergency: 999 · Disaster information: 1090.",
+        limitsTitle: "What it cannot tell you",
+        cards: [
+          ["🌊", "Flood risk (next 15 days)", "A machine-learning model trained on 9 monsoons (2017–2025). It looks at rain here and upstream, soil wetness and the river network. Tested on years it had not seen, it ranks a flooded upazila above a dry one 78% of the time."],
+          ["🛰️", "Past floods", "Sentinel-1 radar (European Space Agency) sees through cloud every 12 days. Each 15-day stretch is compared with the same time in other years, so only unusual water is counted, not rivers or haors that fill every year."],
+          ["🌧️", "Rain", "Forecast: NOAA GFS, updated every 6 hours. History: ERA5-Land (ECMWF), averaged over each upazila and over every river basin that drains into it."],
+          ["🌀", "Cyclones", "Storm paths and winds from the Indian Meteorological Department's official record (the WMO centre for the Bay of Bengal), through NOAA IBTrACS, 1960 to today."],
+          ["🏥", "Hospitals", "Government hospitals from the DGHS Facility Registry. A hospital is shown only if its registered location falls inside the upazila it is registered to."],
+          ["🗺️", "Maps", "Upazila boundaries: BBS / OCHA. Rivers and basins: HydroSHEDS. Base map: Esri."],
+        ],
+        limits: ["Radar shows how far water spread, not how deep it was.", "A short flood between two satellite passes can be missed.",
+                 "Tidal and shrimp-farm areas are always wet, so surge flooding there is hard to see.",
+                 "Rain forecasts get less certain beyond 2–3 days.", "Upazilas are treated as a whole; flooding inside one is patchy."],
+      },
+      bn: {
+        back: "← ম্যাপ", title: "ডেটা সম্পর্কে",
+        intro: "FloodShield BD বাংলাদেশের প্রতিটি উপজেলার বন্যার ঝুঁকি, বৃষ্টি, বন্যার ইতিহাস ও ঘূর্ণিঝড়ের ইতিহাস দেখায়। প্রতিটি সংখ্যা নিচের কোনো প্রকাশ্য বৈজ্ঞানিক বা সরকারি উৎস থেকে আসে।",
+        official: "এই সাইট সরকারি সতর্কবার্তার বিকল্প নয়। জরুরি অবস্থায় বন্যা পূর্বাভাস ও সতর্কীকরণ কেন্দ্র (ffwc.gov.bd), আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের নির্দেশনা মানুন। জরুরি সেবা: ৯৯৯ · দুর্যোগের তথ্য: ১০৯০।",
+        limitsTitle: "যা এটি বলতে পারে না",
+        cards: [
+          ["🌊", "বন্যার ঝুঁকি (আগামী ১৫ দিন)", "৯টি বর্ষার (২০১৭–২০২৫) ডেটায় শেখানো মেশিন লার্নিং মডেল। এখানকার ও উজানের বৃষ্টি, মাটির আর্দ্রতা ও নদীর জাল দেখে। না দেখা বছরে পরীক্ষায় ডোবা উপজেলাকে শুকনোটির চেয়ে বেশি ঝুঁকিতে রেখেছে ৭৮% ক্ষেত্রে।"],
+          ["🛰️", "অতীতের বন্যা", "ইউরোপীয় মহাকাশ সংস্থার Sentinel-1 রাডার প্রতি ১২ দিনে মেঘ ভেদ করে ছবি তোলে। প্রতিটি ১৫ দিনকে অন্য বছরের একই সময়ের সাথে তুলনা করা হয়, তাই প্রতি বছর ভরা নদী বা হাওর নয়, শুধু অস্বাভাবিক পানি গোনা হয়।"],
+          ["🌧️", "বৃষ্টি", "পূর্বাভাস: NOAA GFS, প্রতি ৬ ঘণ্টায় হালনাগাদ। ইতিহাস: ERA5-Land (ECMWF), প্রতিটি উপজেলা ও তার উজানের সব অববাহিকার গড়।"],
+          ["🌀", "ঘূর্ণিঝড়", "ঝড়ের পথ ও বাতাস ভারতীয় আবহাওয়া অধিদপ্তরের অফিসিয়াল রেকর্ড (বঙ্গোপসাগরের WMO কেন্দ্র) থেকে, NOAA IBTrACS-এর মাধ্যমে, ১৯৬০ থেকে আজ পর্যন্ত।"],
+          ["🏥", "হাসপাতাল", "স্বাস্থ্য অধিদপ্তরের ফ্যাসিলিটি রেজিস্ট্রির সরকারি হাসপাতাল। নিবন্ধিত অবস্থান নিবন্ধিত উপজেলার ভেতরে পড়লে তবেই দেখানো হয়।"],
+          ["🗺️", "ম্যাপ", "উপজেলার সীমানা: BBS / OCHA। নদী ও অববাহিকা: HydroSHEDS। ম্যাপ: Esri।"],
+        ],
+        limits: ["রাডার দেখায় পানি কতদূর ছড়িয়েছে, কত গভীর তা নয়।", "দুই স্যাটেলাইট ছবির মাঝের স্বল্পস্থায়ী বন্যা বাদ পড়তে পারে।",
+                 "জোয়ার ও চিংড়ি-ঘের এলাকা সবসময় ভেজা, তাই সেখানে জলোচ্ছ্বাসের বন্যা ধরা কঠিন।",
+                 "২–৩ দিনের পরের বৃষ্টির পূর্বাভাস কম নিশ্চিত।", "পুরো উপজেলাকে একসাথে ধরা হয়; বাস্তবে বন্যা উপজেলার কিছু অংশে হয়।"],
+      },
+    };
+    let lang = "en";
+    try { lang = localStorage.getItem("fs-lang") || "en"; } catch (e) {}
+    function render() {
+      const t = T[lang];
+      document.documentElement.lang = lang;
+      document.body.classList.toggle("bn", lang === "bn");
+      document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t[el.dataset.i18n]);
+      document.getElementById("cards").innerHTML = t.cards.map(([i, h, p]) => `<section class="card reveal"><div class="ico">${i}</div><h2>${h}</h2><p>${p}</p></section>`).join("");
+      document.getElementById("limits").innerHTML = t.limits.map(l => `<li>${l}</li>`).join("");
+      document.getElementById("lang").textContent = lang === "en" ? "বাংলা" : "English";
+      document.querySelectorAll(".reveal").forEach((el, i) => setTimeout(() => el.classList.add("in"), 80 + i * 70));
+    }
+    document.getElementById("lang").onclick = () => { lang = lang === "en" ? "bn" : "en"; try { localStorage.setItem("fs-lang", lang); } catch (e) {} render(); };
+    render();
+  </script>
+</body>
+</html>

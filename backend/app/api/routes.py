@@ -266,6 +266,17 @@ def node_report_csv(node_id: str):
                     headers={"Content-Disposition": f'attachment; filename="floodshield_{name}.csv"'})
 
 
+@router.get("/nodes/{node_id}/shape")
+def node_shape(node_id: str):
+    """Simplified outline of one upazila (for the report's mini map)."""
+    with SessionLocal() as db:
+        g = db.scalar(select(func.ST_AsGeoJSON(func.ST_SimplifyPreserveTopology(Node.geom, 0.001)))
+                      .where(Node.id == node_id))
+        if not g:
+            raise HTTPException(404, "Unknown upazila")
+        return {"type": "Feature", "geometry": json.loads(g), "properties": {}}
+
+
 @router.get("/nodes/{node_id}/report")
 def node_report(node_id: str):
     """Flood history of one upazila (Sentinel-1, 2017-2025) with the rain before each window."""

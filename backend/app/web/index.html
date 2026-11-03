@@ -72,6 +72,7 @@
       <button id="r-layers" data-i18n-title="tLayers">≋</button>
       <button id="r-theme" data-i18n-title="tTheme">◐</button>
       <button id="r-panel" data-i18n-title="tPanel" class="accent">☰</button>
+      <a id="r-about" class="rail-link" href="/about" data-i18n-title="aboutLink">ⓘ</a>
       <button id="lang" class="lang">বাং</button>
     </nav>
     <div id="layers" class="hud layers" hidden>
@@ -102,9 +103,6 @@
         <button id="drawer-close" class="icon-btn" aria-label="Close panel">×</button>
       </div>
       <div class="drawer-body">
-        <div id="notice" class="notice">
-          <span data-i18n="official"></span>
-        </div>
         <div id="overview">
           <section class="panel status" id="status"></section>
           <section class="panel">
@@ -152,10 +150,7 @@
             <div id="d-up"></div>
           </section>
         </div>
-        <details class="sources small muted" id="sources-box">
-          <summary data-i18n="sourcesTitle"></summary>
-          <div id="source"></div>
-        </details>
+        <a class="about-link" href="/about" data-i18n="aboutLink"></a>
       </div>
     </aside>
   </main>
