@@ -75,3 +75,20 @@ def test_dghs_upazila_cross_check():
     assert _same_upazila("Madhukhali", "Madhukhali")
     assert not _same_upazila("Dhamrai", "Savar")  # registry point lies in the wrong upazila: rejected
     assert not _same_upazila("Fenchuganj", "Khaliajuri")
+
+
+def test_cyclone_landfall_and_class():
+    from datetime import datetime, timezone
+
+    import pandas as pd
+
+    from app.services.cyclones import imd_class, landfall
+
+    assert imd_class(115) == "Extremely Severe Cyclonic Storm" and imd_class(60) == "Severe Cyclonic Storm"
+    t0 = datetime(2024, 5, 26, 12, tzinfo=timezone.utc)
+    track = pd.DataFrame({"time": [t0, t0 + pd.Timedelta(hours=6)], "LAT": [21.0, 22.0], "LON": [89.0, 89.0],
+                          "DIST2LAND": [55.0, 0.0], "LANDFALL": [0.0, 0.0]})
+    t, lat, lon = landfall(track)
+    assert 21.4 < lat < 21.6 and lon == 89.0 and t0 < t < t0 + pd.Timedelta(hours=6)
+    pacific = track.assign(LON=[109.0, 109.0])  # a crossing outside the Bay of Bengal is ignored
+    assert landfall(pacific) == (None, None, None)

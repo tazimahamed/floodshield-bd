@@ -253,3 +253,51 @@ class HealthFacility(Base):
     geom = mapped_column(Geometry("POINT", srid=4326))
     dghs_updated_at: Mapped[str | None] = mapped_column(String(40))
     verified: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+
+
+class Cyclone(Base):
+    """A tropical cyclone/depression from NOAA IBTrACS (North Indian basin) that came near Bangladesh."""
+
+    __tablename__ = "cyclones"
+
+    sid: Mapped[str] = mapped_column(String(16), primary_key=True)  # IBTrACS storm id
+    name: Mapped[str] = mapped_column(String(64))
+    season: Mapped[int] = mapped_column(Integer, index=True)
+    start_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    max_wind_kt: Mapped[float | None] = mapped_column(Float)  # IMD New Delhi (WMO RSMC), 3-min mean
+    max_wind_jtwc_kt: Mapped[float | None] = mapped_column(Float)  # US JTWC, 1-min mean (when IMD has none)
+    min_pres_hpa: Mapped[float | None] = mapped_column(Float)
+    category: Mapped[str | None] = mapped_column(String(48))  # IMD classification at peak
+    landfall_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    landfall_lat: Mapped[float | None] = mapped_column(Float)
+    landfall_lon: Mapped[float | None] = mapped_column(Float)
+    closest_bd_km: Mapped[float] = mapped_column(Float)
+    provisional: Mapped[bool] = mapped_column(Boolean, default=False)
+    flood_event_id: Mapped[str | None] = mapped_column(String(32))  # Sentinel-1 map after landfall, if any
+    track = mapped_column(Geometry("LINESTRING", srid=4326))
+
+
+class CyclonePoint(Base):
+    __tablename__ = "cyclone_points"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    sid: Mapped[str] = mapped_column(ForeignKey("cyclones.sid", ondelete="CASCADE"), index=True)
+    time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    lat: Mapped[float] = mapped_column(Float)
+    lon: Mapped[float] = mapped_column(Float)
+    wind_kt: Mapped[float | None] = mapped_column(Float)
+    pres_hpa: Mapped[float | None] = mapped_column(Float)
+
+
+class CycloneExposure(Base):
+    """How close a cyclone's track came to an upazila, and its IMD wind at that closest point."""
+
+    __tablename__ = "cyclone_exposure"
+    __table_args__ = (UniqueConstraint("sid", "node_id"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    sid: Mapped[str] = mapped_column(ForeignKey("cyclones.sid", ondelete="CASCADE"), index=True)
+    node_id: Mapped[str] = mapped_column(ForeignKey("nodes.id", ondelete="CASCADE"), index=True)
+    min_km: Mapped[float] = mapped_column(Float)
+    wind_kt_near: Mapped[float | None] = mapped_column(Float)

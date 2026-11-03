@@ -117,7 +117,9 @@ def training_table() -> pd.DataFrame:
     labels = pd.read_sql(text("""
         select l.node_id, l.event_id, e.post_start, l.abnormal_frac
         from flood_labels l join flood_events e on e.id = l.event_id
-        where l.abnormal_frac is not null"""), engine, parse_dates=["post_start"])
+        where l.abnormal_frac is not null
+          and e.id not like 'cyclone_%'  -- post-cyclone maps miss surge flooding in tidal areas"""),
+        engine, parse_dates=["post_start"])
     static, weights = graph_tables()
     starts = sorted(labels.post_start.unique())
     daily = load_daily((min(starts) - timedelta(days=31)).date(), (max(starts) + timedelta(days=FORECAST_DAYS)).date())

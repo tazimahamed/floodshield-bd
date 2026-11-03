@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select, text
 
-from app.db.models import Asset, Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, HealthFacility, IngestRun, ModelVersion, Node, RainForecast, River
+from app.db.models import Asset, Cyclone, CycloneExposure, CyclonePoint, Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, HealthFacility, IngestRun, ModelVersion, Node, RainForecast, River
 from app.db.session import SessionLocal
 from app.services.impact import impact
 
@@ -263,6 +263,59 @@ def node_hospitals(node_id: str):
                 "profile_url": f"https://hrm.dghs.gov.bd/public/facility-registry/facilities/{h.id}/profile",
             } for h, x, y in rows],
         }
+
+
+KT_TO_KMH = 1.852
+
+
+def _cyclone_info(cy: Cyclone) -> dict:
+    return {
+        "sid": cy.sid, "name": cy.name, "season": cy.season,
+        "start": cy.start_time.isoformat(), "end": cy.end_time.isoformat(),
+        "max_wind_kt": cy.max_wind_kt, "max_wind_kmh": round(cy.max_wind_kt * KT_TO_KMH) if cy.max_wind_kt else None,
+        "max_wind_jtwc_kt": cy.max_wind_jtwc_kt, "min_pres_hpa": cy.min_pres_hpa, "category": cy.category,
+        "landfall_time": cy.landfall_time.isoformat() if cy.landfall_time else None,
+        "landfall_lat": cy.landfall_lat, "landfall_lon": cy.landfall_lon,
+        "closest_bd_km": round(cy.closest_bd_km), "provisional": cy.provisional, "flood_event_id": cy.flood_event_id,
+    }
+
+
+@router.get("/cyclones")
+def cyclones(min_wind_kt: float = 34, named_only: bool = False):
+    """Cyclones that came within 300 km of Bangladesh since 1960 (NOAA IBTrACS; IMD winds)."""
+    with SessionLocal() as db:
+        q = select(Cyclone).where((Cyclone.max_wind_kt >= min_wind_kt) | (Cyclone.max_wind_jtwc_kt >= min_wind_kt)
+                                  | (Cyclone.name != "Unnamed") if not named_only else Cyclone.name != "Unnamed")
+        rows = db.scalars(q.order_by(Cyclone.start_time.desc())).all()
+        return {"source": "NOAA IBTrACS v04r01 (IMD New Delhi best track)", "cyclones": [_cyclone_info(c) for c in rows]}
+
+
+@router.get("/cyclones/{sid}")
+def cyclone_detail(sid: str):
+    """Track (6-hourly fixes) and the upazilas within 150 km of it."""
+    with SessionLocal() as db:
+        cy = db.get(Cyclone, sid)
+        if not cy:
+            raise HTTPException(404, "Unknown cyclone")
+        pts = db.scalars(select(CyclonePoint).where(CyclonePoint.sid == sid).order_by(CyclonePoint.time)).all()
+        exp = db.execute(select(CycloneExposure.node_id, CycloneExposure.min_km, CycloneExposure.wind_kt_near)
+                         .where(CycloneExposure.sid == sid)).all()
+        return {**_cyclone_info(cy),
+                "points": [{"time": p.time.isoformat(), "lat": p.lat, "lon": p.lon, "wind_kt": p.wind_kt,
+                            "pres_hpa": p.pres_hpa} for p in pts],
+                "upazilas": {n: {"min_km": round(km, 1), "wind_kt": w} for n, km, w in exp}}
+
+
+@router.get("/nodes/{node_id}/cyclones")
+def node_cyclones(node_id: str):
+    """Every cyclone since 1960 whose track passed within 150 km of this upazila."""
+    with SessionLocal() as db:
+        rows = db.execute(select(Cyclone, CycloneExposure.min_km, CycloneExposure.wind_kt_near)
+                          .join(CycloneExposure, CycloneExposure.sid == Cyclone.sid)
+                          .where(CycloneExposure.node_id == node_id).order_by(Cyclone.start_time.desc())).all()
+        items = [{**_cyclone_info(c), "min_km": round(km, 1), "wind_kt_near": w} for c, km, w in rows]
+        return {"source": "NOAA IBTrACS v04r01 (IMD New Delhi best track)", "within_150km": len(items),
+                "within_50km": sum(i["min_km"] <= 50 for i in items), "cyclones": items}
 
 
 @router.get("/hindcast")

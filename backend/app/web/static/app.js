@@ -4,7 +4,17 @@ const T = {
     tagline: "Flood early warning · Bangladesh",
     searchPh: "Search an upazila or district…",
     official: "Official warnings come first: follow FFWC (ffwc.gov.bd), BMD and your Upazila Disaster Management Committee. FloodShield supports them and does not replace them.",
-    viewRisk: "Flood risk", viewRain: "Rainfall", viewPast: "Past floods",
+    viewRisk: "Flood risk", viewRain: "Rainfall", viewPast: "Past floods", viewCyc: "Cyclones",
+    cycEyebrow: "Cyclone history · NOAA IBTrACS", cycTop: "Closest to the track",
+    cycBand: ["≤ 50 km", "50–100 km", "100–150 km"], cycScale: "Distance from the storm centre",
+    cycFromTrack: km => `${km} km from the track`, cycWind: kt => `IMD wind nearby ${kt} kt (${Math.round(kt * 1.852)} km/h)`,
+    cycPeak: "Peak (IMD)", cycLandfall: "Landfall", cycNoWind: "Wind not recorded in IBTrACS",
+    cycJtwc: kt => `US JTWC estimate: ${kt} kt (1-min wind, a different measure)`, cycProvisional: "Provisional track (not yet final)",
+    cycNote: "Track: official best track of IMD New Delhi (the WMO regional centre for the Bay of Bengal), from NOAA IBTrACS. Upazilas are coloured by how close the storm centre passed; strong winds reach further than the centre.",
+    cycHistTitle: "🌀 Cyclones since 1960",
+    cycHist: (n50, n150) => `<b>${n50}</b> storm tracks passed within 50 km, <b>${n150}</b> within 150 km (IBTrACS, IMD best track).`,
+    cycStrongest: "Strongest nearby",
+    cycNoLand: "Did not make landfall", cycUpz: n => `${n} upazilas within 150 km`,
     dateLabel: "Date", today: "Today", total24: "Next 24h", total72: "Next 72h",
     past72: "Last 72h", next24: "Next 24h", next72: "Next 72h",
     allDivisions: "All Bangladesh", rivers: "Rivers", upstream: "Upstream basins (India, Nepal…)",
@@ -47,7 +57,17 @@ const T = {
     tagline: "বন্যার আগাম সতর্কতা · বাংলাদেশ",
     searchPh: "উপজেলা বা জেলার নাম লিখুন…",
     official: "সরকারি সতর্কবার্তা আগে: FFWC (ffwc.gov.bd), আবহাওয়া অধিদপ্তর ও উপজেলা দুর্যোগ ব্যবস্থাপনা কমিটির নির্দেশনা মেনে চলুন। FloodShield এগুলোর সহায়ক, বিকল্প নয়।",
-    viewRisk: "বন্যার ঝুঁকি", viewRain: "বৃষ্টি", viewPast: "অতীতের বন্যা",
+    viewRisk: "বন্যার ঝুঁকি", viewRain: "বৃষ্টি", viewPast: "অতীতের বন্যা", viewCyc: "ঘূর্ণিঝড়",
+    cycEyebrow: "ঘূর্ণিঝড়ের ইতিহাস · NOAA IBTrACS", cycTop: "ঝড়ের পথের সবচেয়ে কাছে",
+    cycBand: ["≤ ৫০ কিমি", "৫০–১০০ কিমি", "১০০–১৫০ কিমি"], cycScale: "ঝড়ের কেন্দ্র থেকে দূরত্ব",
+    cycFromTrack: km => `ঝড়ের পথ থেকে ${km} কিমি`, cycWind: kt => `কাছাকাছি IMD বাতাস ${kt} নট (${Math.round(kt * 1.852)} কিমি/ঘণ্টা)`,
+    cycPeak: "সর্বোচ্চ (IMD)", cycLandfall: "আঘাত হানে", cycNoWind: "IBTrACS-এ বাতাসের গতি রেকর্ড নেই",
+    cycJtwc: kt => `মার্কিন JTWC-এর হিসাব: ${kt} নট (১ মিনিটের বাতাস, ভিন্ন মাপ)`, cycProvisional: "অস্থায়ী পথ (এখনো চূড়ান্ত নয়)",
+    cycNote: "পথ: IMD নয়াদিল্লির (বঙ্গোপসাগরের জন্য WMO-র আঞ্চলিক কেন্দ্র) অফিসিয়াল best track, NOAA IBTrACS থেকে। উপজেলার রঙ দেখায় ঝড়ের কেন্দ্র কত কাছ দিয়ে গেছে; জোরালো বাতাস কেন্দ্রের চেয়ে দূর পর্যন্ত যায়।",
+    cycHistTitle: "🌀 ১৯৬০ থেকে ঘূর্ণিঝড়",
+    cycHist: (n50, n150) => `<b>${n50}</b>টি ঝড়ের পথ ৫০ কিমির মধ্যে, <b>${n150}</b>টি ১৫০ কিমির মধ্যে দিয়ে গেছে (IBTrACS, IMD best track)।`,
+    cycStrongest: "কাছ দিয়ে যাওয়া সবচেয়ে শক্তিশালী",
+    cycNoLand: "স্থলভাগে আঘাত হানেনি", cycUpz: n => `${n}টি উপজেলা ১৫০ কিমির মধ্যে`,
     dateLabel: "তারিখ", today: "আজ", total24: "আগামী ২৪ ঘণ্টা", total72: "আগামী ৭২ ঘণ্টা",
     past72: "গত ৭২ ঘণ্টা", next24: "আগামী ২৪ ঘণ্টা", next72: "আগামী ৭২ ঘণ্টা",
     allDivisions: "সমগ্র বাংলাদেশ", rivers: "নদী", upstream: "উজানের অববাহিকা (ভারত, নেপাল…)",
@@ -92,6 +112,7 @@ const T = {
 let lang = "en", view = "risk", lead = "rain_24h_mm";
 let data = null, layer = null, selected = null, selectedLayer = null;
 let hind = null, events = [], eventLabels = null;
+let cycList = [], cyc = null, cycLayer = null;
 let riverLayer = null, basinLayer = null, basinData = null, hiLayer = null, maskLayer = null, hospLayer = null;
 let mapDark = true;
 try { lang = localStorage.getItem("fs-lang") || "en"; mapDark = localStorage.getItem("fs-map") !== "light"; } catch (e) {}
@@ -110,7 +131,10 @@ const TOTAL = { breaks: [0, 1, 5, 10, 20, 50, 100, 200], colors: ["rgba(0,0,0,0)
 const FLOOD = { breaks: [0, 0.02, 0.05, 0.1, 0.2, 0.4], colors: ["rgba(0,0,0,0)", "#f6c9a8", "#f39b6d", "#ea6a45", "#cf3a2b", "#8f1420"] };
 const step = (v, s) => v == null ? "rgba(0,0,0,0)" : s.colors[s.breaks.filter(b => v >= b).length - 1];
 
+const CYC_BANDS = [[50, "#e5483a"], [100, "#f4914a"], [150, "#f4d35e"]];
+const cycOf = p => cyc?.upazilas[p.id];
 function fillFor(p) {
+  if (view === "cyc") { const e = cycOf(p); return e ? CYC_BANDS.find(([km]) => e.min_km <= km)[1] : "rgba(0,0,0,0)"; }
   if (view === "past") return step(eventLabels?.[p.id]?.abnormal_frac, FLOOD);
   if (view === "rain") return step(p[lead], TOTAL);
   const r = riskOf(p.flood_prob);
@@ -118,6 +142,10 @@ function fillFor(p) {
 }
 function valueFor(p) {
   const tt = t();
+  if (view === "cyc") {
+    const e = cycOf(p);
+    return e ? tt.cycFromTrack(nf(e.min_km)) + (e.wind_kt ? `<br>${tt.cycWind(e.wind_kt)}` : "") : "–";
+  }
   if (view === "past") { const v = eventLabels?.[p.id]; return v ? `${nf(v.abnormal_frac * 100, 1)}% ${tt.flooded}` : "–"; }
   if (view === "rain") {
     const v = p[lead];
@@ -126,6 +154,7 @@ function valueFor(p) {
   return p.flood_prob == null ? "–" : `${nf(p.flood_prob * 100)}%`;
 }
 function sortKey(p) {
+  if (view === "cyc") { const e = cycOf(p); return e ? 150 - e.min_km : -1; }
   if (view === "past") return eventLabels?.[p.id]?.abnormal_frac ?? -1;
   if (view === "rain") return p[lead] ?? -1;
   return p.flood_prob ?? -1;
@@ -157,6 +186,7 @@ map.getPane("mask").style.pointerEvents = "none";
 map.createPane("geo").style.zIndex = 650;
 map.getPane("geo").style.pointerEvents = "none";
 map.createPane("rivers").style.zIndex = 450;
+map.createPane("track").style.zIndex = 655;
 let baseLayers = [];
 function setBasemap() {
   baseLayers.forEach(l => l.remove());
@@ -242,6 +272,11 @@ function renderScale() {
       .map(([k, l]) => `<span style="background:${RISK[k]}">${l}</span>`).join("") + `<span class="unit">${tt.viewRisk}</span>`;
     return;
   }
+  if (view === "cyc") {
+    $("scale").innerHTML = CYC_BANDS.map(([, c], i) => `<span style="background:${c}">${tt.cycBand[i]}</span>`).join("")
+      + `<span class="unit">${tt.cycScale}</span>`;
+    return;
+  }
   if (view === "past") { s = FLOOD; labels = ["0", "2%", "5%", "10%", "20%", "40%+"]; unit = tt.flooded; }
   else { s = TOTAL; labels = ["0", "1", "5", "10", "20", "50", "100", "200+"]; unit = tt.mm; }
   $("scale").innerHTML = s.colors.map((c, i) => `<span style="background:${i ? c : "#2a333d"}">${labels[i]}</span>`).join("")
@@ -253,6 +288,8 @@ function setView(v) {
   view = v;
   document.querySelectorAll("#view button").forEach(b => b.classList.toggle("on", b.dataset.view === v));
   document.querySelectorAll(".top-left .sub").forEach(s => s.hidden = s.dataset.for !== v);
+  if (v !== "cyc") cycLayer && cycLayer.remove(); else cycLayer && cycLayer.addTo(map);
+  if (v === "cyc" && !cyc) { loadCyclones(); return; }
   if (v === "past" && !eventLabels && events.length) { $("event").value = events[events.length - 1].id; selectEvent(); return; }
   restyle();
 }
@@ -260,6 +297,35 @@ function setView(v) {
 async function selectEvent() {
   const id = $("event").value;
   eventLabels = id ? await (await fetch(`/api/v1/flood-events/${id}`)).json() : null;
+  restyle();
+}
+
+/* ---------- cyclones ---------- */
+const IMD_COLOR = kt => kt == null ? "#9aa5ae" : kt >= 90 ? "#8f1420" : kt >= 64 ? "#d42e5a" : kt >= 48 ? "#f07c2a"
+  : kt >= 34 ? "#f2d43a" : "#7dcf3c";
+
+async function loadCyclones() {
+  if (!cycList.length) {
+    const r = await (await fetch("/api/v1/cyclones?min_wind_kt=34")).json();
+    cycList = r.cyclones;
+    $("cyclone").innerHTML = cycList.map(c => `<option value="${c.sid}">${c.name} ${c.season}${c.category ? " · " + c.category : ""}</option>`).join("");
+  }
+  const first = cycList.find(c => c.name !== "Unnamed") || cycList[0];
+  $("cyclone").value = first.sid;
+  await selectCyclone();
+}
+
+async function selectCyclone() {
+  cyc = await (await fetch(`/api/v1/cyclones/${$("cyclone").value}`)).json();
+  if (cycLayer) cycLayer.remove();
+  const pts = cyc.points, segs = [];
+  for (let i = 1; i < pts.length; i++)
+    segs.push(L.polyline([[pts[i - 1].lat, pts[i - 1].lon], [pts[i].lat, pts[i].lon]],
+      { pane: "track", color: IMD_COLOR(pts[i].wind_kt ?? pts[i - 1].wind_kt), weight: 4, opacity: 0.95, interactive: false }));
+  const marks = pts.filter(p => p.wind_kt != null).map(p => L.circleMarker([p.lat, p.lon],
+    { pane: "track", radius: 4, color: "#10161d", weight: 1, fillColor: IMD_COLOR(p.wind_kt), fillOpacity: 1 })
+    .bindTooltip(`<div class="tt-name">${cyc.name}</div><div class="tt-sub">${new Date(p.time).toLocaleString(loc(), { timeZone: "Asia/Dhaka", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</div>${p.wind_kt} kt · ${Math.round(p.wind_kt * 1.852)} km/h${p.pres_hpa ? ` · ${p.pres_hpa} hPa` : ""}`));
+  cycLayer = L.layerGroup([...segs, ...marks]).addTo(map);
   restyle();
 }
 
@@ -294,8 +360,29 @@ function counts() {
   return c;
 }
 
+function renderCycStatus(el, tt) {
+  el.className = "panel status high";
+  if (!cyc) { el.innerHTML = `<div class="eyebrow">${tt.cycEyebrow}</div><p class="note">${tt.loading}</p>`; return; }
+  const kmh = kt => Math.round(kt * 1.852);
+  const lf = cyc.landfall_time ? `${dateFmt(cyc.landfall_time)} · ${cyc.landfall_lat}°N ${cyc.landfall_lon}°E` : tt.cycNoLand;
+  el.innerHTML = `<div class="eyebrow">${tt.cycEyebrow}</div>
+    <div class="headline">${cyc.name} (${cyc.season})</div>
+    <div class="period">${dateFmt(cyc.start)} – ${dateFmt(cyc.end)}</div>
+    <dl class="kv" style="margin-top:12px">
+      <dt>${tt.cycPeak}</dt><dd>${cyc.max_wind_kt ? `${cyc.max_wind_kt} kt · ${kmh(cyc.max_wind_kt)} km/h` : tt.cycNoWind}</dd>
+      ${cyc.category ? `<dt></dt><dd>${cyc.category}</dd>` : ""}
+      ${cyc.min_pres_hpa ? `<dt>hPa</dt><dd>${cyc.min_pres_hpa}</dd>` : ""}
+      <dt>${tt.cycLandfall}</dt><dd>${lf}</dd>
+      <dt></dt><dd>${tt.cycUpz(nf(Object.keys(cyc.upazilas).length))}</dd>
+    </dl>
+    ${!cyc.max_wind_kt && cyc.max_wind_jtwc_kt ? `<p class="note" style="margin-top:8px">${tt.cycJtwc(cyc.max_wind_jtwc_kt)}</p>` : ""}
+    ${cyc.provisional ? `<p class="note">${tt.cycProvisional}</p>` : ""}
+    <p class="note" style="margin-top:8px">${tt.cycNote}</p>`;
+}
+
 function renderStatus() {
   const el = $("status"), tt = t(), r = data.flood_forecast_run, c = counts();
+  if (view === "cyc") { renderCycStatus(el, tt); return; }
   el.className = `panel status ${c.high ? "high" : c.medium ? "medium" : "low"}`;
   if (!r && !hind) { el.innerHTML = `<div class="eyebrow">${tt.statusEyebrow}</div><p class="note">${tt.noForecast}</p>`; return; }
   let extra;
@@ -319,7 +406,7 @@ function renderStatus() {
 
 function renderTop() {
   const tt = t();
-  $("top-title").textContent = view === "past" ? tt.topPast : view === "rain"
+  $("top-title").textContent = view === "cyc" ? tt.cycTop : view === "past" ? tt.topPast : view === "rain"
     ? (lead === "rain_past_72h_mm" ? tt.topRainPast : tt.topRain) : tt.topRisk;
   const rows = [...data.features].filter(f => sortKey(f.properties) > 0 || view === "risk")
     .sort((a, b) => sortKey(b.properties) - sortKey(a.properties)).slice(0, 10);
@@ -364,6 +451,7 @@ function select(id, zoom = false) {
   loadRain(id);
   showUpstream(id);
   showHospitals(id);
+  showCycloneHistory(id);
 }
 
 function closeDetail() {
@@ -458,6 +546,20 @@ async function showUpstream(id) {
   hiLayer = L.geoJSON({ type: "FeatureCollection", features: basinData.features.filter(f => ids.has(f.properties.id)) },
     { style: { color: "#f2a90f", weight: 1.2, dashArray: "4 3", fillColor: "#f2a90f", fillOpacity: 0.06 }, interactive: false }).addTo(map);
   hiLayer.bringToBack();
+}
+
+async function showCycloneHistory(id) {
+  const res = await fetch(`/api/v1/nodes/${id}/cyclones`), tt = t();
+  if (!res.ok || selected?.id !== id) return;
+  const r = await res.json();
+  $("cyc-panel").hidden = !r.within_150km;
+  if (!r.within_150km) return;
+  const strong = r.cyclones.filter(c => c.max_wind_kt && c.min_km <= 100)
+    .sort((a, b) => b.max_wind_kt - a.max_wind_kt).slice(0, 3);
+  $("d-cyc").innerHTML = `<p class="note">${tt.cycHist(nf(r.within_50km), nf(r.within_150km))}</p>` + (strong.length
+    ? `<dl class="kv"><dt style="grid-column:1/3;font-weight:600;color:var(--text)">${tt.cycStrongest}</dt>${strong.map(c =>
+        `<dt>${c.name} ${c.season} · ${nf(c.min_km)} km</dt><dd>${c.max_wind_kt} kt · ${Math.round(c.max_wind_kt * 1.852)} km/h</dd>`).join("")}</dl>`
+    : "");
 }
 
 async function showHospitals(id) {
@@ -566,6 +668,7 @@ document.querySelectorAll("#lead button").forEach(b => b.onclick = () => {
   restyle();
 });
 $("event").onchange = selectEvent;
+$("cyclone").onchange = selectCyclone;
 $("day").onchange = selectDay;
 $("day").max = new Date().toISOString().slice(0, 10);
 $("day-clear").onclick = () => { $("day").value = ""; selectDay(); };
@@ -604,7 +707,8 @@ document.addEventListener("keydown", e => {
     fetch("/api/v1/flood-events").then(r => r.json()),
   ]);
   divs.forEach(d => $("division").insertAdjacentHTML("beforeend", `<option value="${d.name}">${d.name}</option>`));
-  events = evs.filter(e => !e.id.startsWith("auto_"));  // monsoon windows are training labels only
+  // monsoon windows are training labels only; post-cyclone maps miss surge flooding in tidal areas
+  events = evs.filter(e => !e.id.startsWith("auto_") && !e.id.startsWith("cyclone_"));
   events.forEach(e => $("event").insertAdjacentHTML("beforeend", `<option value="${e.id}">${e.name}</option>`));
   map.invalidateSize();
   fitBangladesh();

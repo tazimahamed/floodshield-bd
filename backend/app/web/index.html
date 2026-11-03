@@ -34,6 +34,7 @@
         <button data-view="risk" class="on" data-i18n="viewRisk"></button>
         <button data-view="rain" data-i18n="viewRain"></button>
         <button data-view="past" data-i18n="viewPast"></button>
+        <button data-view="cyc" data-i18n="viewCyc"></button>
       </div>
       <div class="sub" data-for="risk">
         <label class="field"><span data-i18n="dateLabel"></span><input type="date" id="day" min="2017-01-31"></label>
@@ -48,6 +49,9 @@
       </div>
       <div class="sub" data-for="past" hidden>
         <select id="event" aria-label="Past flood"></select>
+      </div>
+      <div class="sub" data-for="cyc" hidden>
+        <select id="cyclone" aria-label="Cyclone"></select>
       </div>
     </div>
 
@@ -129,6 +133,10 @@
             <div class="panel-head"><h2 data-i18n="hospTitle"></h2></div>
             <ul id="d-hosp" class="hosp"></ul>
             <p class="note" id="hosp-note"></p>
+          </section>
+          <section class="panel" id="cyc-panel" hidden>
+            <div class="panel-head"><h2 data-i18n="cycHistTitle"></h2></div>
+            <div id="d-cyc"></div>
           </section>
           <section class="panel">
             <div class="panel-head"><h2 data-i18n="upTitle"></h2></div>

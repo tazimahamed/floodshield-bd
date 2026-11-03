@@ -41,6 +41,15 @@ EVENTS = [
      "pre": ("2024-02-01", "2024-03-31"), "post": ("2024-06-18", "2024-07-05")},
     {"id": "east_2024_aug", "name": "Feni-Noakhali-Cumilla flood, August 2024",
      "pre": ("2024-02-01", "2024-03-31"), "post": ("2024-08-21", "2024-09-02")},
+    # after cyclone landfall (IBTrACS landfall dates); the window starts the day after landfall
+    {"id": "cyclone_amphan_2020", "name": "After Cyclone Amphan, May 2020",
+     "pre": ("2020-02-01", "2020-03-31"), "post": ("2020-05-21", "2020-06-01")},
+    {"id": "cyclone_sitrang_2022", "name": "After Cyclone Sitrang, October 2022",
+     "pre": ("2022-02-01", "2022-03-31"), "post": ("2022-10-25", "2022-11-05")},
+    {"id": "cyclone_mocha_2023", "name": "After Cyclone Mocha, May 2023",
+     "pre": ("2023-02-01", "2023-03-31"), "post": ("2023-05-15", "2023-05-26")},
+    {"id": "cyclone_remal_2024", "name": "After Cyclone Remal, May 2024",
+     "pre": ("2024-02-01", "2024-03-31"), "post": ("2024-05-27", "2024-06-07")},
 ]
 
 
