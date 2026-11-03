@@ -219,10 +219,11 @@ function setBasemap() {
   baseLayers.forEach(l => l.remove());
   const base = mapDark ? "Canvas/World_Dark_Gray_Base" : "Ocean/World_Ocean_Base";
   const ref = mapDark ? "Canvas/World_Dark_Gray_Reference" : "Ocean/World_Ocean_Reference";
+  // the Ocean basemap has no tiles past ~zoom 10 on land ("Map data not yet available"), so stretch zoom-10 tiles
   baseLayers = [
-    L.tileLayer(`${ESRI}/${base}/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 16, maxNativeZoom: mapDark ? 16 : 13,
+    L.tileLayer(`${ESRI}/${base}/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 16, maxNativeZoom: mapDark ? 16 : 10,
       attribution: "Basemap © Esri, GEBCO, NOAA, Garmin, HERE, © OpenStreetMap contributors · Boundaries BBS/OCHA · Rivers HydroSHEDS" }),
-    L.tileLayer(`${ESRI}/${ref}/MapServer/tile/{z}/{y}/{x}`, { pane: "labels", maxZoom: 16, maxNativeZoom: mapDark ? 16 : 13, opacity: 0.9 }),
+    L.tileLayer(`${ESRI}/${ref}/MapServer/tile/{z}/{y}/{x}`, { pane: "labels", maxZoom: 16, maxNativeZoom: mapDark ? 16 : 10, opacity: 0.9 }),
   ];
   baseLayers.forEach(l => l.addTo(map));
   $("map").style.background = mapDark ? "#1b232c" : "#cfe0ec";

@@ -154,7 +154,7 @@ function render() {
   const w = s && s.worst;
   $("tiles").innerHTML = `
     <div class="tile reveal"><div class="ti">🌊</div><div class="k">${tt.tFloods}</div><div class="v"><span class="count" data-to="${s ? s.flooded_windows : 0}">0</span> <small>/ ${s ? nf(s.windows) : "–"}</small></div><div class="d">${s ? tt.tFloodsD(nf(s.flooded_windows), nf(s.windows)) : ""}</div></div>
-    <div class="tile reveal"><div class="ti">📅</div><div class="k">${tt.tWorst}</div><div class="v">${w ? monthYear(w.start) : tt.tNoFlood}</div><div class="d">${w ? `${dayMonth(w.start)} – ${dayMonth(w.end)} · ${tt.tWorstD(nf(w.flooded_pct, 0), nf(w.flooded_km2))}` : ""}</div></div>
+    <div class="tile reveal"><div class="ti">📅</div><div class="k">${tt.tWorst}</div><div class="v">${w ? monthYear(w.start) : tt.tNoFlood}</div><div class="d">${w ? `${dayMonth(w.start)} – ${dayMonth(w.end)} · ${tt.tWorstD(nf(w.flooded_pct, 0), nf(w.flooded_km2, w.flooded_km2 < 10 ? 1 : 0))}` : ""}</div></div>
     <div class="tile reveal"><div class="ti">💧</div><div class="k">${tt.tWater}</div><div class="v"><span class="count" data-to="${n.catchment_km2}">0</span> <small>km²</small></div><div class="d">${tt.tWaterD(n.outside_bd_pct)}</div></div>`;
   countUp();
   renderCalendar();
@@ -203,8 +203,10 @@ async function miniMap() {
   const shape = await res.json();
   const m = L.map("mini-map", { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false,
     doubleClickZoom: false, boxZoom: false, keyboard: false, touchZoom: false });
-  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}", { maxNativeZoom: 13 }).addTo(m);
-  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}", { maxNativeZoom: 13, opacity: .8 }).addTo(m);
+  // Light Gray canvas has detail down to street level; the Ocean basemap stops around zoom 10 on land
+  // and shows "Map data not yet available" for small (city) upazilas
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", { maxNativeZoom: 16 }).addTo(m);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { maxNativeZoom: 16, opacity: .9 }).addTo(m);
   const g = L.geoJSON(shape, { style: { color: "#0e5a8a", weight: 2.5, fillColor: "#3b9ad6", fillOpacity: 0.25 } }).addTo(m);
   m.fitBounds(g.getBounds(), { padding: [18, 18] });
   m.setZoom(Math.min(m.getZoom(), 11));
