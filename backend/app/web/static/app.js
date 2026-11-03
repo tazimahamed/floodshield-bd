@@ -19,7 +19,7 @@ const T = {
     hindNote: "The model was run on actual (ERA5-Land) rain for this date, as if the rain forecast had been perfect. Future dates beyond today cannot be forecast.",
     observed: (name, hit, total) => `Satellite (Sentinel-1) saw <b>${total}</b> upazilas flooded in “${name}”. The model had <b>${hit}</b> of them at medium or high risk.`,
     noObserved: "No satellite flood map exists for this date (mapped: 1 Jun – 28 Sep, 2017–2025).",
-    atRisk: "Exposed in medium/high-risk upazilas", roadKm: "km major roads",
+    atRisk: "Exposed in medium/high-risk upazilas (OpenStreetMap, incomplete)", roadKm: "km major roads",
     powerRipple: "upazilas may lose power", healthRipple: "lose hospital access",
     topRisk: "Highest flood risk", topRain: "Most rain expected", topRainPast: "Most rain, last 72h", topPast: "Most flooded",
     howTitle: "How to use",
@@ -34,7 +34,8 @@ const T = {
     rainTitle: "Rainfall", chartPast: "Past", chartFuture: "Forecast",
     upTitle: "Where its water comes from", upArea: "Area draining here", upOut: "Outside Bangladesh",
     upRain: "Rain forecast over that area (72h)", basins: "basins",
-    assetsTitle: "Facilities in this upazila", noAssets: "None mapped in OpenStreetMap yet.",
+    assetsTitle: "Facilities mapped in OpenStreetMap", noAssets: "None mapped in OpenStreetMap yet.",
+    osmNote: "Volunteer-mapped and incomplete for Bangladesh: real numbers are higher. Not an official count.",
     kinds: { hospital: "Hospitals", clinic: "Clinics", school: "Schools", college: "Colleges",
              shelter: "Shelters", substation: "Substations", power_plant: "Power plants" },
     flooded: "flooded", abnormal: "Abnormal flood water", allWater: "All water incl. seasonal",
@@ -62,7 +63,7 @@ const T = {
     hindNote: "এই তারিখের আসল বৃষ্টি (ERA5-Land) দিয়ে মডেল চালানো হয়েছে, যেন বৃষ্টির পূর্বাভাস নিখুঁত ছিল। আজকের পরের তারিখের পূর্বাভাস দেওয়া যায় না।",
     observed: (name, hit, total) => `স্যাটেলাইট (Sentinel-1) “${name}”-এ <b>${total}</b>টি উপজেলায় বন্যা দেখেছে। মডেল এর <b>${hit}</b>টিকে মাঝারি বা উচ্চ ঝুঁকিতে রেখেছিল।`,
     noObserved: "এই তারিখের কোনো স্যাটেলাইট বন্যা-ম্যাপ নেই (ম্যাপ করা: ২০১৭–২০২৫, ১ জুন – ২৮ সেপ্টেম্বর)।",
-    atRisk: "মাঝারি/উচ্চ ঝুঁকির উপজেলায় যা ঝুঁকিতে", roadKm: "কিমি প্রধান সড়ক",
+    atRisk: "মাঝারি/উচ্চ ঝুঁকির উপজেলায় যা ঝুঁকিতে (OpenStreetMap, অসম্পূর্ণ)", roadKm: "কিমি প্রধান সড়ক",
     powerRipple: "উপজেলায় বিদ্যুৎ যেতে পারে", healthRipple: "হাসপাতাল-সুবিধা হারাতে পারে",
     topRisk: "সর্বোচ্চ বন্যার ঝুঁকি", topRain: "সবচেয়ে বেশি বৃষ্টির পূর্বাভাস", topRainPast: "গত ৭২ ঘণ্টায় সবচেয়ে বেশি বৃষ্টি", topPast: "সবচেয়ে বেশি প্লাবিত",
     howTitle: "কীভাবে ব্যবহার করবেন",
@@ -77,7 +78,8 @@ const T = {
     rainTitle: "বৃষ্টি", chartPast: "অতীত", chartFuture: "পূর্বাভাস",
     upTitle: "পানি কোথা থেকে আসে", upArea: "যত এলাকার পানি এখানে আসে", upOut: "বাংলাদেশের বাইরে",
     upRain: "ওই এলাকায় বৃষ্টির পূর্বাভাস (৭২ ঘণ্টা)", basins: "টি অববাহিকা",
-    assetsTitle: "এই উপজেলার স্থাপনা", noAssets: "OpenStreetMap-এ এখনো কিছু চিহ্নিত নেই।",
+    assetsTitle: "OpenStreetMap-এ চিহ্নিত স্থাপনা", noAssets: "OpenStreetMap-এ এখনো কিছু চিহ্নিত নেই।",
+    osmNote: "স্বেচ্ছাসেবকদের আঁকা, বাংলাদেশে অসম্পূর্ণ: আসল সংখ্যা এর চেয়ে বেশি। এটি সরকারি হিসাব নয়।",
     kinds: { hospital: "হাসপাতাল", clinic: "ক্লিনিক", school: "স্কুল", college: "কলেজ",
              shelter: "আশ্রয়কেন্দ্র", substation: "সাবস্টেশন", power_plant: "বিদ্যুৎকেন্দ্র" },
     flooded: "প্লাবিত", abnormal: "অস্বাভাবিক বন্যার পানি", allWater: "মৌসুমি পানিসহ মোট",
@@ -476,6 +478,7 @@ async function showAssets(id) {
     ? `<div class="chips">${Object.entries(n).sort((a, b) => b[1] - a[1]).map(([k, c]) =>
         `<span><i style="background:${KIND_COLORS[k]}"></i>${nf(c)} ${tt.kinds[k] ?? k}</span>`).join("")}</div>`
     : `<p class="empty">${tt.noAssets}</p>`;
+  $("d-assets").insertAdjacentHTML("beforeend", `<p class="note" style="margin:8px 0 0">${tt.osmNote}</p>`);
   assetLayer = L.geoJSON(fc, {
     pointToLayer: (f, ll) => L.circleMarker(ll, { pane: "assets", radius: 5, color: "#fff", weight: 1.5, fillOpacity: 1,
                                                   fillColor: KIND_COLORS[f.properties.kind] }),

@@ -5,7 +5,7 @@ Levels (from the latest flood forecast):
   none    = low risk: calm "no elevated risk" wording, never "you are safe"
   watch   = medium risk (P(flooded) >= 25 %): get ready
   warning = high risk   (P(flooded) >= 50 %): act now
-  severe  = high risk and a hospital or substation lies in the upazila
+  severe  = high risk with P(flooded) >= 75 %
 Pushed alerts go out only for watch and above, when the level rises or once a day while it
 stays at warning/severe. Low risk is only ever said in reply to the person (/status, subscribe).
 
@@ -18,10 +18,10 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 import httpx
-from sqlalchemy import func, select
+from sqlalchemy import select
 
 from app.core.config import settings
-from app.db.models import AlertLog, Asset, FloodForecast, FloodForecastRun, Node, RainForecast, Subscriber
+from app.db.models import AlertLog, FloodForecast, FloodForecastRun, Node, RainForecast, Subscriber
 from app.db.session import SessionLocal
 from app.services.places import find
 
@@ -77,9 +77,14 @@ def rain_word(mm_per_day: float | None) -> tuple[str, str]:
     return next((bn, en) for top, bn, en in RAIN_WORDS if v < top)
 
 
-def level_for(risk: str, has_critical: bool) -> str:
+SEVERE_PROB = 0.75
+
+
+def level_for(risk: str, prob: float) -> str:
+    """Alert level from the forecast alone. (OpenStreetMap facility counts are too incomplete
+    in Bangladesh to decide anything a person reads.)"""
     if risk == "high":
-        return "severe" if has_critical else "warning"
+        return "severe" if prob >= SEVERE_PROB else "warning"
     return "watch" if risk == "medium" else "none"
 
 
@@ -98,8 +103,7 @@ def _mm(v, bn: bool) -> str:
     return f"{_bn(s)} মিমি" if bn else f"{s} mm"
 
 
-def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, facilities: dict,
-           rain: dict | None = None) -> str:
+def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, rain: dict | None = None) -> str:
     """One organised message (HTML): Bangla first, then English, worded for the risk level."""
     rain = rain or {}
     start, end = run.reference_day, run.valid_until
@@ -108,11 +112,6 @@ def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, fac
     risk_bn, risk_en = RISK_WORD[fc.risk]
     w_bn, w_en = rain_word((rain.get("next72") or 0) / 3)
     name = html.escape(f"{node.name}, {node.district}")
-    kinds = [("hospital", "হাসপাতাল", "hospitals"), ("shelter", "আশ্রয়কেন্দ্র", "shelters"),
-             ("school", "স্কুল", "schools"), ("substation", "সাবস্টেশন", "substations")]
-    fac_bn = " · ".join(f"{_bn(facilities[k])} {bn}" for k, bn, _ in kinds if facilities.get(k))
-    fac_en = " · ".join(f"{facilities[k]} {en if facilities[k] > 1 else en[:-1]}" for k, _, en in kinds if facilities.get(k))
-
     bn = [f"<b>{HEAD[level][0]}</b>", f"📍 {name}", f"📅 আগামী ১৫ দিন: {_bn_date(start)} – {_bn_date(end)}", "",
           "<b>🌧️ বৃষ্টির পূর্বাভাস</b>",
           f"• আগামী ২৪ ঘণ্টা: {_mm(rain.get('next24'), True)}",
@@ -132,9 +131,6 @@ def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, fac
     if level != "none":
         bn.append(f"• ডুবতে পারে: উপজেলার প্রায় {_bn(frac)}% (সম্ভাব্য {_bn(p10)}–{_bn(p90)}%)")
         en.append(f"• May flood: about {frac}% of the upazila (likely {p10}–{p90}%)")
-    if fac_bn:
-        bn += ["", f"<b>🏥 এই উপজেলায়</b>: {fac_bn}"]
-        en += ["", f"<b>🏥 In this upazila</b>: {fac_en}"]
     bn += ["", f"<b>✅ করণীয়</b>: {ADVICE[level][0]}"]
     en += ["", f"<b>✅ What to do</b>: {ADVICE[level][1]}"]
     return ("\n".join(bn) + "\n\n━━━━━━━━━━ English ━━━━━━━━━━\n" + "\n".join(en) +
@@ -195,11 +191,6 @@ def send_voice(chat_id: int, script: str) -> None:
         log.exception("Voice message failed")
 
 
-def _facilities(db, node_id: str) -> dict:
-    return dict(db.execute(select(Asset.kind, func.count()).where(Asset.node_id == node_id)
-                           .group_by(Asset.kind)).all())
-
-
 def _rain(db, node_id: str) -> dict:
     """Latest GFS rain for the upazila and the area-weighted rain over its upstream basins."""
     from app.api.routes import UPSTREAM_SQL, _latest_run as latest_rain_run
@@ -240,8 +231,7 @@ def dispatch_alerts() -> int:
                 fc = _forecast(db, run, node_id)
                 if not fc:
                     continue
-                fac = _facilities(db, node_id)
-                level = level_for(fc.risk, bool(fac.get("hospital") or fac.get("substation")))
+                level = level_for(fc.risk, fc.flood_prob)
                 if level == "none":
                     continue
                 last = db.scalars(select(AlertLog).where(AlertLog.chat_id == sub.chat_id, AlertLog.node_id == node_id,
@@ -250,7 +240,7 @@ def dispatch_alerts() -> int:
                 if last and LEVEL_RANK[last.level] >= LEVEL_RANK[level] and now - last.sent_at < REPEAT_AFTER:
                     continue
                 node, rain = db.get(Node, node_id), _rain(db, node_id)
-                text = render(level, node, fc, run, fac, rain)
+                text = render(level, node, fc, run, rain)
                 entry = AlertLog(forecast_run_id=run.id, chat_id=sub.chat_id, node_id=node_id, level=level,
                                  message=text, status="sent")
                 try:
@@ -285,10 +275,9 @@ def _status_messages(db, sub: Subscriber, node_ids: list[str]) -> list[tuple[str
     for i in node_ids:
         fc, node = _forecast(db, run, i), db.get(Node, i)
         if fc and node:
-            fac = _facilities(db, i)
-            level = level_for(fc.risk, bool(fac.get("hospital") or fac.get("substation")))
+            level = level_for(fc.risk, fc.flood_prob)
             rain = _rain(db, i)
-            out.append((render(level, node, fc, run, fac, rain), voice_script(level, node, rain)))
+            out.append((render(level, node, fc, run, rain), voice_script(level, node, rain)))
     return out
 
 
