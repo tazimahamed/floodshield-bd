@@ -133,8 +133,23 @@ function sortKey(p) {
 
 /* ---------- map ---------- */
 const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-const map = L.map("map", { zoomSnap: 0.25, zoomControl: false, minZoom: 5 }).setView([23.75, 90.3], 7);
+// keep the view on Bangladesh and its upstream region; never let it shrink to a dot
+const BD_BOUNDS = L.latLngBounds([20.55, 88.0], [26.65, 92.7]);
+const REGION_BOUNDS = L.latLngBounds([14.5, 76.0], [33.5, 101.0]);
+const map = L.map("map", { zoomSnap: 0.25, zoomControl: false, minZoom: 6, maxBounds: REGION_BOUNDS,
+                           maxBoundsViscosity: 0.8 });
+map.fitBounds(BD_BOUNDS, { padding: [12, 12] });
+const fitBangladesh = () => map.fitBounds(BD_BOUNDS, { padding: [12, 12] });
+new ResizeObserver(() => { map.invalidateSize(); }).observe(document.getElementById("map"));
 L.control.zoom({ position: "bottomright" }).addTo(map);
+const home = L.control({ position: "bottomright" });
+home.onAdd = () => {
+  const b = L.DomUtil.create("a", "leaflet-bar home-btn");
+  b.href = "#"; b.title = "Show all Bangladesh"; b.innerHTML = "⤢";
+  L.DomEvent.on(b, "click", e => { L.DomEvent.preventDefault(e); fitBangladesh(); });
+  return b;
+};
+home.addTo(map);
 const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services";
 // light: Ocean basemap (blue sea, soft terrain) — dark: dark grey canvas
 L.tileLayer(`${ESRI}/${dark ? "Canvas/World_Dark_Gray_Base" : "Ocean/World_Ocean_Base"}/MapServer/tile/{z}/{y}/{x}`, {
@@ -161,9 +176,12 @@ async function drawCountry() {
   maskLayer = L.polygon([world, ...polys.map(p => ll(p[0]))], {
     pane: "mask", stroke: false, fillColor: dark ? "#0b1218" : "#ffffff", fillOpacity: MASK, interactive: false,
   }).addTo(map);
-  const rings = polys.map(p => ll(p[0]));
-  L.polyline(rings, { pane: "geo", color: dark ? "#0b1218" : "#ffffff", weight: 5, opacity: 0.9, interactive: false }).addTo(map);
-  L.polyline(rings, { pane: "geo", color: dark ? "#9fb3c6" : "#33475b", weight: 1.6, opacity: 1, interactive: false }).addTo(map);
+  // border only for the mainland and larger islands: hundreds of tiny Sundarbans islets
+  // drawn with a thick line turn the coast into a dark blob at country zoom
+  const big = p => { const b = L.latLngBounds(ll(p[0])); return b.getNorth() - b.getSouth() + b.getEast() - b.getWest() > 0.6; };
+  const rings = polys.filter(big).map(p => ll(p[0]));
+  L.polyline(rings, { pane: "geo", color: dark ? "#0b1218" : "#ffffff", weight: 4, opacity: 0.85, interactive: false }).addTo(map);
+  L.polyline(rings, { pane: "geo", color: dark ? "#9fb3c6" : "#3d5266", weight: 1.3, opacity: 0.95, interactive: false }).addTo(map);
 }
 map.createPane("assets").style.zIndex = 620;
 
@@ -186,7 +204,7 @@ function renderLegend() {
   }
 }
 
-async function load() {
+async function load(reframe = false) {
   const div = $("division").value;
   const res = await fetch("/api/v1/upazilas" + (div ? `?division=${encodeURIComponent(div)}` : ""));
   data = await res.json();
@@ -203,6 +221,7 @@ async function load() {
   }).addTo(map);
   if (riverLayer && map.hasLayer(riverLayer)) riverLayer.bringToFront();
   if (div) map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+  else if (reframe) fitBangladesh();
   if (selected) highlight(selected.id);
   renderSide();
 }
@@ -550,7 +569,7 @@ $("event").onchange = selectEvent;
 $("day").onchange = selectDay;
 $("day").max = new Date().toISOString().slice(0, 10);
 $("day-clear").onclick = () => { $("day").value = ""; selectDay(); };
-$("division").onchange = load;
+$("division").onchange = () => load(true);
 $("show-rivers").onchange = toggleRivers;
 $("show-basins").onchange = toggleBasins;
 $("detail-close").onclick = closeDetail;

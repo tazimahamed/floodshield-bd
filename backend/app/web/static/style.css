@@ -120,6 +120,8 @@ body.app { display: flex; flex-direction: column; height: 100vh; }
 .leaflet-tooltip-top:before, .leaflet-tooltip-left:before, .leaflet-tooltip-right:before, .leaflet-tooltip-bottom:before { display: none; }
 .leaflet-control-zoom a { background: var(--surface); color: var(--text); border-color: var(--line); }
 .tt-name { font-weight: 600; }
+.home-btn { display: block; width: 34px; height: 34px; line-height: 32px; text-align: center; font-size: 18px;
+  background: var(--surface); color: var(--text) !important; text-decoration: none; }
 .tt-sub { color: var(--muted); font-size: 12px; }
 
 /* side panels */
