@@ -36,11 +36,11 @@ TEXT = {
                  "\nWhat to do: keep documents, medicine and drinking water ready; know your nearest shelter; "
                  "move livestock and stored food to higher ground.\n"
                  "Follow FFWC (ffwc.gov.bd), BMD and your Upazila Disaster Management Committee — "
-                 "FloodShield supports, and does not replace, official warnings."),
+                 "Durjog Barta supports, and does not replace, official warnings."),
         "facilities": "In this upazila: {items}\n",
         "kinds": {"hospital": "hospitals", "clinic": "clinics", "school": "schools", "shelter": "shelters",
                   "substation": "substations"},
-        "start": ("FloodShield BD — upazila flood early warning.\n"
+        "start": ("Durjog Barta Bangladesh — upazila flood early warning (FloodShield BD).\n"
                   "Send /subscribe <upazila name> (e.g. /subscribe Sylhet Sadar) to get alerts.\n"
                   "/list your upazilas · /status current risk · /unsubscribe · /lang bn"),
         "subscribed": "✅ Subscribed: {name} ({district}). You will get an alert when the flood risk rises.",
@@ -60,11 +60,11 @@ TEXT = {
                  "\nকরণীয়: কাগজপত্র, ওষুধ ও খাবার পানি প্রস্তুত রাখুন; নিকটতম আশ্রয়কেন্দ্র জেনে নিন; "
                  "গবাদিপশু ও মজুত খাবার উঁচু জায়গায় সরান।\n"
                  "FFWC (ffwc.gov.bd), আবহাওয়া অধিদপ্তর ও উপজেলা দুর্যোগ ব্যবস্থাপনা কমিটির নির্দেশনা মেনে চলুন — "
-                 "FloodShield সরকারি সতর্কবার্তার সহায়ক, বিকল্প নয়।"),
+                 "দুর্যোগ বার্তা সরকারি সতর্কবার্তার সহায়ক, বিকল্প নয়।"),
         "facilities": "এই উপজেলায়: {items}\n",
         "kinds": {"hospital": "হাসপাতাল", "clinic": "ক্লিনিক", "school": "স্কুল", "shelter": "আশ্রয়কেন্দ্র",
                   "substation": "সাবস্টেশন"},
-        "start": ("FloodShield BD — উপজেলাভিত্তিক বন্যার আগাম সতর্কতা।\n"
+        "start": ("দুর্যোগ বার্তা বাংলাদেশ — উপজেলাভিত্তিক বন্যার আগাম সতর্কতা (FloodShield BD)।\n"
                   "সতর্কবার্তা পেতে লিখুন /subscribe <উপজেলার নাম> (যেমন /subscribe Sylhet Sadar)।\n"
                   "/list আপনার উপজেলা · /status এখনকার ঝুঁকি · /unsubscribe · /lang en"),
         "subscribed": "✅ যুক্ত হয়েছে: {name} ({district})। বন্যার ঝুঁকি বাড়লে আপনাকে জানানো হবে।",
@@ -231,3 +231,26 @@ def poll_updates() -> int:
             except Exception:
                 log.exception("Telegram reply failed")
     return len(updates)
+
+
+def setup_bot_profile() -> None:
+    """Commands menu and descriptions shown in Telegram (Bangla default, English for English users)."""
+    cmds = {
+        "bn": [("subscribe", "উপজেলা যোগ করুন, যেমন /subscribe Chhatak"), ("status", "এখনকার বন্যার ঝুঁকি"),
+               ("list", "আপনার উপজেলাগুলো"), ("unsubscribe", "উপজেলা বাদ দিন"), ("lang", "ভাষা: /lang en বা /lang bn")],
+        "en": [("subscribe", "Add an upazila, e.g. /subscribe Chhatak"), ("status", "Current flood risk"),
+               ("list", "Your upazilas"), ("unsubscribe", "Remove upazilas"), ("lang", "Language: /lang bn or /lang en")],
+    }
+    desc = {
+        "bn": ("দুর্যোগ বার্তা বাংলাদেশ: আপনার উপজেলায় বন্যার ঝুঁকি বাড়লে বাংলায় আগাম সতর্কবার্তা পাবেন। "
+               "স্যাটেলাইট, আবহাওয়ার পূর্বাভাস ও নদীর উজানের তথ্য থেকে তৈরি। সরকারি সতর্কবার্তা (FFWC, BMD) আগে মানুন।"),
+        "en": ("Durjog Barta Bangladesh: early flood warnings for your upazila, in Bangla or English, from satellite, "
+               "weather forecasts and upstream river data. Always follow official FFWC/BMD warnings first."),
+    }
+    short = {"bn": "উপজেলাভিত্তিক বন্যার আগাম সতর্কবার্তা। Start চেপে /subscribe <উপজেলা> লিখুন।",
+             "en": "Upazila flood early warnings. Press Start, then /subscribe <upazila>."}
+    for lang in ("bn", "en"):
+        code = {} if lang == "bn" else {"language_code": "en"}
+        _call("setMyCommands", commands=[{"command": c, "description": d} for c, d in cmds[lang]], **code)
+        _call("setMyDescription", description=desc[lang], **code)
+        _call("setMyShortDescription", short_description=short[lang], **code)
