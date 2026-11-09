@@ -38,17 +38,17 @@ const T = {
     headlineNone: "No elevated flood risk", headlineSome: (h, m) => h ? `${h} upazilas at high risk` : `${m} upazilas at medium risk`,
     period: (a, b) => `Next 15 days · ${a} – ${b}`,
     high: "High", medium: "Medium", low: "Low",
-    whatMeans: "These counts show how many upazilas could see more flooding than normal in the next 15 days.",
+    whatMeans: "Each upazila is grouped by its chance of abnormal water over at least 5% of its area in the next 15 days: low is under 25%, medium 25–50%, high 50% or more.",
     skill: (m, b) => `Tested on 9 past monsoons the model had not seen: given one flooded and one dry upazila, it gave the flooded one the higher risk <b>${nf(m * 100)} times out of 100</b>. Going by past flood history alone: ${nf(b * 100)} times.`,
-    modelDetails: "Model & data details",
+    modelDetails: "How reliable is this model?",
     hindNote: "This is a test, not a live forecast: it shows what the model would have said, given the rain that actually fell.",
     observed: (name, hit, total) => `Satellite images show flooding in <b>${nf(total)}</b> upazilas around this time (${name}). The model put <b>${nf(hit)}</b> of them at medium or high risk.`,
     noObserved: "We have no satellite flood map for this date, so the result can't be compared here.",
-    topRisk: "Highest flood risk", topRain: "Most rain expected", topRainPast: "Most rain, last 72h", topPast: "Most flooded",
+    topRisk: "Upazilas at highest risk", topRain: "Most rain expected", topRainPast: "Most rain, last 72h", topPast: "Most flooded",
     howTitle: "How to use",
-    how1: "Search or click an upazila to see its flood risk, rainfall and facilities.",
-    how2: "Switch to Rainfall or Past floods at the top; pick a past date under Flood risk to check the model.",
-    how3: "Open the full report for an upazila's flood history since 2017 and the rain behind each flood.",
+    how1: "Search or tap an upazila to see its flood risk, rainfall and hospitals.",
+    how2: "Use the buttons at the top for rainfall, past floods and cyclones.",
+    how3: "Open an upazila's full report for its flood history since 2017.",
     backOverview: "← National overview", reportBtn: "Open flood history report",
     riskOf: { low: "Low risk", medium: "Medium risk", high: "High risk" },
     chance: "chance of flooding",
@@ -103,17 +103,17 @@ const T = {
     headlineNone: "বন্যার বাড়তি ঝুঁকি নেই", headlineSome: (h, m) => h ? `${nf(h)}টি উপজেলায় উচ্চ ঝুঁকি` : `${nf(m)}টি উপজেলায় মাঝারি ঝুঁকি`,
     period: (a, b) => `আগামী ১৫ দিন · ${a} – ${b}`,
     high: "উচ্চ", medium: "মাঝারি", low: "নিম্ন",
-    whatMeans: "সংখ্যাগুলো দেখাচ্ছে, আগামী ১৫ দিনে কতটি উপজেলায় স্বাভাবিকের চেয়ে বেশি বন্যা হতে পারে।",
+    whatMeans: "আগামী ১৫ দিনে উপজেলার অন্তত ৫% এলাকায় অস্বাভাবিক পানি জমার সম্ভাবনা ধরে ভাগ করা হয়েছে: নিম্ন ২৫%-এর কম, মাঝারি ২৫–৫০%, উচ্চ ৫০% বা তার বেশি।",
     skill: (m, b) => `মডেলকে আগে না দেখানো ৯টি বর্ষায় পরীক্ষা করা হয়েছে। একটি প্লাবিত ও একটি শুকনো উপজেলার মধ্যে প্লাবিতটিকে বেশি ঝুঁকিতে রেখেছে <b>১০০ বারে ${nf(m * 100)} বার</b>। শুধু আগের বন্যার ইতিহাস দেখে অনুমান করলে ${nf(b * 100)} বার।`,
-    modelDetails: "মডেল ও ডেটার বিস্তারিত",
+    modelDetails: "এই মডেল কতটা নির্ভরযোগ্য?",
     hindNote: "এটি পরীক্ষা, আসল পূর্বাভাস নয়। ওই সময়ে যে বৃষ্টি সত্যিই হয়েছিল, তা দিয়ে মডেল কী বলত সেটাই এখানে দেখানো হচ্ছে।",
     observed: (name, hit, total) => `স্যাটেলাইটের ছবিতে এই সময়ে <b>${nf(total)}</b>টি উপজেলায় বন্যা দেখা গেছে। মডেল এর মধ্যে <b>${nf(hit)}</b>টিকে মাঝারি বা উচ্চ ঝুঁকিতে রেখেছে।`,
     noObserved: "এই তারিখের স্যাটেলাইট বন্যা-ম্যাপ আমাদের কাছে নেই, তাই ফল মিলিয়ে দেখা যাচ্ছে না।",
-    topRisk: "সর্বোচ্চ বন্যার ঝুঁকি", topRain: "সবচেয়ে বেশি বৃষ্টির পূর্বাভাস", topRainPast: "গত ৭২ ঘণ্টায় সবচেয়ে বেশি বৃষ্টি", topPast: "সবচেয়ে বেশি প্লাবিত",
+    topRisk: "সবচেয়ে বেশি ঝুঁকিতে থাকা উপজেলা", topRain: "সবচেয়ে বেশি বৃষ্টির পূর্বাভাস", topRainPast: "গত ৭২ ঘণ্টায় সবচেয়ে বেশি বৃষ্টি", topPast: "সবচেয়ে বেশি প্লাবিত",
     howTitle: "কীভাবে ব্যবহার করবেন",
-    how1: "উপজেলা খুঁজুন বা ম্যাপে ক্লিক করুন — বন্যার ঝুঁকি, বৃষ্টি ও স্থাপনা দেখতে পাবেন।",
-    how2: "উপরে বৃষ্টি বা অতীতের বন্যা দেখুন; বন্যার ঝুঁকিতে অতীত তারিখ বেছে মডেল যাচাই করুন।",
-    how3: "পূর্ণ রিপোর্টে ২০১৭ থেকে উপজেলার বন্যার ইতিহাস ও প্রতিটি বন্যার আগের বৃষ্টি দেখুন।",
+    how1: "উপজেলা খুঁজুন বা ম্যাপে চাপুন। বন্যার ঝুঁকি, বৃষ্টি আর হাসপাতালের তথ্য পাবেন।",
+    how2: "ওপরের বোতাম থেকে বৃষ্টি, অতীতের বন্যা আর ঘূর্ণিঝড় দেখুন।",
+    how3: "উপজেলার পুরো রিপোর্টে ২০১৭ থেকে বন্যার ইতিহাস দেখুন।",
     backOverview: "← জাতীয় পরিস্থিতি", reportBtn: "বন্যার ইতিহাসের রিপোর্ট দেখুন",
     riskOf: { low: "নিম্ন ঝুঁকি", medium: "মাঝারি ঝুঁকি", high: "উচ্চ ঝুঁকি" },
     chance: "বন্যার সম্ভাবনা",
@@ -535,8 +535,8 @@ function renderStatus() {
       <p class="note">${tt.hindNote}</p>`;
   } else {
     const m = r.metrics || {}, b = r.baseline || {};
-    extra = `<p class="note">${tt.whatMeans}</p><div class="skill">${tt.skill(m.auc ?? "–", b.auc ?? "–")}</div>
-      <details class="more"><summary>${tt.modelDetails}</summary>${r.model_version}<br>GFS run #${r.rain_run_id} · ERA5-Land → ${r.era5_last_day}</details>`;
+    extra = `<p class="note">${tt.whatMeans}</p>
+      <details class="more"><summary>${tt.modelDetails}</summary><div class="skill">${tt.skill(m.auc ?? "–", b.auc ?? "–")}</div>${r.model_version}<br>GFS run #${r.rain_run_id} · ERA5-Land → ${r.era5_last_day}</details>`;
   }
   el.innerHTML = `<div class="eyebrow">${hind ? tt.statusEyebrowPast : tt.statusEyebrow}</div>
     <div class="headline">${c.high + c.medium ? tt.headlineSome(c.high, c.medium) : tt.headlineNone}</div>
