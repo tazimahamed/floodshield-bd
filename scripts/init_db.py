@@ -33,7 +33,8 @@ def main() -> None:
         c.execute(text("create extension if not exists postgis"))
     Base.metadata.create_all(engine)
     print("tables ready")
-    print(f"upazilas loaded: {load_upazilas()}")
+    if "--schema-only" not in sys.argv:  # CI has no boundary files: they are not in git
+        print(f"upazilas loaded: {load_upazilas()}")
 
 
 if __name__ == "__main__":

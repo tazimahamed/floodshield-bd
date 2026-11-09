@@ -24,5 +24,11 @@ jobs:
         with: {python-version: "3.12"}
       - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
       - run: pip install -r backend/requirements.txt
-      - run: python scripts/init_db.py
+      - run: python scripts/init_db.py --schema-only
       - run: python -m pytest tests -q
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose build
+        env: {POSTGRES_PASSWORD: ci}
