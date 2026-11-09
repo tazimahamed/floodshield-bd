@@ -165,8 +165,8 @@ body.drawer-open .strip { max-width: calc(100% - 370px - 480px); }
 .counts small { font-size: 12px; font-weight: 500; }
 .counts .h { background: var(--high-bg); color: var(--high); } .counts .m { background: var(--med-bg); color: var(--med); }
 .counts .l { background: var(--low-bg); color: var(--low); }
-.skill { background: var(--surface-2); border-radius: var(--radius-sm); padding: 9px 10px; font-size: 12px; }
-.skill b { font-size: 15px; color: var(--text); }
+.skill { background: var(--surface-2); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; line-height: 1.6; }
+.skill b { color: var(--text); }
 details.more { margin-top: 10px; font-size: 12px; color: var(--muted); }
 details.more summary { cursor: pointer; }
 .rank { list-style: none; margin: 0; padding: 0; counter-reset: r; }

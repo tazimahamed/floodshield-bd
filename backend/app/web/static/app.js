@@ -38,8 +38,8 @@ const T = {
     headlineNone: "No elevated flood risk", headlineSome: (h, m) => h ? `${h} upazilas at high risk` : `${m} upazilas at medium risk`,
     period: (a, b) => `Next 15 days · ${a} – ${b}`,
     high: "High", medium: "Medium", low: "Low",
-    whatMeans: "The chance that part of an upazila floods in the next 15 days, more than in a normal monsoon.",
-    skill: (m, b) => `Tested on 9 past monsoons it had not seen: it ranked a flooded upazila above a dry one <b>${Math.round(m * 100)}%</b> of the time (simply guessing “places that usually flood” scores ${Math.round(b * 100)}%).`,
+    whatMeans: "These counts show how many upazilas could see more flooding than normal in the next 15 days.",
+    skill: (m, b) => `Tested on 9 past monsoons the model had not seen: given one flooded and one dry upazila, it gave the flooded one the higher risk <b>${nf(m * 100)} times out of 100</b>. Going by past flood history alone: ${nf(b * 100)} times.`,
     modelDetails: "Model & data details",
     hindNote: "This is what the model would have said that day, using the rain that actually fell. Dates after today can't be shown.",
     observed: (name, hit, total) => `Satellite (Sentinel-1) saw <b>${total}</b> upazilas flooded in “${name}”. The model had <b>${hit}</b> of them at medium or high risk.`,
@@ -100,11 +100,11 @@ const T = {
     tHome: "পুরো বাংলাদেশ", tSearch: "খুঁজুন", tLayers: "স্তর", tTheme: "গাঢ় / হালকা ম্যাপ", tPanel: "বিস্তারিত প্যানেল",
     overviewTitle: "জাতীয় পরিস্থিতি", detailTitle: "উপজেলার বিস্তারিত",
     statusEyebrow: "জাতীয় বন্যা পরিস্থিতি", statusEyebrowPast: "অতীত তারিখে মডেল যাচাই",
-    headlineNone: "বন্যার বাড়তি ঝুঁকি নেই", headlineSome: (h, m) => h ? `${h}টি উপজেলায় উচ্চ ঝুঁকি` : `${m}টি উপজেলায় মাঝারি ঝুঁকি`,
+    headlineNone: "বন্যার বাড়তি ঝুঁকি নেই", headlineSome: (h, m) => h ? `${nf(h)}টি উপজেলায় উচ্চ ঝুঁকি` : `${nf(m)}টি উপজেলায় মাঝারি ঝুঁকি`,
     period: (a, b) => `আগামী ১৫ দিন · ${a} – ${b}`,
     high: "উচ্চ", medium: "মাঝারি", low: "নিম্ন",
-    whatMeans: "আগামী ১৫ দিনে উপজেলার কোনো অংশ স্বাভাবিক বর্ষার চেয়ে বেশি ডোবার সম্ভাবনা।",
-    skill: (m, b) => `মডেলকে না দেখানো ৯টি বর্ষায় পরীক্ষা: ডোবা উপজেলাকে শুকনো উপজেলার চেয়ে বেশি ঝুঁকিতে রেখেছে <b>${Math.round(m * 100)}%</b> ক্ষেত্রে ("যেখানে সাধারণত বন্যা হয়" ধরে নিলে ${Math.round(b * 100)}%)।`,
+    whatMeans: "সংখ্যাগুলো দেখাচ্ছে, আগামী ১৫ দিনে কতটি উপজেলায় স্বাভাবিকের চেয়ে বেশি বন্যা হতে পারে।",
+    skill: (m, b) => `মডেলকে আগে না দেখানো ৯টি বর্ষায় পরীক্ষা করা হয়েছে। একটি প্লাবিত ও একটি শুকনো উপজেলার মধ্যে প্লাবিতটিকে বেশি ঝুঁকিতে রেখেছে <b>১০০ বারে ${nf(m * 100)} বার</b>। শুধু আগের বন্যার ইতিহাস দেখে অনুমান করলে ${nf(b * 100)} বার।`,
     modelDetails: "মডেল ও ডেটার বিস্তারিত",
     hindNote: "সেদিনের আসল বৃষ্টি দিয়ে মডেল সেদিন কী বলত, তা দেখানো হচ্ছে। আজকের পরের তারিখ দেখানো যায় না।",
     observed: (name, hit, total) => `স্যাটেলাইট (Sentinel-1) “${name}”-এ <b>${total}</b>টি উপজেলায় বন্যা দেখেছে। মডেল এর <b>${hit}</b>টিকে মাঝারি বা উচ্চ ঝুঁকিতে রেখেছিল।`,
@@ -147,6 +147,7 @@ const loc = () => lang === "bn" ? "bn-BD" : "en-GB";
 const nf = (v, d = 0) => Number(v).toLocaleString(loc(), { maximumFractionDigits: d, minimumFractionDigits: d });
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const dateFmt = s => new Date(s).toLocaleDateString(loc(), { day: "numeric", month: "short", year: "numeric" });
+const dateLong = (s, year) => new Date(s).toLocaleDateString(loc(), { day: "numeric", month: "long", ...(year && { year: "numeric" }) });
 
 /* ---------- colour scales ---------- */
 const RISK = { low: "#5bbf7e", medium: "#f4b740", high: "#e5483a" };
@@ -539,7 +540,7 @@ function renderStatus() {
   }
   el.innerHTML = `<div class="eyebrow">${hind ? tt.statusEyebrowPast : tt.statusEyebrow}</div>
     <div class="headline">${c.high + c.medium ? tt.headlineSome(c.high, c.medium) : tt.headlineNone}</div>
-    <div class="period">${hind ? dateFmt(hind.day) : tt.period(dateFmt(r.reference_day), dateFmt(r.valid_until))}</div>
+    <div class="period">${hind ? dateFmt(hind.day) : tt.period(dateLong(r.reference_day), dateLong(r.valid_until, true))}</div>
     <div class="counts"><div class="h"><b>${nf(c.high)}</b><small>${tt.high}</small></div>
       <div class="m"><b>${nf(c.medium)}</b><small>${tt.medium}</small></div>
       <div class="l"><b>${nf(c.low)}</b><small>${tt.low}</small></div></div>${extra}`;
