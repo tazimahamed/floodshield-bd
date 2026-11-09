@@ -652,38 +652,42 @@ async function loadRain(id) {
   if (res.ok && selected?.id === id) drawChart((await res.json()).hourly);
 }
 
+// Daily totals on Dhaka days, 3 days back to 3 ahead: hourly bars over 13 days were too thin to read.
 function drawChart(h) {
-  const c = $("chart"), ctx = c.getContext("2d"), H = 150;
+  const c = $("chart"), ctx = c.getContext("2d"), H = 150, bn = lang === "bn";
   c.width = c.clientWidth * devicePixelRatio; c.height = H * devicePixelRatio;
   ctx.scale(devicePixelRatio, devicePixelRatio);
-  const w = c.clientWidth, n = h.precipitation.length, padL = 28, padB = 18;
-  const max = Math.max(1, ...h.precipitation.map(v => v ?? 0));
-  const bw = (w - padL) / n, now = Date.now();
-  ctx.clearRect(0, 0, w, H);
-  ctx.font = "11px Inter, sans-serif"; ctx.fillStyle = css("--muted"); ctx.strokeStyle = css("--line");
-  [0, 0.5, 1].forEach(k => {
-    const y = H - padB - k * (H - padB - 8);
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w, y); ctx.stroke();
-    ctx.fillText((max * k).toFixed(k ? 1 : 0), 0, y + 4);
-  });
-  let nowX = null;
-  const labelEvery = Math.max(1, Math.ceil(52 / (bw * 24)));
+  const DHAKA = 6 * 3600e3, DAY = 864e5, now = Date.now(), today = Math.floor((now + DHAKA) / DAY);
+  const days = new Map();
   h.precipitation.forEach((v, i) => {
-    const ts = Date.parse(h.time[i] + "Z"), x = padL + i * bw;
-    if (nowX == null && ts >= now) nowX = x;
-    ctx.fillStyle = ts < now ? "#9aa5ae" : css("--rain");
-    const bh = ((v ?? 0) / max) * (H - padB - 8);
-    ctx.fillRect(x, H - padB - bh, Math.max(1, bw - 0.6), bh);
-    if (h.time[i].endsWith("T00:00") && Math.round(i / 24) % labelEvery === 0) {
-      ctx.fillStyle = css("--muted");
-      ctx.fillText(new Date(ts).toLocaleDateString(loc(), { day: "numeric", month: "short" }), x + 2, H - 4);
-    }
+    const ts = Date.parse(h.time[i] + "Z"), key = Math.floor((ts + DHAKA) / DAY);
+    const d = days.get(key) || { past: 0, next: 0, hours: 0 };
+    d[ts < now ? "past" : "next"] += v ?? 0; d.hours += 1;
+    days.set(key, d);
   });
-  if (nowX != null) {
-    ctx.strokeStyle = css("--text"); ctx.setLineDash([3, 3]);
-    ctx.beginPath(); ctx.moveTo(nowX, 4); ctx.lineTo(nowX, H - padB); ctx.stroke(); ctx.setLineDash([]);
-  }
-  ctx.fillStyle = css("--muted"); ctx.fillText("mm/h", w - 30, 10);
+  const rows = [...days].filter(([k, d]) => Math.abs(k - today) <= 3 && d.hours === 24).sort((x, y) => x[0] - y[0]);
+  const w = c.clientWidth, padT = 34, padB = 34, plot = H - padT - padB;
+  ctx.clearRect(0, 0, w, H);
+  if (!rows.length) return;
+  const max = Math.max(1, ...rows.map(([, d]) => d.past + d.next)), slot = w / rows.length, bw = Math.min(34, slot * 0.62);
+  ctx.textAlign = "center";
+  ctx.strokeStyle = css("--line");
+  ctx.beginPath(); ctx.moveTo(0, H - padB); ctx.lineTo(w, H - padB); ctx.stroke();
+  rows.forEach(([k, d], i) => {
+    const x = slot * i + slot / 2, total = d.past + d.next, hp = d.past / max * plot, hn = d.next / max * plot;
+    ctx.fillStyle = "#9aa5ae"; ctx.fillRect(x - bw / 2, H - padB - hp, bw, hp);
+    ctx.fillStyle = css("--rain"); ctx.fillRect(x - bw / 2, H - padB - hp - hn, bw, hn);
+    ctx.fillStyle = css("--text"); ctx.font = "600 12px Inter, sans-serif";
+    ctx.fillText(nf(total, total < 10 ? 1 : 0), x, H - padB - hp - hn - 6);
+    ctx.fillStyle = k === today ? css("--text") : css("--muted");
+    ctx.font = `${k === today ? "600 " : ""}11px Inter, sans-serif`;
+    const date = new Date(k * DAY).toLocaleDateString(loc(), { day: "numeric", month: "short", timeZone: "UTC" });
+    ctx.fillText(k === today ? (bn ? "আজ" : "Today") : date, x, H - padB + 15);
+    if (k === today) ctx.fillText(date, x, H - padB + 29);
+  });
+  ctx.textAlign = "right"; ctx.fillStyle = css("--muted"); ctx.font = "11px Inter, sans-serif";
+  ctx.fillText(bn ? "মিমি/দিন" : "mm/day", w, 11);
+  ctx.textAlign = "left";
 }
 
 async function showUpstream(id) {
