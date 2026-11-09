@@ -1,0 +1,8 @@
+.env
+.git
+.venv
+data
+backups
+ee-credentials
+*.docx
+__pycache__

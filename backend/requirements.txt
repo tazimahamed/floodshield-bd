@@ -23,3 +23,6 @@ transformers
 torch
 imageio-ffmpeg
 edge-tts
+cdsapi
+cfgrib
+xarray

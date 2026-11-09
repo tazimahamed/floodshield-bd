@@ -21,6 +21,8 @@ import httpx
 from sqlalchemy import select
 
 from app.core.config import settings
+from app.core.ratelimit import RateLimiter
+from app.services.outlook import heat_level, node_outlook
 from app.db.models import AlertLog, FloodForecast, HealthFacility, FloodForecastRun, Node, RainForecast, Subscriber
 from app.db.session import SessionLocal
 from app.services.places import find
@@ -52,8 +54,8 @@ ADVICE = {
                "☎️ Emergency 999 · Disaster info 1090"),
 }
 RISK_WORD = {"low": ("নিম্ন", "low"), "medium": ("মাঝারি", "medium"), "high": ("উচ্চ", "high")}
-FOOT = ("সরকারি সতর্কবার্তা (FFWC, আবহাওয়া অধিদপ্তর, উপজেলা প্রশাসন) সবসময় আগে মানুন।",
-        "Always follow official warnings (FFWC, BMD, upazila administration) first.")
+FOOT = ("এটি সহায়ক তথ্য, সরকারি সতর্কবার্তা নয়। FFWC, আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের নির্দেশনা আগে মানুন।",
+        "Supporting information, not an official warning. Follow FFWC, BMD and your upazila administration first.")
 # BMD rainfall categories, mm per day
 RAIN_WORDS = [(0.5, "বৃষ্টি নেই", "no rain"), (10, "হালকা", "light"), (22, "মাঝারি", "moderate"),
               (43, "মাঝারি ধরনের ভারী", "moderately heavy"), (88, "ভারী", "heavy"), (1e9, "অতি ভারী", "very heavy")]
@@ -139,6 +141,15 @@ def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, rai
             f"• {html.escape(h.name_bn or h.name)}" + (f" — ☎️ {h.mobile}" if h.mobile else "") for h in hospitals]
         en += ["", "<b>🏥 Government hospitals</b> (DGHS):"] + [
             f"• {html.escape(h.name)}" + (f" — ☎️ {h.mobile}" if h.mobile else "") for h in hospitals]
+    day = rain.get("outlook")
+    if day:
+        hot = heat_level(day.tmax_c)
+        if hot:
+            bn += ["", f"<b>🌡️ গরম</b>: সর্বোচ্চ {_bn(round(day.tmax_c))}° ({hot[0]})"]
+            en += ["", f"<b>🌡️ Heat</b>: up to {round(day.tmax_c)}° ({hot[1]})"]
+        if day.wave_m is not None:
+            bn += ["", f"<b>🌊 সাগর</b>: ঢেউ {_bn(round(day.wave_m, 1))} মিটার পর্যন্ত, বাতাস {_bn(round(day.wind_kmh or 0))} কিমি/ঘণ্টা। আবহাওয়া অধিদপ্তরের সংকেত দেখুন।"]
+            en += ["", f"<b>🌊 Sea</b>: waves up to {round(day.wave_m, 1)} m, wind {round(day.wind_kmh or 0)} km/h. Check BMD signals."]
     return ("\n".join(bn) + "\n\n━━━━━━━━━━ English ━━━━━━━━━━\n" + "\n".join(en) +
             f"\n\n<i>ℹ️ {FOOT[0]}\n{FOOT[1]}</i>")
 
@@ -209,7 +220,8 @@ def _rain(db, node_id: str) -> dict:
     got = [(r.rain_72h_mm, r.km2) for r in up if r.rain_72h_mm is not None]
     area = sum(a for _, a in got)
     return {"past72": rf and rf.rain_past_72h_mm, "next24": rf and rf.rain_24h_mm, "next72": rf and rf.rain_72h_mm,
-            "up72": sum(v * a for v, a in got) / area if area else None}
+            "up72": sum(v * a for v, a in got) / area if area else None,
+            "outlook": next(iter(node_outlook(db, node_id)), None)}
 
 
 def _hospitals(db, node_id: str, n: int = 2) -> list:
@@ -374,6 +386,9 @@ def _deliver(chat_id: int, replies: list[dict]) -> None:
 _offset = 0
 
 
+_chat_limit = RateLimiter(20)  # messages per chat per minute
+
+
 def poll_updates() -> int:
     """Scheduler job: read new bot messages and button taps (long polling) and answer them."""
     global _offset
@@ -388,6 +403,8 @@ def poll_updates() -> int:
                 _call("answerCallbackQuery", callback_query_id=cq["id"])
                 _deliver(cq["message"]["chat"]["id"], handle_callback(cq["message"]["chat"]["id"], cq.get("data", "")))
             elif "text" in (msg := u.get("message") or {}):
+                if not _chat_limit.allow(msg["chat"]["id"]):  # flooding the bot must not delay other people
+                    continue
                 _deliver(msg["chat"]["id"], handle_message(msg["chat"]["id"], msg["text"]))
         except Exception:
             log.exception("Telegram reply failed")

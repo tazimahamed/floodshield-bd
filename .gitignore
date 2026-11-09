@@ -14,3 +14,7 @@ backend/models/*.pt
 .ipynb_checkpoints/
 *.docx
 data/models/
+
+backups/
+ee-credentials/
+data/glofas_hindcast.csv

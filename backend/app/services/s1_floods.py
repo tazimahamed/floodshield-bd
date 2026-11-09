@@ -53,15 +53,20 @@ EVENTS = [
 ]
 
 
-def monsoon_windows(first_year: int = 2017, last_year: int = 2025) -> list[dict]:
-    """Every 15-day window of every monsoon (1 Jun - 28 Sep): flood and no-flood periods alike,
-    so the model also sees normal monsoons (negatives), not only the famous floods."""
-    out = []
+def monsoon_windows(first_year: int = 2017, last_year: int = 2026) -> list[dict]:
+    """Every 15-day window of the whole year (early Jan - late Dec, 24 per year): flood and no-flood
+    periods alike, so the model also sees normal periods, April haor flash floods and October floods.
+    The grid is anchored on 1 Jun so the original monsoon windows keep their ids.
+    Windows that start before April use the previous year's dry season as the reference."""
+    out, last_ok = [], date.today() - timedelta(days=5)  # S1 scenes need a few days to arrive
     for y in range(first_year, last_year + 1):
-        for start in (date(y, 6, 1) + timedelta(days=15 * k) for k in range(8)):
+        for start in (date(y, 6, 1) + timedelta(days=15 * k) for k in range(-10, 14)):
             end = start + timedelta(days=14)
-            out.append({"id": f"auto_{start:%Y%m%d}", "name": f"Monsoon window {start:%d %b} - {end:%d %b %Y}",
-                        "pre": (f"{y}-02-01", f"{y}-03-31"), "post": (start.isoformat(), end.isoformat())})
+            if end > last_ok:
+                continue
+            ref = y - 1 if start.month < 4 else y
+            out.append({"id": f"auto_{start:%Y%m%d}", "name": f"15-day window {start:%d %b} - {end:%d %b %Y}",
+                        "pre": (f"{ref}-02-01", f"{ref}-03-31"), "post": (start.isoformat(), end.isoformat())})
     return out
 
 

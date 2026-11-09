@@ -59,6 +59,48 @@ class RainForecast(Base):
     hourly: Mapped[dict] = mapped_column(JSON)
 
 
+class GlofasPoint(Base):
+    """A main river where it enters Bangladesh, with its 2-year flow from the GloFAS reanalysis."""
+
+    __tablename__ = "glofas_points"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    name_bn: Mapped[str] = mapped_column(String)
+    lat: Mapped[float] = mapped_column(Float)
+    lon: Mapped[float] = mapped_column(Float)
+    down_en: Mapped[str] = mapped_column(String)
+    down_bn: Mapped[str] = mapped_column(String)
+    q2: Mapped[float] = mapped_column(Float)
+    n_years: Mapped[int] = mapped_column(Integer)
+
+
+class GlofasOutlook(Base):
+    """Share of ensemble members above the 2-year flow, per point, forecast run and valid day."""
+
+    __tablename__ = "glofas_outlook"
+
+    point_id: Mapped[str] = mapped_column(ForeignKey("glofas_points.id"), primary_key=True)
+    run_day: Mapped[date] = mapped_column(Date, primary_key=True)
+    valid_day: Mapped[date] = mapped_column(Date, primary_key=True)
+    issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    members: Mapped[int] = mapped_column(Integer)
+    chance: Mapped[float] = mapped_column(Float)
+    q_median: Mapped[float] = mapped_column(Float)
+
+
+class DailyOutlook(Base):
+    """GFS max temperature and wind, and wave height (coast only), per upazila and day."""
+
+    __tablename__ = "daily_outlook"
+
+    node_id: Mapped[str] = mapped_column(ForeignKey("nodes.id"), primary_key=True)
+    day: Mapped[date] = mapped_column(Date, primary_key=True)
+    issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    tmax_c: Mapped[float | None] = mapped_column(Float)
+    wind_kmh: Mapped[float | None] = mapped_column(Float)
+    wave_m: Mapped[float | None] = mapped_column(Float)
+
+
 class Edge(Base):
     """Directed graph edge: basin drains_to basin, upazila in_basin basin (weight = area share)."""
 

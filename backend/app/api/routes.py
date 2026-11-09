@@ -1,12 +1,16 @@
+import gzip
 import json
+from threading import Lock
 from datetime import date, timedelta
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request, Response
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import func, select, text
 
 from app.db.models import Asset, Cyclone, CycloneExposure, CyclonePoint, Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, HealthFacility, IngestRun, ModelVersion, Node, RainForecast, River
 from app.db.session import SessionLocal
 from app.services.impact import impact
+from app.services.outlook import heat_level, node_outlook
 
 router = APIRouter(prefix="/api/v1")
 
@@ -18,8 +22,37 @@ def _latest_run(db, source: str = "open-meteo-gfs") -> IngestRun | None:
     ).first()
 
 
+_json_cache: dict[tuple, tuple[object, bytes, bytes]] = {}
+_json_lock = Lock()
+
+
+def _cached_json(request: Request, key: tuple, stamp: object, build) -> Response:
+    """Big map responses, built once per forecast run and sent pre-compressed, so a rush of
+    visitors during a flood does not mean re-reading every polygon from the database each time."""
+    hit = _json_cache.get(key)
+    if not hit or hit[0] != stamp:
+        with _json_lock:
+            hit = _json_cache.get(key)
+            if not hit or hit[0] != stamp:
+                raw = json.dumps(jsonable_encoder(build()), ensure_ascii=False).encode()
+                hit = _json_cache[key] = (stamp, raw, gzip.compress(raw, 6))
+    if "gzip" in request.headers.get("accept-encoding", ""):
+        return Response(hit[2], media_type="application/json", headers={"Content-Encoding": "gzip", "Vary": "Accept-Encoding"})
+    return Response(hit[1], media_type="application/json", headers={"Vary": "Accept-Encoding"})
+
+
+def _run_stamp() -> tuple:
+    with SessionLocal() as db:
+        run, frun = _latest_run(db), _latest_flood_run(db)
+        return (run.id if run else None, frun.id if frun else None)
+
+
 @router.get("/upazilas")
-def upazilas(division: str | None = Query(None)):
+def upazilas(request: Request, division: str | None = Query(None)):
+    return _cached_json(request, ("upazilas", division), _run_stamp(), lambda: _upazilas(division))
+
+
+def _upazilas(division: str | None):
     """Upazila polygons as GeoJSON, joined with the latest real rainfall forecast (if any)."""
     with SessionLocal() as db:
         run = _latest_run(db)
@@ -414,6 +447,14 @@ def model_versions():
 _outline_cache: dict = {}
 
 
+@router.get("/nodes/{node_id}/outlook")
+def outlook(node_id: str):
+    with SessionLocal() as db:
+        rows = node_outlook(db, node_id)
+        return [{"day": r.day.isoformat(), "tmax_c": r.tmax_c, "wind_kmh": r.wind_kmh, "wave_m": r.wave_m,
+                 "heat": heat_level(r.tmax_c)} for r in rows]
+
+
 @router.get("/country-outline")
 def country_outline():
     """Bangladesh outline (union of the upazilas), for the map mask and border."""
@@ -457,7 +498,11 @@ def _flood_run_info(r: FloodForecastRun) -> dict:
 
 
 @router.get("/flood-forecast")
-def flood_forecast():
+def flood_forecast(request: Request):
+    return _cached_json(request, ("flood-forecast",), _run_stamp(), _flood_forecast)
+
+
+def _flood_forecast():
     """Latest model forecast per upazila. 404 (with the reason) until a model has been trained."""
     with SessionLocal() as db:
         run = _latest_flood_run(db)

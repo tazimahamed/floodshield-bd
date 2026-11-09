@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Model report card · FloodShield BD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/report.css">
+</head>
+<body class="page">
+  <header class="topbar">
+    <a class="back" href="/" data-i18n="back"></a>
+    <a class="brand small-brand" href="/"><b>FloodShield BD</b></a>
+    <div class="top-actions">
+      <a class="btn ghost small" href="/about" data-i18n="about"></a>
+      <button id="lang" class="btn ghost small">বাংলা</button>
+    </div>
+  </header>
+  <main class="report about">
+    <section class="hero" style="display:block"><h1 data-i18n="title"></h1><p class="lead" data-i18n="intro"></p></section>
+    <section class="tiles3" id="tiles"></section>
+    <section class="card">
+      <h2 data-i18n="yearTitle"></h2>
+      <p class="sub" data-i18n="yearSub"></p>
+      <div id="years" class="ybars"></div>
+    </section>
+    <section class="card">
+      <h2 data-i18n="weakTitle"></h2>
+      <ul class="limits" id="weak"></ul>
+    </section>
+    <p class="not-official" id="version"></p>
+  </main>
+  <script>
+    const T = {
+      en: {
+        back: "← Map", about: "ⓘ About the data", title: "How accurate is the model?",
+        intro: "Each year was hidden from the model during training, then used as its test. These are the results on those unseen years, compared with satellite flood maps.",
+        yearTitle: "Result for each unseen year", yearSub: "Out of 100 pairs of one flooded and one dry upazila, how many the model ranked correctly. 50 would be a coin toss.",
+        weakTitle: "Where it falls short",
+        rank: "Ranks flooded above dry", rankD: b => `Out of 100 pairs. Simple seasonal history alone: ${b}`,
+        brier: "Probability error (Brier)", brierD: b => `Lower is better. Seasonal history alone: ${b}`,
+        range: "Range holds the true value", rangeD: "Target is 80 out of 100. Not reached yet.",
+        weak: (lo, ly, h, hy) => [`Skill varies by year: lowest ${lo} (${ly}), highest ${h} (${hy}).`,
+          "The likely-flooded range is too narrow: it holds the true value less often than it should.",
+          "It is trained on satellite maps, so floods the radar missed are also missing from its lessons."],
+        version: (v, n, y) => `Model ${v} · ${n.toLocaleString()} test cases · ${y}`,
+      },
+      bn: {
+        back: "← ম্যাপ", about: "ⓘ ডেটা সম্পর্কে", title: "মডেল কতটা নির্ভুল?",
+        intro: "প্রশিক্ষণের সময় প্রতিটি বছর মডেল থেকে লুকিয়ে রেখে পরে সেই বছর দিয়ে পরীক্ষা করা হয়েছে। এগুলো সেই না দেখা বছরের ফল, স্যাটেলাইট বন্যা ম্যাপের সাথে মিলিয়ে।",
+        yearTitle: "না দেখা প্রতিটি বছরের ফল", yearSub: "একটি ডোবা ও একটি শুকনো উপজেলার ১০০ জোড়ার মধ্যে কতটি মডেল ঠিকভাবে সাজাতে পেরেছে। ৫০ মানে টস করার সমান।",
+        weakTitle: "যেখানে দুর্বলতা আছে",
+        rank: "ডোবাকে শুকনোর উপরে রাখে", rankD: b => `১০০ জোড়ায়। শুধু মৌসুমি ইতিহাস দিয়ে: ${b}`,
+        brier: "সম্ভাবনার ভুল (Brier)", brierD: b => `যত কম তত ভালো। শুধু মৌসুমি ইতিহাস দিয়ে: ${b}`,
+        range: "পরিসরে আসল মান পড়ে", rangeD: "লক্ষ্য ১০০-তে ৮০। এখনো পৌঁছায়নি।",
+        weak: (lo, ly, h, hy) => [`বছরভেদে দক্ষতা বদলায়: সর্বনিম্ন ${lo} (${ly}), সর্বোচ্চ ${h} (${hy})।`,
+          "সম্ভাব্য ডোবার পরিসর বেশি সরু: যতবার আসল মান পড়া উচিত, তার চেয়ে কম পড়ে।",
+          "স্যাটেলাইট ম্যাপ দেখে শেখে, তাই রাডারে ধরা না পড়া বন্যা মডেলও শেখেনি।"],
+        version: (v, n, y) => `মডেল ${v} · ${n.toLocaleString()}টি পরীক্ষা · ${y}`,
+      },
+    };
+    let lang = "en", model = null;
+    try { lang = localStorage.getItem("fs-lang") || "en"; } catch (e) {}
+    const pct = x => Math.round(x * 100);
+    function render() {
+      const t = T[lang];
+      document.documentElement.lang = lang;
+      document.body.classList.toggle("bn", lang === "bn");
+      document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t[el.dataset.i18n]);
+      document.getElementById("lang").textContent = lang === "en" ? "বাংলা" : "English";
+      if (!model) return;
+      const m = model.metrics.model, b = model.metrics.climatology_baseline;
+      const tile = (k, v, d) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
+      document.getElementById("tiles").innerHTML =
+        tile(t.rank, pct(m.auc), t.rankD(pct(b.auc))) + tile(t.brier, m.brier.toFixed(3), t.brierD(b.brier.toFixed(3))) +
+        tile(t.range, pct(m.p10_p90_coverage), t.rangeD);
+      const ys = Object.entries(model.metrics.per_year);
+      document.getElementById("years").innerHTML = ys.map(([y, r]) =>
+        `<div class="row"><span>${y}</span><div class="track"><div class="fill" style="width:${pct(r.auc)}%"></div></div><span class="v">${pct(r.auc)}</span></div>`).join("");
+      const sorted = [...ys].sort((a, c) => a[1].auc - c[1].auc), lo = sorted[0], hi = sorted[sorted.length - 1];
+      document.getElementById("weak").innerHTML = t.weak(pct(lo[1].auc), lo[0], pct(hi[1].auc), hi[0]).map(l => `<li>${l}</li>`).join("");
+      document.getElementById("version").textContent = t.version(model.version, m.n, `${ys[0][0]}–${ys[ys.length - 1][0]}`);
+    }
+    document.getElementById("lang").onclick = () => { lang = lang === "en" ? "bn" : "en"; try { localStorage.setItem("fs-lang", lang); } catch (e) {} render(); };
+    render();
+    fetch("/api/v1/models").then(r => r.json()).then(ms => { model = ms.find(x => x.active); render(); });
+  </script>
+</body>
+</html>

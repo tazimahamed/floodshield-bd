@@ -132,3 +132,4 @@ body.page { background: var(--bg); min-height: 100vh; }
   .secnav, .top-actions, .mini-map-wrap { display: none; }
   .reveal { opacity: 1; transform: none; }
 }
+.not-official { margin: 4px 0 0; text-align: center; color: var(--muted); font-size: 12.5px; }

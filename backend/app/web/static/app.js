@@ -629,7 +629,22 @@ function renderDetail() {
   $("d-past").textContent = v(p.rain_past_72h_mm); $("d-24").textContent = v(p.rain_24h_mm); $("d-72").textContent = v(p.rain_72h_mm);
 }
 
+async function loadOutlook(id) {
+  const box = $("d-outlook"), bn = lang === "bn";
+  box.innerHTML = "";
+  const res = await fetch(`/api/v1/nodes/${id}/outlook`);
+  if (!res.ok || selected?.id !== id) return;
+  const rows = (await res.json()).filter(r => r.heat || r.wave_m != null);
+  if (!rows.length) return;
+  box.innerHTML = `<h3>${bn ? "গরম ও সাগর" : "Heat and sea"}</h3><ul class="hosp">` + rows.map(r =>
+    `<li>${new Date(r.day).toLocaleDateString(loc(), { day: "numeric", month: "short" })}: ` +
+    [r.heat ? `${nf(r.tmax_c)}° (${r.heat[bn ? 0 : 1]})` : "",
+     r.wave_m != null ? (bn ? `ঢেউ ${nf(r.wave_m, 1)} মি, বাতাস ${nf(r.wind_kmh)} কিমি/ঘণ্টা` : `waves ${nf(r.wave_m, 1)} m, wind ${nf(r.wind_kmh)} km/h`) : ""]
+      .filter(Boolean).join(" · ") + `</li>`).join("") + `</ul>`;
+}
+
 async function loadRain(id) {
+  loadOutlook(id);
   const res = await fetch(`/api/v1/nodes/${id}/rain`);
   if (res.ok && selected?.id === id) drawChart((await res.json()).hourly);
 }

@@ -6,7 +6,7 @@ const T = {
     rainTitle: "What brings floods here", monsoonTitle: "Monsoon rain each year", monsoonSub: "June to September, this upazila.",
     cycTitle: "🌀 Cyclones that passed close by",
     navOverview: "Overview", navCalendar: "Flood calendar", navRain: "Rain", navCyc: "Cyclones",
-    about: "ⓘ About the data", print: "🖨 Print / PDF",
+    about: "ⓘ About the data", print: "🖨 Print / PDF", notOfficial: "Supporting information, not an official warning. Follow FFWC, BMD and your upazila administration first.",
     csv: "⬇ CSV",
     crumb: (d, v) => `${d} district · ${v} division`,
     lead: (n, total, oneIn) => n
@@ -33,7 +33,7 @@ const T = {
     rainTitle: "এখানে বন্যা কখন হয়", monsoonTitle: "প্রতি বছর বর্ষার বৃষ্টি", monsoonSub: "জুন থেকে সেপ্টেম্বর, এই উপজেলায়।",
     cycTitle: "🌀 কাছ দিয়ে যাওয়া ঘূর্ণিঝড়",
     navOverview: "সারসংক্ষেপ", navCalendar: "বন্যার ক্যালেন্ডার", navRain: "বৃষ্টি", navCyc: "ঘূর্ণিঝড়",
-    about: "ⓘ ডেটা সম্পর্কে", print: "🖨 প্রিন্ট / PDF",
+    about: "ⓘ ডেটা সম্পর্কে", print: "🖨 প্রিন্ট / PDF", notOfficial: "এটি সহায়ক তথ্য, সরকারি সতর্কবার্তা নয়। FFWC, আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের নির্দেশনা আগে মানুন।",
     csv: "⬇ CSV",
     crumb: (d, v) => `${d} জেলা · ${v} বিভাগ`,
     lead: (n, total, oneIn) => n

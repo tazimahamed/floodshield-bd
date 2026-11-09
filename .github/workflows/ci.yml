@@ -1,0 +1,28 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: gitleaks/gitleaks-action@v2
+        env: {GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"}
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql+psycopg://floodshield:ci@127.0.0.1:5432/floodshield
+    services:
+      db:
+        image: postgis/postgis:16-3.4
+        env: {POSTGRES_USER: floodshield, POSTGRES_PASSWORD: ci, POSTGRES_DB: floodshield}
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U floodshield" --health-interval 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install -r backend/requirements.txt
+      - run: python scripts/init_db.py
+      - run: python -m pytest tests -q

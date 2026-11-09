@@ -20,8 +20,8 @@ if __name__ == "__main__":
     with engine.begin() as c:  # columns added after the first P2 run
         c.execute(text("alter table flood_labels add column if not exists abnormal_km2 double precision"))
         c.execute(text("alter table flood_labels add column if not exists abnormal_frac double precision"))
-    if sys.argv[1:2] == ["--auto"]:  # monsoon windows not mapped yet (safe to re-run after a stop)
-        years = [int(a) for a in sys.argv[2:4]] or [2017, 2025]  # optional: --auto FIRST LAST
+    if sys.argv[1:2] == ["--auto"]:  # 15-day windows not mapped yet (safe to re-run after a stop)
+        years = [int(a) for a in sys.argv[2:4]] or [2017, 2026]  # optional: --auto FIRST LAST
         with engine.connect() as c:
             done = set(c.execute(text("select id from flood_events")).scalars())
         for ev in monsoon_windows(years[0], years[-1]):

@@ -14,6 +14,12 @@ class Settings(BaseSettings):
     cdsapi_key: str = ""
     telegram_bot_token: str = ""
     jwt_secret: str = ""
+    ewds_url: str = "https://ewds.climate.copernicus.eu/api"
+    ewds_key: str = ""
+    healthchecks_forecast_url: str = ""
+    healthchecks_era5_url: str = ""
+    admin_chat_id: str = ""
+    rate_limit_per_minute: int = 600  # per IP, generous because mobile users share IPs; 0 turns it off
 
     open_meteo_gfs_url: str = "https://api.open-meteo.com/v1/gfs"
     ingest_interval_hours: int = 6
