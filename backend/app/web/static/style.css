@@ -173,6 +173,7 @@ details.more summary { cursor: pointer; }
 .rank li { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: center; padding: 7px 6px; border-radius: var(--radius-sm);
   cursor: pointer; counter-increment: r; }
 .rank li::before { content: counter(r); color: var(--muted); font-size: 12px; text-align: right; }
+html[lang="bn"] .rank li::before { content: counter(r, bengali); }
 .rank li:hover { background: var(--surface-2); }
 .rank .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rank .nm small { color: var(--muted); }
