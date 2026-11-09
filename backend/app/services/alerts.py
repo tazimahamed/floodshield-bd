@@ -22,6 +22,7 @@ from sqlalchemy import select
 
 from app.core.config import settings
 from app.core.ratelimit import RateLimiter
+from app.services.ops import notify_admin
 from app.services.outlook import heat_level, node_outlook
 from app.db.models import AlertLog, FloodForecast, HealthFacility, FloodForecastRun, Node, RainForecast, Subscriber
 from app.db.session import SessionLocal
@@ -31,6 +32,7 @@ log = logging.getLogger(__name__)
 API = "https://api.telegram.org/bot{token}/{method}"
 LEVEL_RANK = {"none": 0, "watch": 1, "warning": 2, "severe": 3}
 REPEAT_AFTER = timedelta(hours=24)
+STALE_AFTER = timedelta(hours=24)
 BN_DIGITS = str.maketrans("0123456789", "০১২৩৪৫৬৭৮৯")
 BN_MONTHS = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর",
              "অক্টোবর", "নভেম্বর", "ডিসেম্বর"]
@@ -172,7 +174,7 @@ UI = {
     "none": "এখনো কোনো উপজেলা যুক্ত করেননি। উপজেলার নাম লিখে পাঠান।\nNo upazila yet — just send its name.",
     "list": "📋 আপনার উপজেলা / Your upazilas:\n{names}",
     "removed": "❎ বাদ দেওয়া হয়েছে / Removed: {names}",
-    "no_forecast": "এখনো কোনো পূর্বাভাস নেই। / No forecast yet.",
+    "no_forecast": "এই মুহূর্তে হালনাগাদ পূর্বাভাস নেই। FFWC ও উপজেলা প্রশাসনের নির্দেশনা দেখুন। / No up-to-date forecast right now. Please check FFWC and your upazila administration.",
     "voice_on": "🔊 ভয়েস বার্তা চালু। / Voice messages on.", "voice_off": "🔇 ভয়েস বার্তা বন্ধ। / Voice messages off.",
 }
 
@@ -233,6 +235,11 @@ def _latest_run(db) -> FloodForecastRun | None:
     return db.scalars(select(FloodForecastRun).order_by(FloodForecastRun.id.desc()).limit(1)).first()
 
 
+def is_stale(run: FloodForecastRun, now: datetime | None = None) -> bool:
+    """An old risk number must never read as today's: cycles run every 6 h, so a day means they are failing."""
+    return (now or datetime.now(timezone.utc)) - run.issued_at > STALE_AFTER
+
+
 def _forecast(db, run, node_id) -> FloodForecast | None:
     return db.scalars(select(FloodForecast).where(FloodForecast.run_id == run.id,
                                                   FloodForecast.node_id == node_id)).first()
@@ -248,6 +255,10 @@ def dispatch_alerts() -> int:
     with SessionLocal() as db:
         run = _latest_run(db)
         if not run:
+            return 0
+        if is_stale(run):
+            log.warning("Forecast run %d is stale; alerts not sent", run.id)
+            notify_admin(f"Forecast is stale, last issued {run.issued_at:%d %b %H:%M} UTC. Alerts are paused.")
             return 0
         for sub in db.scalars(select(Subscriber).where(Subscriber.active)).all():
             for node_id in sub.node_ids:
@@ -292,7 +303,7 @@ def _buttons(nodes: list[Node], with_district: bool) -> list[list[dict]]:
 def _status_messages(db, sub: Subscriber, node_ids: list[str]) -> list[tuple[str, str]]:
     """(text, voice script) for each upazila, worded for its current level."""
     run = _latest_run(db)
-    if not run:
+    if not run or is_stale(run):
         return [(UI["no_forecast"], "")]
     out = []
     for i in node_ids:

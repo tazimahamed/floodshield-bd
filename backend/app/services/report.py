@@ -68,7 +68,7 @@ def upazila_report(node_id: str) -> dict:
         current = c.execute(text("""
             select f.flood_prob, f.flood_frac, f.frac_p10, f.frac_p90, f.risk, r.reference_day, r.valid_until
             from flood_forecasts f join flood_forecast_runs r on r.id = f.run_id
-            where f.node_id = :n order by r.id desc limit 1"""), {"n": node_id}).mappings().first()
+            where f.node_id = :n and r.issued_at > now() - interval '24 hours' order by r.id desc limit 1"""), {"n": node_id}).mappings().first()
 
     rain = _daily_rain(node_id)
 

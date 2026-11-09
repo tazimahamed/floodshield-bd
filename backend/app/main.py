@@ -60,7 +60,9 @@ async def lifespan(app: FastAPI):
         scheduler.add_job(warm_voice, id="warm_voice")  # load the Bangla voice model before the first message
     scheduler.add_job(refresh_outlook, "interval", hours=settings.ingest_interval_hours, id="outlook", max_instances=1,
                       coalesce=True, next_run_time=datetime.now(timezone.utc))
-    scheduler.add_job(era5_refresh, "cron", hour=3, id="era5_refresh", max_instances=1, coalesce=True)
+    # also at startup: a machine that was off at 03:00 would otherwise fall behind until forecasts fail
+    scheduler.add_job(era5_refresh, "cron", hour=3, id="era5_refresh", max_instances=1, coalesce=True,
+                      next_run_time=datetime.now(timezone.utc))
     scheduler.start()
     yield
     scheduler.shutdown(wait=False)

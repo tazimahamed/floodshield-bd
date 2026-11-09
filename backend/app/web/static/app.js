@@ -632,15 +632,18 @@ function renderDetail() {
 async function loadOutlook(id) {
   const box = $("d-outlook"), bn = lang === "bn";
   box.innerHTML = "";
+  $("outlook-panel").hidden = true;
   const res = await fetch(`/api/v1/nodes/${id}/outlook`);
   if (!res.ok || selected?.id !== id) return;
   const rows = (await res.json()).filter(r => r.heat || r.wave_m != null);
   if (!rows.length) return;
-  box.innerHTML = `<h3>${bn ? "গরম ও সাগর" : "Heat and sea"}</h3><ul class="hosp">` + rows.map(r =>
+  $("outlook-title").textContent = bn ? "গরম ও সাগর" : "Heat and sea";
+  $("outlook-panel").hidden = false;
+  box.innerHTML = rows.map(r =>
     `<li>${new Date(r.day).toLocaleDateString(loc(), { day: "numeric", month: "short" })}: ` +
     [r.heat ? `${nf(r.tmax_c)}° (${r.heat[bn ? 0 : 1]})` : "",
      r.wave_m != null ? (bn ? `ঢেউ ${nf(r.wave_m, 1)} মি, বাতাস ${nf(r.wind_kmh)} কিমি/ঘণ্টা` : `waves ${nf(r.wave_m, 1)} m, wind ${nf(r.wind_kmh)} km/h`) : ""]
-      .filter(Boolean).join(" · ") + `</li>`).join("") + `</ul>`;
+      .filter(Boolean).join(" · ") + `</li>`).join("");
 }
 
 async function loadRain(id) {

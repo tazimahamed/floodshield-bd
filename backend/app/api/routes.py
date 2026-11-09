@@ -9,6 +9,7 @@ from sqlalchemy import func, select, text
 
 from app.db.models import Asset, Cyclone, CycloneExposure, CyclonePoint, Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, HealthFacility, IngestRun, ModelVersion, Node, RainForecast, River
 from app.db.session import SessionLocal
+from app.services.alerts import is_stale
 from app.services.impact import impact
 from app.services.outlook import heat_level, node_outlook
 
@@ -488,7 +489,9 @@ def ingest_status(limit: int = 20):
 
 
 def _latest_flood_run(db) -> FloodForecastRun | None:
-    return db.scalars(select(FloodForecastRun).order_by(FloodForecastRun.id.desc()).limit(1)).first()
+    """The forecast to show. A stale one counts as none, so an old risk never reads as today's."""
+    run = db.scalars(select(FloodForecastRun).order_by(FloodForecastRun.id.desc()).limit(1)).first()
+    return None if run and is_stale(run) else run
 
 
 def _flood_run_info(r: FloodForecastRun) -> dict:
