@@ -51,7 +51,7 @@ const T = {
     how3: "Open an upazila's full report for its flood history since 2017.",
     backOverview: "← National overview", reportBtn: "Open flood history report",
     riskOf: { low: "Low risk", medium: "Medium risk", high: "High risk" },
-    chance: "chance of flooding",
+    chance: "estimated chance of flooding", riskLimit: "River levels and local waterlogging are not included in this estimate.",
     likelyRange: (f, a, b) => `Expected flooded share ${f}% · likely range ${a}–${b}%`,
     noForecast: "No flood forecast for this upazila yet.",
     rainTitle: "Rainfall", chartPast: "Past", chartFuture: "Forecast",
@@ -116,7 +116,7 @@ const T = {
     how3: "উপজেলার পুরো রিপোর্টে ২০১৭ থেকে বন্যার ইতিহাস দেখুন।",
     backOverview: "← জাতীয় পরিস্থিতি", reportBtn: "বন্যার ইতিহাসের রিপোর্ট দেখুন",
     riskOf: { low: "নিম্ন ঝুঁকি", medium: "মাঝারি ঝুঁকি", high: "উচ্চ ঝুঁকি" },
-    chance: "বন্যার সম্ভাবনা",
+    chance: "বন্যার আনুমানিক সম্ভাবনা", riskLimit: "নদীর পানির স্তর ও স্থানীয় জলাবদ্ধতা এই হিসাবে নেই।",
     likelyRange: (f, a, b) => `প্রত্যাশিত প্লাবিত অংশ ${f}% · সম্ভাব্য পরিসর ${a}–${b}%`,
     noForecast: "এই উপজেলার জন্য এখনো পূর্বাভাস নেই।",
     rainTitle: "বৃষ্টি", chartPast: "অতীত", chartFuture: "পূর্বাভাস",
@@ -624,6 +624,7 @@ function renderDetail() {
       <div class="prob">${nf(pct)}% <small>${tt.chance}</small></div>
       <div class="meter"><span style="width:${pct}%;background:var(--${r === "medium" ? "med" : r})"></span></div>
       ${p.flood_frac != null ? `<p>${tt.likelyRange(nf(p.flood_frac * 100), nf((p.frac_p10 ?? p.flood_frac) * 100), nf((p.frac_p90 ?? p.flood_frac) * 100))}</p>` : ""}
+      <p>${tt.riskLimit}</p>
       ${hind ? `<p>${dateFmt(hind.day)}${p.observed_frac != null ? ` · Sentinel-1: ${nf(p.observed_frac * 100, 1)}% ${tt.flooded}` : ""}</p>` : ""}`;
   }
   const v = x => x == null ? "–" : `${nf(x, 1)}`;

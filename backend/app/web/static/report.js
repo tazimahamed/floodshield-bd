@@ -6,14 +6,14 @@ const T = {
     rainTitle: "What brings floods here", monsoonTitle: "Monsoon rain each year", monsoonSub: "June to September, this upazila.",
     cycTitle: "🌀 Cyclones that passed close by",
     navOverview: "Overview", navCalendar: "Flood calendar", navRain: "Rain", navCyc: "Cyclones",
-    about: "ⓘ About the data", print: "🖨 Print / PDF", notOfficial: "Supporting information, not an official warning. Follow FFWC, BMD and your upazila administration first.",
+    about: "ⓘ About the data", print: "🖨 Print / PDF", notOfficial: "Supporting information, not an official warning. River levels and local waterlogging are not included in this estimate. Follow FFWC, BMD and your upazila administration first.",
     csv: "⬇ CSV",
     crumb: (d, v) => `${d} district · ${v} division`,
     lead: (n, total, oneIn) => n
       ? `Over the last nine monsoons, unusual flood water covered part of this upazila in <b>${n} of ${total}</b> half-months — about <b>1 in ${oneIn}</b>.`
       : `Over the last nine monsoons the satellite saw no unusual flooding here in any of ${total} half-months.`,
     nowTitle: "Next 15 days", risk: { low: "Low risk", medium: "Medium risk", high: "High risk" },
-    chance: p => `${p}% chance of flooding`,
+    chance: p => `Estimated ${p}% chance of flooding`,
     tFloods: "Floods since 2017", tFloodsD: (n, total) => `${n} of ${total} monsoon half-months`,
     tWorst: "Worst flood seen", tWorstD: (pct, km2) => `${pct}% of the upazila · ${km2} km²`, tNoFlood: "None seen",
     tWater: "Water comes from", tWaterD: o => o > 0 ? `${o}% of that area is in India / upstream` : "all of it inside Bangladesh",
@@ -33,14 +33,14 @@ const T = {
     rainTitle: "এখানে বন্যা কখন হয়", monsoonTitle: "প্রতি বছর বর্ষার বৃষ্টি", monsoonSub: "জুন থেকে সেপ্টেম্বর, এই উপজেলায়।",
     cycTitle: "🌀 কাছ দিয়ে যাওয়া ঘূর্ণিঝড়",
     navOverview: "সারসংক্ষেপ", navCalendar: "বন্যার ক্যালেন্ডার", navRain: "বৃষ্টি", navCyc: "ঘূর্ণিঝড়",
-    about: "ⓘ ডেটা সম্পর্কে", print: "🖨 প্রিন্ট / PDF", notOfficial: "এটি সহায়ক তথ্য, সরকারি সতর্কবার্তা নয়। FFWC, আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের নির্দেশনা আগে মানুন।",
+    about: "ⓘ ডেটা সম্পর্কে", print: "🖨 প্রিন্ট / PDF", notOfficial: "এটি সহায়ক তথ্য, সরকারি সতর্কবার্তা নয়। নদীর পানির স্তর ও স্থানীয় জলাবদ্ধতা এই হিসাবে নেই। FFWC, আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের নির্দেশনা আগে মানুন।",
     csv: "⬇ CSV",
     crumb: (d, v) => `${d} জেলা · ${v} বিভাগ`,
     lead: (n, total, oneIn) => n
       ? `গত নয় বর্ষায় এই উপজেলার একাংশ <b>${total}টি অর্ধমাসের ${n}টিতে</b> অস্বাভাবিক বন্যার পানিতে ডুবেছে — মোটামুটি <b>প্রতি ${oneIn}টিতে ১টি</b>।`
       : `গত নয় বর্ষার ${total}টি অর্ধমাসে স্যাটেলাইট এখানে কোনো অস্বাভাবিক বন্যা দেখেনি।`,
     nowTitle: "আগামী ১৫ দিন", risk: { low: "নিম্ন ঝুঁকি", medium: "মাঝারি ঝুঁকি", high: "উচ্চ ঝুঁকি" },
-    chance: p => `বন্যার সম্ভাবনা ${p}%`,
+    chance: p => `বন্যার আনুমানিক সম্ভাবনা ${p}%`,
     tFloods: "২০১৭ থেকে বন্যা", tFloodsD: (n, total) => `বর্ষার ${total}টি অর্ধমাসের ${n}টিতে`,
     tWorst: "সবচেয়ে বড় বন্যা", tWorstD: (pct, km2) => `উপজেলার ${pct}% · ${km2} বর্গকিমি`, tNoFlood: "দেখা যায়নি",
     tWater: "পানি আসে", tWaterD: o => o > 0 ? `এর ${o}% এলাকা ভারতে / উজানে` : "পুরোটাই বাংলাদেশের ভেতর থেকে",

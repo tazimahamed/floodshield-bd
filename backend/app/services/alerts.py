@@ -44,8 +44,8 @@ HEAD = {
     "severe": ("🔴 তীব্র বন্যার সতর্কবার্তা", "🔴 SEVERE FLOOD WARNING"),
 }
 ADVICE = {
-    "none": ("স্বাভাবিক কাজকর্ম চালিয়ে যান। পরিস্থিতি বদলালে আমরা সঙ্গে সঙ্গে জানাব।",
-             "Carry on as usual. We will message you right away if this changes."),
+    "none": ("স্বাভাবিক কাজকর্ম চালিয়ে যান। পরিস্থিতি বদলালে আমরা জানানোর চেষ্টা করব, স্থানীয় প্রশাসনের নির্দেশনাও দেখুন।",
+             "Carry on as usual. We will try to tell you if this changes; please also follow your local administration."),
     "watch": ("জরুরি কাগজপত্র ও ওষুধ পানিরোধী ব্যাগে রাখুন, মোবাইল চার্জ রাখুন, নিকটতম আশ্রয়কেন্দ্র কোথায় জেনে নিন।",
               "Keep papers and medicine in a waterproof bag, keep your phone charged, know where your nearest shelter is."),
     "warning": ("খাবার পানি ও শুকনো খাবার মজুত করুন; গবাদিপশু ও মালামাল উঁচু জায়গায় সরান; শিশু ও বয়স্কদের দিকে খেয়াল রাখুন।",
@@ -56,8 +56,8 @@ ADVICE = {
                "☎️ Emergency 999 · Disaster info 1090"),
 }
 RISK_WORD = {"low": ("নিম্ন", "low"), "medium": ("মাঝারি", "medium"), "high": ("উচ্চ", "high")}
-FOOT = ("এটি সহায়ক তথ্য, সরকারি সতর্কবার্তা নয়। FFWC, আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের নির্দেশনা আগে মানুন।",
-        "Supporting information, not an official warning. Follow FFWC, BMD and your upazila administration first.")
+FOOT = ("এটি সহায়ক তথ্য, সরকারি সতর্কবার্তা নয়। নদীর পানির স্তর ও স্থানীয় জলাবদ্ধতা এই হিসাবে নেই। FFWC, আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের নির্দেশনা আগে মানুন।",
+        "Supporting information, not an official warning. River levels and local waterlogging are not included in this estimate. Follow FFWC, BMD and your upazila administration first.")
 # BMD rainfall categories, mm per day
 RAIN_WORDS = [(0.5, "বৃষ্টি নেই", "no rain"), (10, "হালকা", "light"), (22, "মাঝারি", "moderate"),
               (43, "মাঝারি ধরনের ভারী", "moderately heavy"), (88, "ভারী", "heavy"), (1e9, "অতি ভারী", "very heavy")]
@@ -66,7 +66,7 @@ VOICE_RAIN = {"বৃষ্টি নেই": "বৃষ্টির সম্�
               "অতি ভারী": "অতি ভারী বৃষ্টি হতে পারে"}
 VOICE = {
     "none": "দুর্যোগ বার্তা। আপনার উপজেলায় আগামী পনেরো দিনে বন্যার বাড়তি ঝুঁকি দেখা যাচ্ছে না। আগামী তিন দিনে {rain}। "
-            "স্বাভাবিক কাজকর্ম চালিয়ে যান। পরিস্থিতি বদলালে আমরা জানাব।",
+            "স্বাভাবিক কাজকর্ম চালিয়ে যান। পরিস্থিতি বদলালে আমরা জানানোর চেষ্টা করব। স্থানীয় প্রশাসনের নির্দেশনাও দেখুন।",
     "watch": "দুর্যোগ বার্তা। আপনার উপজেলায় আগামী পনেরো দিনে বন্যার আশঙ্কা আছে। আগামী তিন দিনে {rain}। প্রস্তুত থাকুন। "
              "জরুরি কাগজপত্র আর ওষুধ পানিরোধী ব্যাগে রাখুন, মোবাইল চার্জ রাখুন, নিকটতম আশ্রয়কেন্দ্র জেনে নিন।",
     "warning": "দুর্যোগ বার্তা। জরুরি। আপনার উপজেলায় বন্যার ঝুঁকি বেশি। আগামী তিন দিনে {rain}। এখনই খাবার পানি আর শুকনো খাবার "
@@ -124,7 +124,7 @@ def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, rai
           f"• উজানে (ভারতসহ), আগামী ৩ দিন: {_mm(rain.get('up72'), True)}",
           f"• গত ৩ দিন: {_mm(rain.get('past72'), True)}", "",
           "<b>🌊 বন্যার ঝুঁকি</b>",
-          f"• সম্ভাবনা: {_bn(pct)}% ({risk_bn})"]
+          f"• সম্ভাবনা: আনুমানিক {_bn(pct)}% ({risk_bn})"]
     en = [f"<b>{HEAD[level][1]}</b>", f"📅 Next 15 days: {start:%d %b} – {end:%d %b}", "",
           "<b>🌧️ Rain forecast</b>",
           f"• Next 24 h: {_mm(rain.get('next24'), False)}",
@@ -132,7 +132,7 @@ def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, rai
           f"• Upstream (incl. India), next 3 days: {_mm(rain.get('up72'), False)}",
           f"• Last 3 days: {_mm(rain.get('past72'), False)}", "",
           "<b>🌊 Flood risk</b>",
-          f"• Chance: {pct}% ({risk_en})"]
+          f"• Estimated chance: {pct}% ({risk_en})"]
     if level != "none":
         bn.append(f"• ডুবতে পারে: উপজেলার প্রায় {_bn(frac)}% (সম্ভাব্য {_bn(p10)}–{_bn(p90)}%)")
         en.append(f"• May flood: about {frac}% of the upazila (likely {p10}–{p90}%)")
