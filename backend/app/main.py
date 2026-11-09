@@ -22,6 +22,9 @@ from app.services.ops import notify_admin, ping
 from app.services.outlook import refresh_outlook
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+# httpx logs every request URL at INFO, and Telegram URLs contain the bot token
+for _name in ("httpx", "httpx2", "httpcore", "apscheduler.executors.default"):
+    logging.getLogger(_name).setLevel(logging.WARNING)
 WEB_DIR = Path(__file__).parent / "web"
 log = logging.getLogger(__name__)
 
