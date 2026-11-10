@@ -76,6 +76,13 @@ const T = {
     cycSay: (n50, n150) => `Since 1960, <b>${n50}</b> storms passed within 50 km of here and <b>${n150}</b> within 150 km.`,
     kmAway: km => `${km} km away`, nextDays: "next 24 hours",
     ffwcLink: "See today's official river levels (FFWC) ↗",
+    waterLayer: "🛰️ Satellite: water now", wnTitle: "🛰️ Satellite: water now",
+    wnSum: (a, b, n, m) => `Sentinel-1 radar pictures from <b>${a} – ${b}</b>: <b>${n}</b> upazilas have more water than usual over 5% or more of their land (${m} upazilas had a picture).`,
+    wnNone: (a, b) => `Sentinel-1 radar pictures from ${a} – ${b}: no upazila has more water than usual over 5% of its land.`,
+    wnNote: "Water the radar saw on the ground, compared with the same time in other years. It is not a forecast, and it shows water spreading over land, not river height.",
+    wnDetail: (d, p) => `Satellite picture of <b>${d}</b>: more water than usual over <b>${p}%</b> of this upazila.`,
+    wnWord: ["Almost none: like a normal year.", "A little more water than usual.", "A lot more water than usual: the level counted as a flood in the flood history."],
+    wnMissing: "No satellite picture of this upazila in the last 12 days.",
     tgBtn: "Get alerts for this upazila on Telegram", tgNote: "Opens Telegram and adds this upazila to Durjog Barta. Free; stop any time with /unsubscribe.",
     tgTitle: "🔔 Alerts on your phone", tgAll: "Open Durjog Barta on Telegram",
     tgAllNote: "Free alerts in Bangla and English, with a voice message. Send your upazila name to the bot.",
@@ -156,6 +163,13 @@ const T = {
     cycSay: (n50, n150) => `১৯৬০ থেকে <b>${n50}</b>টি ঝড় এখানকার ৫০ কিমির মধ্যে দিয়ে এবং <b>${n150}</b>টি ১৫০ কিমির মধ্যে দিয়ে গেছে।`,
     kmAway: km => `${km} কিমি দূরে`, nextDays: "আগামী ২৪ ঘণ্টা",
     ffwcLink: "আজকের সরকারি নদীর পানির স্তর দেখুন (FFWC) ↗",
+    waterLayer: "🛰️ স্যাটেলাইট: এখনকার পানি", wnTitle: "🛰️ স্যাটেলাইট: এখনকার পানি",
+    wnSum: (a, b, n, m) => `Sentinel-1 রাডারের ছবি <b>${a} – ${b}</b>: <b>${n}</b>টি উপজেলায় জমির ৫% বা বেশি এলাকায় স্বাভাবিকের চেয়ে বেশি পানি (${m}টি উপজেলার ছবি পাওয়া গেছে)।`,
+    wnNone: (a, b) => `Sentinel-1 রাডারের ছবি ${a} – ${b}: কোনো উপজেলায় জমির ৫% এলাকায় স্বাভাবিকের চেয়ে বেশি পানি নেই।`,
+    wnNote: "রাডার মাটিতে যে পানি দেখেছে, অন্য বছরের একই সময়ের সাথে তুলনা করে। এটি পূর্বাভাস নয়; নদীর উচ্চতা নয়, জমিতে কতটা পানি ছড়িয়েছে তা দেখায়।",
+    wnDetail: (d, p) => `<b>${d}</b>-এর স্যাটেলাইট ছবি: এই উপজেলার <b>${p}%</b> এলাকায় স্বাভাবিকের চেয়ে বেশি পানি।`,
+    wnWord: ["প্রায় নেই: স্বাভাবিক বছরের মতো।", "স্বাভাবিকের চেয়ে কিছুটা বেশি পানি।", "স্বাভাবিকের চেয়ে অনেক বেশি পানি: বন্যার ইতিহাসে এই মাত্রাকে বন্যা ধরা হয়।"],
+    wnMissing: "গত ১২ দিনে এই উপজেলার স্যাটেলাইট ছবি নেই।",
     tgBtn: "এই উপজেলার সতর্কবার্তা Telegram-এ পান", tgNote: "Telegram খুলে এই উপজেলাটি দুর্যোগ বার্তায় যোগ হবে। বিনামূল্যে; বন্ধ করতে /unsubscribe লিখুন।",
     tgTitle: "🔔 ফোনে সতর্কবার্তা", tgAll: "Telegram-এ দুর্যোগ বার্তা খুলুন",
     tgAllNote: "বাংলা ও ইংরেজিতে বিনামূল্যে সতর্কবার্তা, সাথে ভয়েস বার্তা। বটকে আপনার উপজেলার নাম পাঠান।",
@@ -621,6 +635,7 @@ function select(id, zoom = false) {
   $("side").querySelector(".drawer-body").scrollTop = 0;
   renderDetail();
   renderStrip();
+  renderWaterDetail();
   // one tap: Telegram opens the bot, which subscribes this upazila from the start link
   $("tg-link").href = `https://t.me/DurjogBartaBangladesh_bot?start=${encodeURIComponent(id)}`;
   loadRain(id);
@@ -661,6 +676,50 @@ function countTo(el, to, fmt, ms = 900) {
   const stepFn = now => { const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(to * e); if (k < 1) requestAnimationFrame(stepFn); };
   requestAnimationFrame(stepFn);
 }
+// Water now: unusual water on the latest Sentinel-1 pictures (built daily on the server, same method as the flood history)
+let waterNow = null, waterLayerGroup = null;
+map.createPane("satwater").style.zIndex = 430;
+map.getPane("satwater").style.pointerEvents = "none";
+const dShort = iso => new Date(iso + "T00:00:00Z").toLocaleDateString(loc(), { day: "numeric", month: "short", timeZone: "UTC" });
+async function loadWaterNow() {
+  try {
+    const r = await fetch("/api/v1/water-now");
+    if (!r.ok) return;
+    waterNow = await r.json();
+  } catch (e) { return; }
+  waterLayerGroup = L.layerGroup(waterNow.tiles.map(tl => L.imageOverlay(`/api/v1/water-now/${tl.file}?d=${waterNow.computed_at.slice(0, 10)}`,
+    tl.bounds, { pane: "satwater", opacity: 0.95, interactive: false, className: "wn-img" })));
+  toggleWaterNow();
+  renderWaterNow();
+  if (selected) renderWaterDetail();
+}
+function toggleWaterNow() {
+  if (!waterLayerGroup) return;
+  if ($("show-water").checked) waterLayerGroup.addTo(map); else waterLayerGroup.remove();
+}
+function renderWaterNow() {
+  if (!waterNow) return;
+  const tt = t(), a = dShort(waterNow.window[0]), b = dShort(waterNow.latest_picture || waterNow.window[1]);
+  $("wn-panel").hidden = false;
+  $("wn-sum").innerHTML = `<p class="wn-sum">${waterNow.upazilas_flooded ? tt.wnSum(a, b, nf(waterNow.upazilas_flooded), nf(waterNow.mapped)) : tt.wnNone(a, b)}</p>`;
+  const top = waterNow.top.filter(r => r.pct >= 0.5).slice(0, 5);
+  $("wn-top").innerHTML = top.map(r => `<li data-id="${r.id}"><span class="nm">${r.name}<small>${r.district}</small></span>
+    <span class="bar"><i style="width:${Math.min(100, r.pct * 3)}%"></i></span><b>${nf(r.pct, 1)}%</b></li>`).join("");
+  $("wn-top").querySelectorAll("li").forEach(li => li.onclick = () => select(li.dataset.id, true));
+  $("wn-note").textContent = tt.wnNote;
+}
+function renderWaterDetail() {
+  const box = $("d-water"), tt = t();
+  if (!waterNow || !selected) { box.hidden = true; return; }
+  const w = waterNow.upazilas[selected.id];
+  box.hidden = false;
+  if (!w) { box.className = "wn-card none"; box.innerHTML = `<span class="ico">🛰️</span><p>${tt.wnMissing}</p>`; return; }
+  const pct = w.frac * 100, lvl = pct < 0.5 ? 0 : pct < 5 ? 1 : 2;
+  box.className = `wn-card l${lvl}`;
+  box.innerHTML = `<span class="ico">🛰️</span><div><p>${tt.wnDetail(dShort(w.last_day), nf(pct, pct < 10 ? 1 : 0))}</p>
+    <div class="wn-meter"><i style="width:${Math.min(100, pct * 4)}%"></i><b style="left:20%"></b></div><small>${tt.wnWord[lvl]}</small></div>`;
+}
+
 function renderDetail() {
   const p = selected, tt = t();
   $("d-name").textContent = p.name;
@@ -963,6 +1022,7 @@ function applyLang() {
   if (cyc && cycTrack.length) setStormTime(pbIdx);
   if (data) { renderSide(); if (selected) renderStrip(); }
   if (riverNames && $("show-rivers").checked) placeRiverNames();
+  renderWaterNow(); if (selected) renderWaterDetail();
 }
 
 /* ---------- wiring ---------- */
@@ -982,6 +1042,7 @@ $("day-clear").onclick = () => { $("day").value = ""; selectDay(); };
 $("division").onchange = () => load(true);
 $("show-rivers").onchange = toggleRivers;
 $("show-basins").onchange = toggleBasins;
+$("show-water").onchange = toggleWaterNow;
 $("detail-close").onclick = closeDetail;
 $("strip-close").onclick = closeDetail;
 $("drawer-close").onclick = closeDrawer;
@@ -1023,5 +1084,6 @@ document.addEventListener("keydown", e => {
   await load();
   $("map-loading").hidden = true;
   toggleRivers();
+  loadWaterNow();
   if (innerWidth > 1100) openDrawer();
 })();

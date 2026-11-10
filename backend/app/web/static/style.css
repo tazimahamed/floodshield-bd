@@ -428,3 +428,20 @@ body.bn .mini-h { text-transform: none; letter-spacing: 0; }
 /* official river levels (FFWC): the answer to "river levels are not included" */
 .risk-card a.ffwc { display: inline-block; margin-top: 4px; font-weight: 700; color: var(--brand); text-decoration: none; }
 .risk-card a.ffwc:hover { text-decoration: underline; }
+
+/* ---------- satellite: water now ---------- */
+.wn-img { image-rendering: auto; filter: drop-shadow(0 0 1px #1d8cf8) drop-shadow(0 0 3px rgba(29,140,248,.55)); }
+.wn-sum { font-size: 13.5px; line-height: 1.5; margin: 0 0 8px; }
+#wn-top li { cursor: pointer; display: grid; grid-template-columns: 1fr 70px auto; gap: 8px; align-items: center; }
+#wn-top .nm small { display: block; color: var(--muted); font-size: 11.5px; }
+#wn-top .bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+#wn-top .bar i { display: block; height: 100%; background: #1d8cf8; border-radius: 3px; }
+.wn-card { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; padding: 10px 12px; border-radius: var(--radius-sm);
+  background: var(--surface-2); border: 1px solid var(--line); font-size: 13.5px; line-height: 1.45; }
+.wn-card .ico { font-size: 20px; line-height: 1; }
+.wn-card p { margin: 0 0 6px; } .wn-card small { color: var(--muted); }
+.wn-card.l1 { border-color: #8cc2ff; } .wn-card.l2 { border-color: #1d8cf8; background: rgba(29,140,248,.08); }
+.wn-card.none p { margin: 0; color: var(--muted); }
+.wn-meter { position: relative; height: 7px; border-radius: 4px; background: rgba(0,0,0,.08); margin: 2px 0 6px; overflow: visible; }
+.wn-meter i { display: block; height: 100%; border-radius: 4px; background: #1d8cf8; animation: grow .9s cubic-bezier(.2,.8,.2,1) both; transform-origin: left; }
+.wn-meter b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--high); opacity: .7; }

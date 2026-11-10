@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/style.css?v=7">
+  <link rel="stylesheet" href="/static/style.css?v=8">
 </head>
 <body class="app">
   <main class="stage">
@@ -82,6 +82,7 @@
       <label class="check"><input type="checkbox" id="show-rivers" checked><span data-i18n="rivers"></span></label>
       <label class="check"><input type="checkbox" id="show-basins"><span data-i18n="upstream"></span></label>
       <label class="check"><input type="checkbox" id="show-coast" checked><span data-i18n="coastLayer"></span></label>
+      <label class="check"><input type="checkbox" id="show-water" checked><span data-i18n="waterLayer"></span></label>
     </div>
 
     <!-- bottom: colour scale -->
@@ -111,6 +112,12 @@
             <div class="panel-head"><h2 id="top-title"></h2></div>
             <ol id="top" class="rank"></ol>
           </section>
+          <section class="panel wn-panel" id="wn-panel" hidden>
+            <div class="panel-head"><h2 data-i18n="wnTitle"></h2></div>
+            <div id="wn-sum"></div>
+            <ol id="wn-top" class="rank"></ol>
+            <p class="note" id="wn-note"></p>
+          </section>
           <section class="panel tg-panel">
             <div class="panel-head"><h2 data-i18n="tgTitle"></h2></div>
             <p class="muted small" data-i18n="tgAllNote"></p>
@@ -131,6 +138,7 @@
             <h2 id="d-name" class="d-name"></h2>
             <p id="d-where" class="muted"></p>
             <div id="d-risk" class="risk-card"></div>
+            <div id="d-water" class="wn-card" hidden></div>
             <a id="report-link" class="btn primary block" target="_blank" rel="noopener" data-i18n="reportBtn"></a>
             <a id="tg-link" class="btn tg block" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.3-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13 1.4 11.5c-1-.3-1-1 .2-1.5L20.6 2.9c.9-.3 1.6.2 1.3 1.4z"/></svg><span data-i18n="tgBtn"></span></a>
             <p class="tg-note" data-i18n="tgNote"></p>
@@ -171,7 +179,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.3/leaflet-maplibre-gl.js"></script>
-  <script src="/static/app.js?v=8"></script>
+  <script src="/static/app.js?v=9"></script>
   <script src="/static/coast.js?v=7"></script>
 </body>
 </html>

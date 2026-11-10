@@ -1,10 +1,12 @@
 import gzip
 import json
+import re
 from threading import Lock
 from datetime import date, timedelta
 
 from fastapi import APIRouter, HTTPException, Query, Request, Response
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import FileResponse
 from geoalchemy2 import Geography, Geometry
 from sqlalchemy import func, select, text
 
@@ -461,6 +463,26 @@ def model_versions():
         return [{"version": m.version, "trained_at": m.trained_at.isoformat(), "active": m.is_active,
                  "metrics": m.metrics, **m.info}
                 for m in db.scalars(select(ModelVersion).order_by(ModelVersion.trained_at.desc())).all()]
+
+
+@router.get("/water-now")
+def water_now_view():
+    """Unusual water in every upazila on the latest Sentinel-1 pictures (last 12 days), plus the map tiles."""
+    from app.services.water_now import load
+
+    data = load()
+    if not data:
+        raise HTTPException(503, "The latest satellite water map is being made; try again in a few minutes.")
+    return data
+
+
+@router.get("/water-now/{name}")
+def water_now_tile(name: str):
+    from app.services.water_now import TILES
+
+    if not re.fullmatch(r"t\d\d\.png", name) or not (TILES / name).exists():
+        raise HTTPException(404, "No such tile")
+    return FileResponse(TILES / name, media_type="image/png", headers={"Cache-Control": "public, max-age=3600"})
 
 
 @router.get("/model/calendar")
