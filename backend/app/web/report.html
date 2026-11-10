@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
-  <link rel="stylesheet" href="/static/report.css?v=11">
+  <link rel="stylesheet" href="/static/report.css?v=14">
 </head>
 <body class="page dash-page">
   <header class="topbar">
@@ -56,6 +56,7 @@
             <div class="seg-mini" role="group">
               <button id="v3d" class="on">3D</button><button id="v2d">2D</button>
             </div>
+            <button id="bWx" class="wx-btn" hidden></button>
           </div>
         </div>
         <div class="map3d-wrap"><div id="map3d"></div><div id="mini-map" hidden></div><div id="map-hint" class="map-hint" hidden></div></div>
@@ -96,12 +97,19 @@
     <section class="card reveal" id="cyclones" hidden>
       <h2 data-i18n="cycTitle"></h2>
       <div id="cyc"></div>
+      <div class="cyc-map-wrap" id="cyc-map-wrap" hidden>
+        <div id="cyc-map"></div>
+        <div class="cyc-now" id="cyc-now"></div>
+        <button class="cyc-replay" id="cyc-replay"></button>
+      </div>
+      <div class="cyc-legend" id="cyc-legend"></div>
+      <p class="src" id="cyc-src"></p>
     </section>
     <p class="not-official" data-i18n="notOfficial"></p>
   </main>
   <div id="tip" class="tip" hidden></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-  <script src="/static/report.js?v=11"></script>
+  <script src="/static/report.js?v=14"></script>
 </body>
 </html>

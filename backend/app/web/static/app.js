@@ -30,7 +30,7 @@ const T = {
     cycFar: km => `Never within 150 km of an upazila (closest ${km} km from Bangladesh)`, cycUpz: n => `${n} upazilas within 150 km`,
     dateLabel: "Date", today: "Today", total24: "Next 24h", total72: "Next 72h",
     past72: "Last 72h", next24: "Next 24h", next72: "Next 72h",
-    allDivisions: "All Bangladesh", rivers: "Rivers", upstream: "Upstream basins (India, Nepal…)",
+    allDivisions: "All Bangladesh", rivers: "Rivers", upstream: "Upstream basins (India, Nepal…)", coastLayer: "Coast, ports & live sea",
     layersTitle: "Map layers", loading: "Loading…", runningModel: "Running the model for this date…",
     tHome: "Show all Bangladesh", tSearch: "Search", tLayers: "Layers", tTheme: "Dark / light map", tPanel: "Details panel",
     overviewTitle: "National overview", detailTitle: "Upazila details",
@@ -95,7 +95,7 @@ const T = {
     cycFar: km => `কোনো উপজেলার ১৫০ কিমির মধ্যে আসেনি (বাংলাদেশ থেকে সবচেয়ে কাছে ${km} কিমি)`, cycUpz: n => `${n}টি উপজেলা ১৫০ কিমির মধ্যে`,
     dateLabel: "তারিখ", today: "আজ", total24: "আগামী ২৪ ঘণ্টা", total72: "আগামী ৭২ ঘণ্টা",
     past72: "গত ৭২ ঘণ্টা", next24: "আগামী ২৪ ঘণ্টা", next72: "আগামী ৭২ ঘণ্টা",
-    allDivisions: "সমগ্র বাংলাদেশ", rivers: "নদী", upstream: "উজানের অববাহিকা (ভারত, নেপাল…)",
+    allDivisions: "সমগ্র বাংলাদেশ", rivers: "নদী", upstream: "উজানের অববাহিকা (ভারত, নেপাল…)", coastLayer: "উপকূল, বন্দর ও সাগরের এখনকার অবস্থা",
     layersTitle: "ম্যাপের স্তর", loading: "লোড হচ্ছে…", runningModel: "এই তারিখের জন্য মডেল চলছে…",
     tHome: "পুরো বাংলাদেশ", tSearch: "খুঁজুন", tLayers: "স্তর", tTheme: "গাঢ় / হালকা ম্যাপ", tPanel: "বিস্তারিত প্যানেল",
     overviewTitle: "জাতীয় পরিস্থিতি", detailTitle: "উপজেলার বিস্তারিত",
@@ -218,12 +218,15 @@ map.createPane("track").style.zIndex = 655;
 let baseLayers = [];
 function setBasemap() {
   baseLayers.forEach(l => l.remove());
-  const base = mapDark ? "Canvas/World_Dark_Gray_Base" : "Ocean/World_Ocean_Base";
   const ref = mapDark ? "Canvas/World_Dark_Gray_Reference" : "Ocean/World_Ocean_Reference";
-  // the Ocean basemap has no tiles past ~zoom 10 on land ("Map data not yet available"), so stretch zoom-10 tiles
-  baseLayers = [
-    L.tileLayer(`${ESRI}/${base}/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 16, maxNativeZoom: mapDark ? 16 : 10,
-      attribution: "Basemap © Esri, GEBCO, NOAA, Garmin, HERE, © OpenStreetMap contributors · Boundaries BBS/OCHA · Rivers HydroSHEDS" }),
+  const attribution = "Basemap © Esri, GEBCO, NOAA, Garmin, HERE, © OpenStreetMap contributors · Boundaries BBS/OCHA · Rivers HydroSHEDS · Sea: Open-Meteo";
+  // the Ocean basemap shows the real sea floor (shallow shelf, the Swatch of No Ground canyon) but has no tiles
+  // past ~zoom 10 on land ("Map data not yet available"), so stretch zoom-10 tiles. In dark mode it is dimmed,
+  // and close up (past zoom 10) the plain dark map takes over so streets stay sharp.
+  const ocean = L.tileLayer(`${ESRI}/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}`,
+    { maxZoom: mapDark ? 10 : 16, maxNativeZoom: 10, className: mapDark ? "sea-dark" : "", attribution });
+  baseLayers = [ocean,
+    ...(mapDark ? [L.tileLayer(`${ESRI}/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`, { minZoom: 10.01, maxZoom: 16 })] : []),
     L.tileLayer(`${ESRI}/${ref}/MapServer/tile/{z}/{y}/{x}`, { pane: "labels", maxZoom: 16, maxNativeZoom: mapDark ? 16 : 10, opacity: 0.9 }),
   ];
   baseLayers.forEach(l => l.addTo(map));
@@ -233,7 +236,7 @@ function setBasemap() {
   restyleRivers();
   if (layer) restyle();
 }
-const maskOpacity = () => $("show-basins").checked ? 0.15 : (mapDark ? 0.45 : 0.38);
+const maskOpacity = () => $("show-basins").checked ? 0.15 : (mapDark ? 0.32 : 0.3);
 
 async function drawCountry() {
   const f = await (await fetch("/api/v1/country-outline")).json();

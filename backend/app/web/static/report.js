@@ -28,7 +28,11 @@ const T = {
     months: ["Jun", "Jul", "Aug", "Sep"], halves: ["1–15", "16–30"], notFound: "Upazila not found", mm: "mm",
     navMap: "Map", mapTitle: "What is where", mapSub: "Roads, place names, rivers and hospitals on real ground.",
     hintClick: "Click the map to move and zoom it", hintTap: "Tap the map to move it", baseSat: "Satellite", baseMap: "Map",
-    mapSrc: "Satellite, roads and place names: Esri · Relief: Mapzen Terrain Tiles (AWS), height shown 4× taller · Rivers: HydroSHEDS · Hospitals: DGHS registry",
+    mapSrc: "Satellite, roads and place names: Esri · Relief: Mapzen Terrain Tiles (AWS), height shown 4× taller · Rivers: HydroSHEDS · Hospitals: DGHS registry · Roads, rivers and canals: OpenStreetMap via OpenFreeMap (small khals may be missing) · Rain and wind: Open-Meteo, right now, checked every 10 minutes. Rain and wind move only when there really is rain or wind; they show how strong and which way, not where each drop falls.",
+    wxBtn: "Rain & wind", lgFlow: "Light moving on rivers and canals shows which way the water flows",
+    wxRain: v => `Raining now: ${v} mm/h`, wxDry: "No rain right now", wxWind: (v, d, g) => `Wind ${v} km/h from the ${d}, gusts ${g}`, wxCalm: "Calm, almost no wind",
+    wxAt: tm => `Updated ${tm} · Open-Meteo`,
+    dirs: ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"],
     lgBoundary: "Upazila boundary", lgRivers: n => `Rivers and streams (${n} stretches)`, lgNoRivers: "No large river mapped inside",
     lgHosp: n => `Government hospitals (${n})`, lgNoHosp: "No government hospital with a checked location here", lgRelief: "Hills and high ground",
     popBeds: b => `${b} beds`, popProfile: "Open in DGHS registry ↗",
@@ -37,6 +41,10 @@ const T = {
     sPast: "Last 3 days", sNext: "Next 3 days", sPeak: "Heaviest hour ahead", sPeakNone: "No rain expected", mmh: "mm/h",
     noRain: "No rainfall forecast is available right now.",
     tRainNext: "Rain, next 3 days", tRainNextD: "NOAA GFS forecast", tRainPast: "Rain, last 3 days", tRainPastD: "Same source, already fallen",
+    upBefore: "Upstream, before floods", gaugeCap: "Rain that fell in the two weeks before, typical (median) amount",
+    cats: ["Depression", "Deep depression", "Cyclone", "Severe cyclone", "Very severe cyclone", "Extremely severe cyclone", "Super cyclone"],
+    cycWindAt: v => `wind ${v} km/h`, cycNoWindAt: "wind not recorded", cycReplay: "↻ Replay",
+    cycMapSrc: "Real storm paths from NOAA IBTrACS (Indian Meteorological Department best track), one point every 6 hours. The colour shows how strong the storm was at that point. The yellow outline is this upazila.",
   },
   bn: {
     back: "← ম্যাপ", calTitle: "বন্যার ক্যালেন্ডার, ২০১৭ থেকে আজ পর্যন্ত",
@@ -66,7 +74,11 @@ const T = {
     months: ["জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর"], halves: ["১–১৫", "১৬–৩০"], notFound: "উপজেলা পাওয়া যায়নি", mm: "মিমি",
     navMap: "ম্যাপ", mapTitle: "কোথায় কী আছে", mapSub: "আসল জমির উপর রাস্তা, জায়গার নাম, নদী ও হাসপাতাল।",
     hintClick: "ম্যাপ নাড়াতে ও জুম করতে একবার ক্লিক করুন", hintTap: "ম্যাপ নাড়াতে একবার ট্যাপ করুন", baseSat: "স্যাটেলাইট", baseMap: "ম্যাপ",
-    mapSrc: "স্যাটেলাইট, রাস্তা ও জায়গার নাম: Esri · উঁচু-নিচু: Mapzen Terrain Tiles (AWS), উচ্চতা ৪ গুণ বাড়িয়ে দেখানো · নদী: HydroSHEDS · হাসপাতাল: স্বাস্থ্য অধিদপ্তরের রেজিস্ট্রি",
+    mapSrc: "স্যাটেলাইট, রাস্তা ও জায়গার নাম: Esri · উঁচু-নিচু: Mapzen Terrain Tiles (AWS), উচ্চতা ৪ গুণ বাড়িয়ে দেখানো · নদী: HydroSHEDS · হাসপাতাল: স্বাস্থ্য অধিদপ্তরের রেজিস্ট্রি · রাস্তা, নদী ও খাল: OpenStreetMap (OpenFreeMap-এর মাধ্যমে), ছোট খাল বাদ থাকতে পারে · বৃষ্টি ও বাতাস: Open-Meteo, এই মুহূর্তের, প্রতি ১০ মিনিটে মিলিয়ে নেওয়া হয়। সত্যিই বৃষ্টি বা বাতাস থাকলে তবেই নড়ে; কতটা জোরে ও কোন দিকে তা দেখায়, ঠিক কোথায় ফোঁটা পড়ছে তা নয়।",
+    wxBtn: "বৃষ্টি ও বাতাস", lgFlow: "নদী ও খালের উপর চলমান আলো দেখায় পানি কোন দিকে বইছে",
+    wxRain: v => `এখন বৃষ্টি হচ্ছে: ${v} মিমি/ঘণ্টা`, wxDry: "এখন বৃষ্টি নেই", wxWind: (v, d, g) => `বাতাস ${v} কিমি/ঘণ্টা, ${d} দিক থেকে, দমকা ${g}`, wxCalm: "বাতাস প্রায় নেই",
+    wxAt: tm => `হালনাগাদ ${tm} · Open-Meteo`,
+    dirs: ["উত্তর", "উত্তর-পূর্ব", "পূর্ব", "দক্ষিণ-পূর্ব", "দক্ষিণ", "দক্ষিণ-পশ্চিম", "পশ্চিম", "উত্তর-পশ্চিম"],
     lgBoundary: "উপজেলার সীমানা", lgRivers: n => `নদী ও খাল (${n}টি অংশ)`, lgNoRivers: "ভেতরে বড় কোনো নদী ম্যাপে নেই",
     lgHosp: n => `সরকারি হাসপাতাল (${n}টি)`, lgNoHosp: "যাচাই করা অবস্থানসহ কোনো সরকারি হাসপাতাল নেই", lgRelief: "পাহাড় ও উঁচু জমি",
     popBeds: b => `${b}টি শয্যা`, popProfile: "স্বাস্থ্য অধিদপ্তরের রেজিস্ট্রিতে দেখুন ↗",
@@ -75,6 +87,10 @@ const T = {
     sPast: "গত ৩ দিন", sNext: "আগামী ৩ দিন", sPeak: "সামনে সবচেয়ে ভারী ঘণ্টা", sPeakNone: "বৃষ্টির সম্ভাবনা নেই", mmh: "মিমি/ঘণ্টা",
     noRain: "এই মুহূর্তে বৃষ্টির পূর্বাভাস পাওয়া যাচ্ছে না।",
     tRainNext: "বৃষ্টি, আগামী ৩ দিন", tRainNextD: "NOAA GFS পূর্বাভাস", tRainPast: "বৃষ্টি, গত ৩ দিন", tRainPastD: "একই উৎস, হয়ে গেছে",
+    upBefore: "উজানে, বন্যার আগে", gaugeCap: "আগের দুই সপ্তাহে যতটা বৃষ্টি হয়েছিল, সাধারণ (মধ্যমা) পরিমাণ",
+    cats: ["নিম্নচাপ", "গভীর নিম্নচাপ", "ঘূর্ণিঝড়", "প্রবল ঘূর্ণিঝড়", "অতি প্রবল ঘূর্ণিঝড়", "অত্যন্ত প্রবল ঘূর্ণিঝড়", "সুপার সাইক্লোন"],
+    cycWindAt: v => `বাতাস ${v} কিমি/ঘণ্টা`, cycNoWindAt: "বাতাসের রেকর্ড নেই", cycReplay: "↻ আবার দেখুন",
+    cycMapSrc: "ঝড়ের আসল পথ, NOAA IBTrACS (ভারতীয় আবহাওয়া অধিদপ্তরের best track) থেকে, প্রতি ৬ ঘণ্টায় একটি বিন্দু। রঙ দেখায় ওই জায়গায় ঝড় কত শক্তিশালী ছিল। হলুদ রেখা এই উপজেলা।",
   },
 };
 let lang = "en", R = null, CY = null, nodeId = null, RAIN = null, RS = null, MAPINFO = null, MAP = null;
@@ -116,7 +132,11 @@ function renderCalendar() {
     const idx = byYear[y][k];
     if (idx == null) return `<td class="none">·</td>`;
     const h = R.history[idx], p = h.flooded_pct;
-    return `<td class="${h.flooded ? "flood" : p < 0.5 ? "none" : ""}" style="background:${calColor(p)};animation-delay:${(years.indexOf(y) * cols + k) * 12}ms" data-i="${idx}">${p < 0.5 ? "" : nf(p, p < 10 ? 1 : 0) + "%"}</td>`;
+    const d = (years.indexOf(y) * cols + k) * 12;
+    if (p < 0.5 && !h.flooded) return `<td class="none" style="animation-delay:${d}ms" data-i="${idx}"></td>`;
+    // each box fills with water to how much of the upazila was under unusual water (full at 20% or more)
+    const lvl = h.flooded ? 100 : Math.min(100, 14 + p * 4.3);
+    return `<td class="w${h.flooded ? " flood" : ""}" style="--wc:${calColor(p)};--lvl:${lvl.toFixed(0)}%;--d:${d}ms;animation-delay:${d}ms" data-i="${idx}"><span>${nf(p, p < 10 ? 1 : 0)}%</span></td>`;
   }).join("")}</tr>`).join("");
   $("cal-legend").innerHTML = `${tt.legendLow} ${CAL.map(([, c]) => `<i style="background:${c}"></i>`).join("")} ${tt.legendHigh}`;
   document.querySelectorAll(".cal td[data-i]").forEach(td => {
@@ -143,12 +163,16 @@ function renderRainStory() {
   const tt = t(), s = R.summary;
   if (!s || !s.flooded_windows) { $("rain-story").innerHTML = `<p class="story">${tt.noStory}</p>`; return; }
   const f = s.median_rain_local_15d_before.flooded, n = s.median_rain_local_15d_before.not_flooded;
-  const max = Math.max(f, n, 1);
-  $("rain-story").innerHTML = `<div class="cmp">
-      <div class="row"><span>${tt.before}</span><div class="bar" style="width:${(f / max) * 100}%;background:#d9472b">${nf(f)} ${tt.mm}</div></div>
-      <div class="row"><span>${tt.normal}</span><div class="bar" style="width:${(n / max) * 100}%;background:#5aaee3">${nf(n)} ${tt.mm}</div></div>
-    </div>
-    <p class="story">${tt.story(nf(f), nf(n), nf(s.lowest_rain_local_15d_before_a_flood), R.node.outside_bd_pct > 0 ? nf(s.median_rain_up_15d_before.flooded) : null)}</p>`;
+  const up = R.node.outside_bd_pct > 0 ? s.median_rain_up_15d_before.flooded : null;
+  const max = Math.max(f, n, up || 0, 1);
+  // rain gauges: each tube fills to the typical two-week rain total, with drops falling into it
+  const gauge = (label, v, c, i) => `<div class="rg" style="--c:${c};--h:${Math.max(4, v / max * 86).toFixed(1)}%;--i:${i}">
+      <b class="rg-v">${nf(v)} <small>${tt.mm}</small></b>
+      <div class="rg-tube"><div class="rg-water"><i class="rg-crest"></i></div><span class="rg-drop"></span><span class="rg-drop"></span><span class="rg-drop"></span></div>
+      <small class="rg-l">${label}</small></div>`;
+  $("rain-story").innerHTML = `<div class="rgs">${gauge(tt.before, f, "#d9472b", 0)}${gauge(tt.normal, n, "#3b9ad6", 1)}${up ? gauge(tt.upBefore, up, "#7c5cd6", 2) : ""}</div>
+    <p class="rg-cap">${tt.gaugeCap}</p>
+    <p class="story">${tt.story(nf(f), nf(n), nf(s.lowest_rain_local_15d_before_a_flood), up != null ? nf(up) : null)}</p>`;
 }
 
 function renderMonsoon() {
@@ -164,9 +188,119 @@ function renderCyclones() {
   box.hidden = !CY || !CY.within_150km;
   $("nav-cyc").hidden = box.hidden;
   if (box.hidden) return;
-  const top = CY.cyclones.filter(c => c.max_wind_kt && c.min_km <= 100).sort((a, b) => b.max_wind_kt - a.max_wind_kt).slice(0, 3);
-  $("cyc").innerHTML = `<p class="story">${tt.cycSummary(nf(CY.within_50km), nf(CY.within_150km))}</p>` + (top.length ? `<ul class="cyc-list">${top.map(c =>
-    `<li style="--c:${catColor(c.max_wind_kt)}"><b>${c.name === "Unnamed" ? (lang === "bn" ? `${yearNum(c.season)}-এর ঘূর্ণিঝড়` : `${c.season} cyclone`) : `${c.name} ${yearNum(c.season)}`}</b><span>${tt.cycItem(nf(c.min_km), nf(Math.round(c.max_wind_kt * 1.852)))}</span></li>`).join("")}</ul>` : "");
+  const top = topCyclones();
+  $("cyc").innerHTML = `<p class="story">${tt.cycSummary(nf(CY.within_50km), nf(CY.within_150km))}</p>` + (top.length ? `<ul class="cyc-list">${top.map((c, i) =>
+    `<li style="--c:${catColor(c.max_wind_kt)}" data-k="${i}" tabindex="0" role="button"><span class="cyc-spin" aria-hidden="true">${CYC_SVG}</span>
+      <b>${stormName(c)}</b><em>${tt.cats[catIdx(c.max_wind_kt)] || ""}</em><span>${tt.cycItem(nf(c.min_km), nf(Math.round(c.max_wind_kt * 1.852)))}</span></li>`).join("")}</ul>` : "");
+  document.querySelectorAll(".cyc-list li").forEach(li => {
+    const go = () => CYCM && CYCM.play(+li.dataset.k);
+    li.onclick = go; li.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } };
+  });
+  $("cyc-src").textContent = tt.cycMapSrc;
+  $("cyc-replay").textContent = tt.cycReplay;
+  if (CYCM) CYCM.relabel();
+}
+const topCyclones = () => CY.cyclones.filter(c => c.max_wind_kt && c.min_km <= 100).sort((a, b) => b.max_wind_kt - a.max_wind_kt).slice(0, 3);
+const catIdx = kt => kt == null ? -1 : CAT_KT.filter(k => kt >= k).length - 1;
+const stormName = c => c.name === "Unnamed" ? (lang === "bn" ? `${yearNum(c.season)}-এর ঘূর্ণিঝড়` : `${c.season} cyclone`) : `${c.name} ${yearNum(c.season)}`;
+const CYC_SVG = `<svg viewBox="0 0 40 40"><path d="M20 4c-6 0-10 3-12 7 4-3 9-3 12 0 3 3 3 8 0 11a8 8 0 0 1-3 2c6 1 13-3 14-10 0-6-5-10-11-10z" fill="currentColor"/><path d="M20 36c6 0 10-3 12-7-4 3-9 3-12 0-3-3-3-8 0-11a8 8 0 0 1 3-2c-6-1-13 3-14 10 0 6 5 10 11 10z" fill="currentColor" opacity=".75"/><circle cx="20" cy="20" r="3.2" fill="#fff"/></svg>`;
+
+/* replay the real paths of the strongest storms that came close, one after another */
+let CYCM = null;
+async function cycMap() {
+  const wrap = $("cyc-map-wrap"), top = CY && CY.within_150km ? topCyclones() : [];
+  if (!top.length || !window.maplibregl || !hasWebGL()) { wrap.hidden = true; return; }
+  const [shape, ...storms] = await Promise.all([
+    fetch(`/api/v1/nodes/${nodeId}/shape`).then(r => r.ok ? r.json() : null),
+    ...top.map(c => fetch(`/api/v1/cyclones/${encodeURIComponent(c.sid)}`).then(r => r.ok ? r.json() : null).catch(() => null)),
+  ]);
+  const S = storms.map((s, i) => s && s.points.length > 1 ? { info: top[i], pts: s.points } : null);
+  if (!S.some(Boolean)) { wrap.hidden = true; return; }
+  wrap.hidden = false;
+  const xs = [], ys = [];
+  // frame the Bay of Bengal only: storms born far away (some start in the Pacific) enter from the edge
+  S.forEach(s => s && s.pts.forEach(p => { if (p.lon >= 80 && p.lon <= 97.5 && p.lat >= 5 && p.lat <= 28) { xs.push(p.lon); ys.push(p.lat); } }));
+  if (shape) outerRings(shape.geometry).forEach(r => r.forEach(([x, y]) => { xs.push(x); ys.push(y); }));
+  const bounds = [[Math.min(...xs), Math.min(...ys)], [Math.max(...xs), Math.max(...ys)]];
+  const map = new maplibregl.Map({ container: "cyc-map", bounds, fitBoundsOptions: { padding: 40 }, interactive: false,
+    attributionControl: { compact: true }, preserveDrawingBuffer: true,
+    style: { version: 8, sources: { sat: esri("World_Imagery", "Esri, Maxar, Earthstar Geographics · NOAA IBTrACS"),
+      places: esri("Reference/World_Boundaries_and_Places", "Esri") },
+      layers: [{ id: "sat", type: "raster", source: "sat", paint: { "raster-brightness-max": 0.8, "raster-saturation": -0.15 } },
+        { id: "places", type: "raster", source: "places", paint: { "raster-opacity": 0.8 } }] } });
+  const seg = (pts, upto) => {  // coloured pieces of the path up to a fractional point index
+    const f = [], n = Math.min(upto, pts.length - 1);
+    for (let i = 0; i < Math.ceil(n); i++) {
+      const a = pts[i], b = pts[i + 1], k = Math.min(1, n - i);
+      f.push({ type: "Feature", properties: { c: catColor(a.wind_kt) },
+        geometry: { type: "LineString", coordinates: [[a.lon, a.lat], [a.lon + (b.lon - a.lon) * k, a.lat + (b.lat - a.lat) * k]] } });
+    }
+    return { type: "FeatureCollection", features: f };
+  };
+  const el = document.createElement("div"); el.className = "cyc-eye"; el.innerHTML = CYC_SVG;
+  const marker = new maplibregl.Marker({ element: el });
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let cur = 0, t0 = 0, seen = true, raf = 0, ready = false, hold = 0;
+  const DUR = 6000, HOLD = 1600;
+  const chip = $("cyc-now");
+  function showAt(i, x) {
+    const s = S[i], n = s.pts.length - 1, fi = Math.min(n, x * n), k = Math.floor(fi), a = s.pts[k], b = s.pts[Math.min(n, k + 1)], r = fi - k;
+    const lon = a.lon + (b.lon - a.lon) * r, lat = a.lat + (b.lat - a.lat) * r, kt = a.wind_kt;
+    map.getSource("run").setData(seg(s.pts, fi));
+    marker.setLngLat([lon, lat]);
+    const size = 26 + Math.max(0, catIdx(kt)) * 5;
+    el.style.width = el.style.height = size + "px"; el.style.color = catColor(kt);
+    const tt = t(), when = new Date(a.time).toLocaleDateString(loc(), { day: "numeric", month: "short", year: "numeric" });
+    chip.innerHTML = `<b>${esc(stormName(s.info))}</b><span>${when} · ${kt ? `${tt.cats[catIdx(kt)] || ""}, ${tt.cycWindAt(nf(Math.round(kt * 1.852)))}` : tt.cycNoWindAt}</span>`;
+    chip.style.setProperty("--c", catColor(kt));
+  }
+  function frame(now) {
+    raf = requestAnimationFrame(frame);
+    if (!ready || !seen || document.hidden) { t0 = 0; return; }
+    if (!t0) t0 = now - (hold ? 0 : 0);
+    const e = now - t0;
+    if (e < DUR) showAt(cur, e / DUR);
+    else if (e > DUR + HOLD) { next(); }
+  }
+  function next() {
+    for (let j = 1; j <= S.length; j++) { const k = (cur + j) % S.length; if (S[k]) { start(k); return; } }
+  }
+  function start(i) {
+    cur = i; t0 = 0;
+    document.querySelectorAll(".cyc-list li").forEach(li => li.classList.toggle("on", +li.dataset.k === i));
+    S.forEach((s, j) => s && map.getLayer(`full${j}`) && map.setPaintProperty(`full${j}`, "line-opacity", j === i ? 0.45 : 0.18));
+    if (reduce) showAt(i, 1);
+  }
+  map.on("load", () => {
+    if (shape) {
+      map.addSource("upz", { type: "geojson", data: shape });
+      map.addLayer({ id: "upz", type: "fill", source: "upz", paint: { "fill-color": "#ffd34d", "fill-opacity": 0.25 } });
+      map.addLayer({ id: "upz-l", type: "line", source: "upz", paint: { "line-color": "#ffd34d", "line-width": 2 } });
+    }
+    S.forEach((s, j) => {
+      if (!s) return;
+      map.addSource(`full${j}`, { type: "geojson", data: seg(s.pts, s.pts.length - 1) });
+      map.addLayer({ id: `full${j}`, type: "line", source: `full${j}`, layout: { "line-cap": "round", "line-join": "round" },
+        paint: { "line-color": ["get", "c"], "line-width": 2, "line-opacity": 0.18, "line-dasharray": [2, 2] } });
+    });
+    map.addSource("run", { type: "geojson", data: seg([], 0) });
+    map.addLayer({ id: "run-glow", type: "line", source: "run", layout: { "line-cap": "round" },
+      paint: { "line-color": ["get", "c"], "line-width": 10, "line-blur": 6, "line-opacity": 0.55 } });
+    map.addLayer({ id: "run", type: "line", source: "run", layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": ["get", "c"], "line-width": 3.5 } });
+    marker.setLngLat([S.find(Boolean).pts[0].lon, S.find(Boolean).pts[0].lat]).addTo(map);
+    ready = true;
+    start(S.findIndex(Boolean));
+    if (!reduce) raf = requestAnimationFrame(frame);
+  });
+  new IntersectionObserver(es => { seen = es[0].isIntersecting; }).observe(wrap);
+  $("cyc-replay").onclick = () => start(cur);
+  $("cyc-legend").innerHTML = CAT_COLORS.map((c, i) => `<span><i style="background:${c}"></i>${t().cats[i]}</span>`).join("");
+  CYCM = {
+    play: i => { if (S[i] && ready) start(i); },
+    relabel: () => { $("cyc-legend").innerHTML = CAT_COLORS.map((c, i) => `<span><i style="background:${c}"></i>${t().cats[i]}</span>`).join("");
+      if (ready && reduce) showAt(cur, 1); document.querySelectorAll(".cyc-list li").forEach(li => li.classList.toggle("on", +li.dataset.k === cur)); },
+  };
 }
 
 function render() {
@@ -281,7 +415,9 @@ function renderLegend() {
   el.innerHTML = item("b", tt.lgBoundary) +
     (MAPINFO.rivers ? item("r", tt.lgRivers(nf(MAPINFO.rivers))) : item("r off", tt.lgNoRivers)) +
     (MAPINFO.hosp ? item("h", tt.lgHosp(nf(MAPINFO.hosp))) : item("h off", tt.lgNoHosp)) +
-    (MAPINFO.webgl ? item("t", tt.lgRelief) : "");
+    (MAPINFO.webgl ? item("t", tt.lgRelief) : "") +
+    (MAPINFO.webgl && MAPINFO.rivers ? item("f", tt.lgFlow) : "");
+  if (WXL) WXL.chip();
   if (MAPINFO.markers) MAPINFO.markers.forEach(([m, h]) => m.getPopup().setHTML(hospPopup(h)));
 }
 function hospPopup(h) {
@@ -310,20 +446,21 @@ async function map3d() {
   const risk = R.current ? RISK_COLOR[R.current.risk] : "#3b9ad6";
   const dem = { type: "raster-dem", tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"], encoding: "terrarium", tileSize: 256, maxzoom: 14 };
   const map = MAP = new maplibregl.Map({
-    container: "map3d", bounds, fitBoundsOptions: { padding: 36 }, pitch: 58, bearing: -18, maxPitch: 75,
+    container: "map3d", bounds, fitBoundsOptions: { padding: 36 }, pitch: 58, bearing: -18, maxPitch: 75, maxZoom: 18.5,
     scrollZoom: false, preserveDrawingBuffer: true, attributionControl: { compact: true },
     style: { version: 8, sources: {
         sat: esri("World_Imagery", "Esri, Maxar, Earthstar Geographics"),
         street: esri("World_Street_Map", "Esri, HERE, Garmin, OpenStreetMap contributors"),
-        roads: esri("Reference/World_Transportation", "Esri"),
-        places: esri("Reference/World_Boundaries_and_Places", "Esri"),
+        // sharp roads, rivers, canals and names drawn as lines from OpenStreetMap (free, no key)
+        osm: { type: "vector", url: "https://tiles.openfreemap.org/planet",
+          attribution: "<a href=\"https://openfreemap.org\" target=\"_blank\">OpenFreeMap</a> © OpenMapTiles · © OpenStreetMap contributors" },
         dem, hs: { ...dem },
       },
-      layers: [{ id: "sat", type: "raster", source: "sat", paint: { "raster-contrast": 0.05 } },
+      glyphs: "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
+      layers: [{ id: "sat", type: "raster", source: "sat", paint: { "raster-contrast": 0.08, "raster-saturation": 0.1 } },
         { id: "street", type: "raster", source: "street", layout: { visibility: "none" } },
         { id: "hill", type: "hillshade", source: "hs", paint: { "hillshade-exaggeration": 0.35, "hillshade-shadow-color": "#08131c" } },
-        { id: "roads", type: "raster", source: "roads", paint: { "raster-opacity": 0.95 } },
-        { id: "places", type: "raster", source: "places" }],
+        ...osmLayers()],
       sky: { "sky-color": "#bfe3ff", "horizon-color": "#eaf6ff", "fog-color": "#eaf6ff", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.6, "fog-ground-blend": 0.4 } },
   });
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
@@ -331,16 +468,20 @@ async function map3d() {
     map.setTerrain({ source: "dem", exaggeration: 4 });
     const world = [[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]];
     map.addSource("mask", { type: "geojson", data: { type: "Feature", geometry: { type: "Polygon", coordinates: [world, ...outerRings(shape.geometry)] } } });
-    map.addLayer({ id: "mask", type: "fill", source: "mask", paint: { "fill-color": "#0a1722", "fill-opacity": 0.38 } });
+    map.addLayer({ id: "mask", type: "fill", source: "mask", paint: { "fill-color": "#0a1722", "fill-opacity": 0.38 } }, "osm-place");
     map.addSource("upz", { type: "geojson", data: shape });
-    map.addLayer({ id: "upz-fill", type: "fill", source: "upz", paint: { "fill-color": risk, "fill-opacity": 0.06 } });
-    map.addLayer({ id: "upz-glow", type: "line", source: "upz", paint: { "line-color": "#7fd3ff", "line-width": 10, "line-blur": 8, "line-opacity": 0.75 } });
-    map.addLayer({ id: "upz-line", type: "line", source: "upz", paint: { "line-color": "#ffffff", "line-width": 2.4 } });
+    map.addLayer({ id: "upz-fill", type: "fill", source: "upz", paint: { "fill-color": risk, "fill-opacity": 0.06 } }, "osm-place");
+    // the chosen upazila stands up from the ground as a thin glass slab
+    map.addLayer({ id: "upz-3d", type: "fill-extrusion", source: "upz", paint: {
+      "fill-extrusion-color": "#8fdcff", "fill-extrusion-height": 180, "fill-extrusion-base": 0,
+      "fill-extrusion-opacity": 0.16, "fill-extrusion-vertical-gradient": true } }, "osm-road-label");
+    map.addLayer({ id: "upz-glow", type: "line", source: "upz", paint: { "line-color": "#7fd3ff", "line-width": 10, "line-blur": 8, "line-opacity": 0.75 } }, "osm-road-label");
+    map.addLayer({ id: "upz-line", type: "line", source: "upz", paint: { "line-color": "#ffffff", "line-width": 2.4 } }, "osm-road-label");
     map.addSource("riv", { type: "geojson", data: rivers });
     map.addLayer({ id: "riv-glow", type: "line", source: "riv", layout: { "line-cap": "round" },
-      paint: { "line-color": "#38bdf8", "line-opacity": 0.35, "line-blur": 3, "line-width": ["interpolate", ["linear"], ["get", "order"], 3, 4, 9, 14] } });
-    map.addLayer({ id: "riv", type: "line", source: "riv", layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#7dd3fc", "line-width": ["interpolate", ["linear"], ["get", "order"], 3, 1.4, 9, 5.5] } });
+      paint: { "line-color": "#38bdf8", "line-opacity": 0.3, "line-blur": 3, "line-width": ["interpolate", ["linear"], ["get", "order"], 3, 4, 9, 14] } }, "osm-road-casing");
+    WXL = wxLayer(map, [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2]);
+    FLOW = flowLayer(map, rivers, bounds);
     hosp.hospitals.forEach(h => {
       if (h.lat == null || h.lon == null) return;
       const el = document.createElement("div");
@@ -367,7 +508,9 @@ async function map3d() {
     $("bSat").classList.toggle("on", sat); $("bMap").classList.toggle("on", !sat);
     map.setLayoutProperty("sat", "visibility", sat ? "visible" : "none");
     map.setLayoutProperty("street", "visibility", sat ? "none" : "visible");
-    ["roads", "places"].forEach(id => map.setLayoutProperty(id, "visibility", sat ? "visible" : "none"));
+    // the street map draws its own roads and names; rivers and canals stay on both
+    map.getStyle().layers.filter(l => l.id.startsWith("osm-road") || l.id === "osm-place")
+      .forEach(l => map.setLayoutProperty(l.id, "visibility", sat ? "visible" : "none"));
   };
   let loaded = false; map.once("load", () => { loaded = true; });
   const ready = f => loaded ? f() : map.once("load", f);
@@ -383,8 +526,310 @@ async function map3d() {
   map.getContainer().addEventListener("mouseleave", () => { if (!touch) map.scrollZoom.disable(); });
   map.getContainer().addEventListener("mouseenter", () => { if (!touch && hint.hidden) map.scrollZoom.enable(); });
 }
+/* ---------- OpenStreetMap roads, rivers, canals and names (vector, from OpenFreeMap) ---------- */
+function osmLayers() {
+  const cls = ["get", "class"];
+  const z = (pairs) => ["interpolate", ["exponential", 1.5], ["zoom"], ...pairs];
+  // road widths per class at zoom 8 and zoom 18 (pixels)
+  const w = (k) => z([8, ["match", cls, ["motorway", "trunk"], 1.6 * k, "primary", 1.2 * k, "secondary", 0.8 * k, "tertiary", 0.5 * k, 0.3 * k],
+                      18, ["match", cls, ["motorway", "trunk"], 22 * k, "primary", 18 * k, "secondary", 14 * k, "tertiary", 11 * k, ["minor", "service"], 7 * k, 3 * k]]);
+  const roads = ["match", cls, ["motorway", "trunk", "primary", "secondary", "tertiary", "minor", "service", "track"], true, false];
+  const name = ["coalesce", ["get", "name:latin"], ["get", "name:en"], ["get", "name"]];
+  return [
+    { id: "osm-water", type: "fill", source: "osm", "source-layer": "water", paint: { "fill-color": "#3aa6e8", "fill-opacity": 0.22 } },
+    { id: "osm-waterway", type: "line", source: "osm", "source-layer": "waterway", minzoom: 9,
+      filter: ["match", cls, ["river", "canal", "stream", "drain", "ditch"], true, false], layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": ["match", cls, "river", "#5ec8ff", "canal", "#6fd6ff", "#8adfff"], "line-opacity": 0.9,
+        "line-width": z([9, ["match", cls, "river", 1.2, 0.5], 18, ["match", cls, "river", 10, "canal", 6, 3]]) } },
+    { id: "osm-road-casing", type: "line", source: "osm", "source-layer": "transportation", minzoom: 8, filter: roads,
+      layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#141414", "line-opacity": 0.55, "line-width": w(1.6) } },
+    { id: "osm-road", type: "line", source: "osm", "source-layer": "transportation", minzoom: 8, filter: roads,
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": ["match", cls, ["motorway", "trunk"], "#ffb547", "primary", "#ffd36b", "secondary", "#fff0a8", "track", "#e8dcc0", "#ffffff"],
+        "line-opacity": ["match", cls, ["minor", "service", "track"], 0.8, 1], "line-width": w(1) } },
+    { id: "osm-road-label", type: "symbol", source: "osm", "source-layer": "transportation_name", minzoom: 11,
+      layout: { "symbol-placement": "line", "text-field": ["coalesce", ["get", "ref"], name], "text-font": ["Noto Sans Bold"],
+        "text-size": z([11, 10, 18, 14]), "text-max-angle": 30 },
+      paint: { "text-color": "#1d1d1d", "text-halo-color": "#fff7d6", "text-halo-width": 1.6 } },
+    { id: "osm-place", type: "symbol", source: "osm", "source-layer": "place", minzoom: 8,
+      // villages only once zoomed in, so the wide view is not buried in names
+      filter: ["any", ["match", cls, ["city", "town"], true, false], ["all", [">=", ["zoom"], 11], ["match", cls, ["village", "suburb"], true, false]]],
+      layout: { "text-field": name, "text-font": ["Noto Sans Bold"], "text-max-width": 8,
+        "text-size": ["match", cls, "city", 16, "town", 14, 12], "symbol-sort-key": ["match", cls, "city", 0, "town", 1, 2] },
+      paint: { "text-color": "#ffffff", "text-halo-color": "rgba(10,20,30,.85)", "text-halo-width": 1.8 } },
+  ];
+}
+
+/* ---------- water flowing along the real rivers and canals ---------- */
+// Lines from HydroRIVERS and OpenStreetMap are both drawn upstream to downstream, so light moving from the
+// start of a line to its end moves the way the water really flows. Speed is for the eye, not measured flow.
+let FLOW = null;
+function flowLayer(map, rivers, bounds) {
+  const wrap = map.getContainer().parentElement;
+  const cv = document.createElement("canvas"); cv.className = "flow-canvas"; cv.setAttribute("aria-hidden", "true");
+  wrap.insertBefore(cv, wrap.querySelector(".wx-canvas"));
+  const ctx = cv.getContext("2d");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const R_EARTH = 6371000, rad = Math.PI / 180;
+  const pad = 0.08, box = [bounds[0][0] - pad, bounds[0][1] - pad, bounds[1][0] + pad, bounds[1][1] + pad];
+  let lines = [], parts = [], W = 0, H = 0, seen = true, last = 0;
+  let water = [], segs = [], wparts = [], wTotal = 0;
+  const M_LAT = 110540, mLon = lat => 111320 * Math.cos(lat * rad);
+  function inRing(x, y, r) {
+    let ins = false;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      const [xi, yi] = r[i], [xj, yj] = r[j];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) ins = !ins;
+    }
+    return ins;
+  }
+  // flow direction at a point = direction of the nearest river or canal line (within 4 km); none means still water
+  function dirAt(x, y) {
+    let best = 4000 * 4000, ux = 0, uy = 0;
+    const kx = mLon(y);
+    for (const [a, b] of segs) {
+      const ax = (a[0] - x) * kx, ay = (a[1] - y) * M_LAT, bx = (b[0] - x) * kx, by = (b[1] - y) * M_LAT;
+      const vx = bx - ax, vy = by - ay, L2 = vx * vx + vy * vy || 1;
+      const k = Math.max(0, Math.min(1, -(ax * vx + ay * vy) / L2)), px = ax + vx * k, py = ay + vy * k, d2 = px * px + py * py;
+      if (d2 < best) { best = d2; const n = Math.sqrt(L2); ux = vx / n; uy = vy / n; }
+    }
+    return best < 4000 * 4000 ? [ux, uy] : null;
+  }
+  function spawnW() {
+    for (let tries = 0; tries < 6; tries++) {
+      let r = Math.random() * wTotal, w = water[0];
+      for (const q of water) { r -= q.a; if (r <= 0) { w = q; break; } }
+      if (!w) return null;
+      const x = w.bb[0] + Math.random() * (w.bb[2] - w.bb[0]), y = w.bb[1] + Math.random() * (w.bb[3] - w.bb[1]);
+      if (!inRing(x, y, w.r) || w.holes.some(h => inRing(x, y, h))) continue;
+      const u = dirAt(x, y);
+      if (!u) continue;
+      return { x, y, ux: u[0], uy: u[1], life: Math.random(), sp: 0.7 + Math.random() * 0.6, ln: 0.5 + Math.random() * 0.9, tw: Math.random() * 6.3 };
+    }
+    return null;
+  }
+  const dist = (a, b) => { const x = (b[0] - a[0]) * Math.cos((a[1] + b[1]) / 2 * rad), y = b[1] - a[1]; return Math.hypot(x, y) * rad * R_EARTH; };
+  function addLine(coords, kind, q) {
+    if (coords.length < 2) return;
+    const cum = [0];
+    for (let i = 1; i < coords.length; i++) cum.push(cum[i - 1] + dist(coords[i - 1], coords[i]));
+    if (cum[cum.length - 1] < 30) return;
+    // half the channel width in metres: from mean discharge for HydroRIVERS (width ~ 7 x sqrt(Q)), a few metres for OSM lines
+    const half = kind === "big" ? Math.max(60, Math.min(1500, 3.5 * Math.sqrt(q || 100))) : kind === "river" ? 25 : kind === "canal" ? 6 : 3;
+    lines.push({ c: coords, cum, len: cum[cum.length - 1], kind, half });
+  }
+  const inBox = ([x, y]) => x >= box[0] && x <= box[2] && y >= box[1] && y <= box[3];
+  function rebuild() {
+    lines = [];
+    rivers.features.forEach(f => (f.geometry.type === "MultiLineString" ? f.geometry.coordinates : [f.geometry.coordinates]).forEach(c => addLine(c, "big", f.properties.discharge_m3s)));
+    try {
+      map.querySourceFeatures("osm", { sourceLayer: "waterway" }).forEach(f => {
+        const k = f.properties.class; if (!["river", "canal", "stream"].includes(k)) return;
+        (f.geometry.type === "MultiLineString" ? f.geometry.coordinates : [f.geometry.coordinates]).forEach(c => { if (c.some(inBox)) addLine(c, k); });
+      });
+    } catch (e) { /* source not ready yet */ }
+    // only the waterways on screen get glints, so a close-up view is as lively as the wide one
+    const vb = map.getBounds(), mx = (vb.getEast() - vb.getWest()) * 0.15, my = (vb.getNorth() - vb.getSouth()) * 0.15;
+    const vbox = [vb.getWest() - mx, vb.getSouth() - my, vb.getEast() + mx, vb.getNorth() + my];
+    lines = lines.filter(l => {
+      let x0 = 180, y0 = 90, x1 = -180, y1 = -90;
+      l.c.forEach(([x, y]) => { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; });
+      return x1 >= vbox[0] && x0 <= vbox[2] && y1 >= vbox[1] && y0 <= vbox[3];
+    });
+    // about one moving glint per 9 screen pixels of waterway, at most ~2600 in all
+    const mpp = 156543.03 * Math.cos(map.getCenter().lat * rad) / Math.pow(2, map.getZoom());
+    const onScreen = l => { let n = 0; for (let i = 1; i < l.c.length; i++) { const [x, y] = l.c[i]; if (x >= vbox[0] && x <= vbox[2] && y >= vbox[1] && y <= vbox[3]) n += l.cum[i] - l.cum[i - 1]; } return n; };
+    const total = lines.reduce((a, l) => a + onScreen(l), 0), per = Math.max(9 * mpp, total / 1800);
+    parts = [];
+    // wide rivers carry more glints (spread across the channel); random spots, speeds and lengths, so no dash pattern
+    lines.forEach((l, li) => {
+      const n = Math.round(l.len / per * Math.max(1, Math.min(10, l.half * 2 / (8 * mpp))));
+      for (let k = 0; k < n; k++) parts.push({ li, d: Math.random() * l.len, off: (Math.random() + Math.random() - 1), tw: Math.random() * 6.3,
+        sp: 0.7 + Math.random() * 0.6, ln: 0.5 + Math.random() * 0.9 });
+    });
+    if (parts.length > 2600) parts = parts.filter(() => Math.random() < 2600 / parts.length);
+    // glints across the real water surface (OpenStreetMap water areas), drifting the way the nearest river runs
+    segs = []; lines.forEach(l => { for (let i = 1; i < l.c.length; i++) segs.push([l.c[i - 1], l.c[i]]); });
+    water = []; wTotal = 0;
+    try {
+      map.querySourceFeatures("osm", { sourceLayer: "water" }).forEach(f => {
+        const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.type === "MultiPolygon" ? f.geometry.coordinates : [];
+        polys.forEach(pl => {
+          const r = pl[0]; let x0 = 180, y0 = 90, x1 = -180, y1 = -90, a = 0;
+          for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+            const [x, y] = r[i]; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+            a += (r[j][0] - x) * (r[j][1] + y);
+          }
+          if (x1 < vbox[0] || x0 > vbox[2] || y1 < vbox[1] || y0 > vbox[3]) return;
+          const px2 = Math.abs(a / 2) * mLon((y0 + y1) / 2) * M_LAT / (mpp * mpp);  // area in screen pixels
+          if (px2 < 40) return;
+          water.push({ r, holes: pl.slice(1), bb: [x0, y0, x1, y1], a: px2 }); wTotal += px2;
+        });
+      });
+    } catch (e) { /* tiles not ready */ }
+    const nw = segs.length ? Math.min(1600, Math.round(wTotal / 140)) : 0;
+    wparts = []; for (let i = 0; i < nw; i++) { const q = spawnW(); if (q) wparts.push(q); }
+  }
+  function at(l, d) {
+    let i = 1; while (i < l.cum.length - 1 && l.cum[i] < d) i++;
+    const a = l.c[i - 1], b = l.c[i], seg = l.cum[i] - l.cum[i - 1] || 1, k = (d - l.cum[i - 1]) / seg;
+    return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k];
+  }
+  const SPEED = { big: 34, river: 30, canal: 20, stream: 15 }, HALF = { big: 4, river: 2.5, canal: 1.2, stream: 0.6 };
+  function frame(ts) {
+    requestAnimationFrame(frame);
+    const dt = Math.min(0.05, (ts - last) / 1000 || 0); last = ts;
+    if (!seen || document.hidden || (!parts.length && !wparts.length)) return;
+    ctx.clearRect(0, 0, W, H);
+    const zoom = map.getZoom(), mpp = 156543.03 * Math.cos(map.getCenter().lat * rad) / Math.pow(2, zoom), t = ts / 1000;
+    const zf = Math.max(0.5, Math.min(2.2, (zoom - 9) / 3));
+    ctx.lineCap = "round";
+    for (const p of parts) {
+      const l = lines[p.li];
+      if (!reduce) { p.d += SPEED[l.kind] * p.sp * mpp * dt; if (p.d > l.len) p.d -= l.len; }
+      const tail = Math.min(p.d, 12 * mpp * zf * p.ln);
+      const a = map.project(at(l, p.d)), b = map.project(at(l, p.d - tail));
+      if (a.x < -20 || a.y < -20 || a.x > W + 20 || a.y > H + 20) continue;
+      const dx = a.x - b.x, dy = a.y - b.y, n = Math.hypot(dx, dy) || 1, o = p.off * Math.max(HALF[l.kind] * zf, l.half / mpp);
+      const ox = -dy / n * o, oy = dx / n * o;
+      const alpha = (0.3 + 0.6 * (0.5 + 0.5 * Math.sin(t * 2.2 + p.tw))) * (1 - Math.abs(p.off) * 0.5);
+      ctx.strokeStyle = `rgba(225,247,255,${alpha.toFixed(2)})`;
+      ctx.lineWidth = l.kind === "big" ? 1.8 : l.kind === "stream" ? 1 : 1.4;
+      ctx.beginPath(); ctx.moveTo(b.x + ox, b.y + oy); ctx.lineTo(a.x + ox, a.y + oy); ctx.stroke();
+    }
+    ctx.lineWidth = 1;
+    for (let i = 0; i < wparts.length; i++) {
+      const p = wparts[i];
+      if (!reduce) {
+        const m = 26 * p.sp * mpp * dt;
+        p.x += p.ux * m / mLon(p.y); p.y += p.uy * m / M_LAT; p.life += dt * 0.45;
+        if (p.life > 1) { const q = spawnW(); if (q) { q.life = 0; wparts[i] = q; } else p.life = 0; continue; }
+      }
+      const tl = 6 * mpp * zf * p.ln;
+      const a = map.project([p.x, p.y]), b = map.project([p.x - p.ux * tl / mLon(p.y), p.y - p.uy * tl / M_LAT]);
+      if (a.x < -20 || a.y < -20 || a.x > W + 20 || a.y > H + 20) continue;
+      const alpha = Math.sin(p.life * Math.PI) * (0.22 + 0.38 * (0.5 + 0.5 * Math.sin(t * 2.6 + p.tw)));
+      ctx.strokeStyle = `rgba(235,250,255,${alpha.toFixed(2)})`;
+      ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(a.x, a.y); ctx.stroke();
+    }
+  }
+  const size = () => { const d = Math.min(2, devicePixelRatio || 1); W = wrap.clientWidth; H = wrap.clientHeight; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
+  let tm = 0; const later = () => { clearTimeout(tm); tm = setTimeout(rebuild, 400); };
+  map.on("idle", later); map.on("moveend", later);
+  new ResizeObserver(size).observe(wrap);
+  new IntersectionObserver(es => { seen = es[0].isIntersecting; }).observe(wrap);
+  size(); rebuild(); requestAnimationFrame(frame);
+  return { count: () => parts.length, lines: () => lines.length, water: () => [water.length, wparts.length] };
+}
+
+/* ---------- live rain and wind over the map (Open-Meteo, checked every 10 minutes) ---------- */
+let WXL = null;
+function wxLayer(map, [lon, lat]) {
+  const wrap = map.getContainer().parentElement, btn = $("bWx");
+  const cv = document.createElement("canvas"); cv.className = "wx-canvas"; cv.setAttribute("aria-hidden", "true");
+  const chip = document.createElement("div"); chip.className = "wx-chip";
+  wrap.append(cv, chip);
+  const ctx = cv.getContext("2d");
+  let W = 0, H = 0, on = !matchMedia("(prefers-reduced-motion: reduce)").matches, seen = true;
+  let now = null, drops = [], gusts = [], splashes = [];
+  const size = () => {
+    const d = Math.min(2, devicePixelRatio || 1); W = wrap.clientWidth; H = wrap.clientHeight;
+    cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); seed();
+  };
+  const rate = () => now ? now.rate : 0, kmh = () => now ? now.kmh : 0;
+  // wind on screen: it blows toward (from + 180), turned by the map bearing and squashed by the tilt
+  const vec = () => {
+    if (!now || now.kmh < 3) return { x: 0, y: 0, s: 0 };
+    const a = (now.from + 180 - map.getBearing()) * Math.PI / 180, squash = Math.max(0.35, Math.cos(map.getPitch() * Math.PI / 180));
+    return { x: Math.sin(a), y: -Math.cos(a) * squash, s: 8 + now.kmh * 3.2 };
+  };
+  const drop = () => {
+    const big = Math.log2(1 + rate());  // heavier rain: bigger, longer, faster drops
+    return { x: Math.random() * W, y: -Math.random() * H * 0.3, l: 5 + big * 4 + Math.random() * 6, v: 300 + big * 140 + Math.random() * 120,
+      g: H * (0.35 + Math.random() * 0.65), a: 0.25 + Math.random() * 0.4 };
+  };
+  function seed() {
+    const area = W * H / (640 * 460), r = rate(), k = kmh();
+    const nd = r < 0.05 ? 0 : Math.round(Math.min(420, 20 + r * 55) * area);
+    drops = Array.from({ length: nd }, () => { const d = drop(); d.y = Math.random() * d.g; return d; });
+    const ng = k < 3 ? 0 : Math.round(Math.min(150, (k - 2) * 6) * area);
+    gusts = Array.from({ length: ng }, () => ({ x: Math.random() * W, y: Math.random() * H, ph: Math.random() * 6.3, life: Math.random() }));
+    splashes = [];
+  }
+  let last = 0;
+  function frame(ts) {
+    requestAnimationFrame(frame);
+    const dt = Math.min(0.05, (ts - last) / 1000 || 0); last = ts;
+    if (!on || !seen || document.hidden) return;
+    ctx.clearRect(0, 0, W, H);
+    const w = vec(), t = ts / 1000, k = kmh();
+    ctx.lineCap = "round";
+    // wind: faint streaks drifting with the wind; stronger wind, more and brighter streaks
+    const wa = Math.min(1, k / 18) * 0.7;
+    for (const g of gusts) {
+      const wob = Math.sin(t * 1.3 + g.ph) * 0.22, cx = w.x * Math.cos(wob) - w.y * Math.sin(wob), cy = w.x * Math.sin(wob) + w.y * Math.cos(wob);
+      g.x += cx * w.s * dt; g.y += cy * w.s * dt; g.life += dt * 0.35;
+      if (g.life > 1 || g.x < -40 || g.x > W + 40 || g.y < -40 || g.y > H + 40) { g.x = Math.random() * W; g.y = Math.random() * H; g.life = 0; }
+      const a = Math.sin(g.life * Math.PI) * wa, len = 18 + w.s * 0.5;
+      const grd = ctx.createLinearGradient(g.x - cx * len, g.y - cy * len, g.x, g.y);
+      grd.addColorStop(0, "rgba(255,255,255,0)"); grd.addColorStop(1, `rgba(255,255,255,${a.toFixed(2)})`);
+      ctx.strokeStyle = grd; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(g.x - cx * len, g.y - cy * len); ctx.lineTo(g.x, g.y); ctx.stroke();
+    }
+    // rain: thin falling streaks slanted by the wind, a small ring where each one lands
+    const slant = w.x * Math.min(0.55, w.s / 170);
+    for (const d of drops) {
+      d.y += d.v * dt; d.x += slant * d.v * dt;
+      if (d.y > d.g) {
+        if (splashes.length < 160) splashes.push({ x: d.x, y: d.y, life: 0, r: 2 + Math.random() * 3 + Math.log2(1 + rate()) });
+        Object.assign(d, drop());
+      }
+      if (d.x > W) d.x -= W; else if (d.x < 0) d.x += W;
+      ctx.strokeStyle = `rgba(200,230,255,${d.a.toFixed(2)})`; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x - slant * d.l, d.y - d.l); ctx.stroke();
+    }
+    for (let i = splashes.length - 1; i >= 0; i--) {
+      const s = splashes[i]; s.life += dt * 3;
+      if (s.life >= 1) { splashes.splice(i, 1); continue; }
+      ctx.strokeStyle = `rgba(215,238,255,${(0.5 * (1 - s.life)).toFixed(2)})`; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(s.x, s.y, s.r * (0.4 + s.life), s.r * 0.35 * (0.4 + s.life), 0, 0, 6.283); ctx.stroke();
+    }
+  }
+  function renderChip() {
+    const tt = t();
+    btn.textContent = tt.wxBtn;
+    if (!now) { chip.innerHTML = ""; chip.hidden = true; return; }
+    const rain = `<span class="wr">${now.rate >= 0.05 ? tt.wxRain(nf(now.rate, now.rate < 10 ? 1 : 0)) : tt.wxDry}</span>`;
+    const wd = `<span class="ww">${now.kmh < 3 ? tt.wxCalm : tt.wxWind(nf(Math.round(now.kmh)), tt.dirs[Math.round(now.from / 45) % 8], nf(Math.round(now.gust)))}</span>`;
+    const at = new Date(now.time).toLocaleTimeString(loc(), { hour: "numeric", minute: "2-digit", timeZone: "Asia/Dhaka" });
+    chip.innerHTML = rain + wd + `<small class="wt">${tt.wxAt(at)}</small>`; chip.hidden = false;
+  }
+  const setOn = v => { on = v; btn.classList.toggle("on", on); cv.hidden = !on; };
+  btn.hidden = false; btn.onclick = () => setOn(!on); setOn(on);
+  async function check() {
+    try {
+      const j = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(3)}&longitude=${lon.toFixed(3)}` +
+        `&current=precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=kmh&timezone=GMT`).then(r => r.ok ? r.json() : null);
+      const c = j && j.current;
+      if (!c || c.wind_speed_10m == null) return;
+      // "current" precipitation is the total of the last interval (15 min); show it as a rate per hour
+      const per = 3600 / (c.interval || 900);
+      now = { rate: (c.precipitation || 0) * per, kmh: c.wind_speed_10m, from: c.wind_direction_10m || 0, gust: c.wind_gusts_10m || c.wind_speed_10m,
+              time: Date.parse(c.time + "Z") };
+      seed(); renderChip();
+    } catch (e) { /* keep the last reading */ }
+  }
+  new ResizeObserver(size).observe(wrap);
+  new IntersectionObserver(es => { seen = es[0].isIntersecting; }).observe(wrap);
+  size(); renderChip(); requestAnimationFrame(frame);
+  check(); setInterval(() => { if (!document.hidden) check(); }, 10 * 60e3);
+  return { chip: renderChip, rain: () => {}, now: () => now };
+}
+
 function esri(path, attribution) {
-  return { type: "raster", tileSize: 256, maxzoom: 19, attribution,
+  // Esri has real imagery to about zoom 17 in rural Bangladesh; past that it serves grey "Map data not yet
+  // available" tiles, so stop there and let MapLibre enlarge the zoom-17 picture instead
+  return { type: "raster", tileSize: 256, maxzoom: 17, attribution,
     tiles: [`https://server.arcgisonline.com/ArcGIS/rest/services/${path}/MapServer/tile/{z}/{y}/{x}`] };
 }
 
@@ -418,11 +863,12 @@ async function miniMap(shapeIn) {
   map3d().catch(e => console.warn("map", e));
   fetch(`/api/v1/nodes/${nodeId}/rain`).then(r => r.ok ? r.json() : null).then(j => {
     if (!j) { RS = { pts: [] }; renderRainNow(); return; }
-    RAIN = j.hourly; RS = rainStats(RAIN); renderRainNow();
+    RAIN = j.hourly; RS = rainStats(RAIN); renderRainNow(); if (WXL) WXL.rain();
     const mm = v => `${nf(v, v < 10 ? 1 : 0)} <small>${t().mm}</small>`;
     $("k-next").innerHTML = mm(RS.next); $("k-past").innerHTML = mm(RS.past);
   }).catch(() => {});
   CY =await (await fetch(`/api/v1/nodes/${nodeId}/cyclones`)).json();
   renderCyclones();
+  cycMap().catch(e => console.warn("cyclone map", e));
   watchReveal();
 })();

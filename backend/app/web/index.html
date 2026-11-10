@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/style.css?v=2">
 </head>
 <body class="app">
   <main class="stage">
@@ -80,6 +80,7 @@
       <select id="division" aria-label="Zoom to division"><option value="" data-i18n="allDivisions"></option></select>
       <label class="check"><input type="checkbox" id="show-rivers" checked><span data-i18n="rivers"></span></label>
       <label class="check"><input type="checkbox" id="show-basins"><span data-i18n="upstream"></span></label>
+      <label class="check"><input type="checkbox" id="show-coast" checked><span data-i18n="coastLayer"></span></label>
     </div>
 
     <!-- bottom: colour scale -->
@@ -160,6 +161,7 @@
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=2"></script>
+  <script src="/static/coast.js?v=2"></script>
 </body>
 </html>
