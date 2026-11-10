@@ -461,3 +461,11 @@ body.page::after { content: ""; position: absolute; left: 0; right: 0; top: 300p
 @keyframes tgShine { 0%, 55% { background-position: 130% 0; } 100% { background-position: -130% 0; } }
 @media (prefers-reduced-motion: reduce) { .tg-cta::after { animation: none; } }
 @media print { .tg-cta { display: none; } }
+
+/* official river levels (FFWC), beside the Telegram button */
+.ffwc-cta { display: inline-flex; align-items: center; gap: 8px; margin: 14px 0 0 8px; padding: 9px 16px; border-radius: 999px;
+  border: 1.5px solid var(--brand); color: var(--brand); background: var(--surface); font-weight: 700; font-size: 14px; text-decoration: none;
+  transition: background .15s, transform .15s; }
+.ffwc-cta:hover { background: var(--brand-50); transform: translateY(-2px); }
+@media (max-width: 560px) { .ffwc-cta { margin-left: 0; } }
+@media print { .ffwc-cta { display: none; } }

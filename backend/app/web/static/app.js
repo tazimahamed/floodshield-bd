@@ -75,6 +75,7 @@ const T = {
     inside: "Inside Bangladesh", outside: "Outside Bangladesh",
     cycSay: (n50, n150) => `Since 1960, <b>${n50}</b> storms passed within 50 km of here and <b>${n150}</b> within 150 km.`,
     kmAway: km => `${km} km away`, nextDays: "next 24 hours",
+    ffwcLink: "See today's official river levels (FFWC) ↗",
     tgBtn: "Get alerts for this upazila on Telegram", tgNote: "Opens Telegram and adds this upazila to Durjog Barta. Free; stop any time with /unsubscribe.",
     tgTitle: "🔔 Alerts on your phone", tgAll: "Open Durjog Barta on Telegram",
     tgAllNote: "Free alerts in Bangla and English, with a voice message. Send your upazila name to the bot.",
@@ -154,6 +155,7 @@ const T = {
     inside: "বাংলাদেশের ভেতরে", outside: "বাংলাদেশের বাইরে",
     cycSay: (n50, n150) => `১৯৬০ থেকে <b>${n50}</b>টি ঝড় এখানকার ৫০ কিমির মধ্যে দিয়ে এবং <b>${n150}</b>টি ১৫০ কিমির মধ্যে দিয়ে গেছে।`,
     kmAway: km => `${km} কিমি দূরে`, nextDays: "আগামী ২৪ ঘণ্টা",
+    ffwcLink: "আজকের সরকারি নদীর পানির স্তর দেখুন (FFWC) ↗",
     tgBtn: "এই উপজেলার সতর্কবার্তা Telegram-এ পান", tgNote: "Telegram খুলে এই উপজেলাটি দুর্যোগ বার্তায় যোগ হবে। বিনামূল্যে; বন্ধ করতে /unsubscribe লিখুন।",
     tgTitle: "🔔 ফোনে সতর্কবার্তা", tgAll: "Telegram-এ দুর্যোগ বার্তা খুলুন",
     tgAllNote: "বাংলা ও ইংরেজিতে বিনামূল্যে সতর্কবার্তা, সাথে ভয়েস বার্তা। বটকে আপনার উপজেলার নাম পাঠান।",
@@ -664,7 +666,7 @@ function renderDetail() {
   $("d-name").textContent = p.name;
   $("d-where").textContent = [p.district, p.division].filter(Boolean).join(" · ");
   const r = riskOf(p.flood_prob), box = $("d-risk");
-  if (!r) { box.className = "risk-card"; box.innerHTML = `<p>${tt.noForecast}</p>`; }
+  if (!r) { box.className = "risk-card"; box.innerHTML = `<p>${tt.noForecast}</p><p><a class="ffwc" href="https://www.ffwc.gov.bd/" target="_blank" rel="noopener">${tt.ffwcLink}</a></p>`; }
   else {
     const pct = Math.round(p.flood_prob * 100);
     box.className = `risk-card ${r}`;
@@ -673,7 +675,7 @@ function renderDetail() {
       <p class="say">${tt.riskSay[r]}</p>
       <div class="meter"><span style="width:0;background:var(--${r === "medium" ? "med" : r})"></span><i style="left:25%"></i><i style="left:50%"></i></div>
       ${p.flood_frac != null ? `<p>${tt.likelyRange(nf(p.flood_frac * 100), nf((p.frac_p10 ?? p.flood_frac) * 100), nf((p.frac_p90 ?? p.flood_frac) * 100))}</p>` : ""}
-      <p>${tt.riskLimit}</p>
+      <p>${tt.riskLimit} <a class="ffwc" href="https://www.ffwc.gov.bd/" target="_blank" rel="noopener">${tt.ffwcLink}</a></p>
       ${hind ? `<p>${dateFmt(hind.day)}${p.observed_frac != null ? ` · Sentinel-1: ${nf(p.observed_frac * 100, 1)}% ${tt.flooded}` : ""}</p>` : ""}`;
     countTo(box.querySelector(".num"), pct, v => nf(Math.round(v)));
     requestAnimationFrame(() => requestAnimationFrame(() => { box.querySelector(".meter span").style.width = `${Math.max(2, pct)}%`; }));

@@ -29,7 +29,7 @@ const T = {
     navMap: "Map", mapTitle: "What is where", mapSub: "Roads, place names, rivers and hospitals on real ground.",
     hintClick: "Click the map to move and zoom it", hintTap: "Tap the map to move it", baseSat: "Satellite", baseMap: "Map",
     mapSrc: "Satellite, roads and place names: Esri · Relief: Mapzen Terrain Tiles (AWS), height shown 4× taller · Rivers: HydroSHEDS · Hospitals: DGHS registry · Roads, rivers and canals: OpenStreetMap via OpenFreeMap (small khals may be missing) · Rain and wind: Open-Meteo, right now, checked every 10 minutes. Rain and wind move only when there really is rain or wind; they show how strong and which way, not where each drop falls.",
-    tgBtn: "Get flood alerts for this upazila on Telegram", wxBtn: "Rain & wind", lgFlow: "Light moving on rivers and canals shows which way the water flows",
+    tgBtn: "Get flood alerts for this upazila on Telegram", ffwcBtn: "Official river levels (FFWC) ↗", wxBtn: "Rain & wind", lgFlow: "Light moving on rivers and canals shows which way the water flows",
     wxRain: v => `Raining now: ${v} mm/h`, wxDry: "No rain right now", wxWind: (v, d, g) => `Wind ${v} km/h from the ${d}, gusts ${g}`, wxCalm: "Calm, almost no wind",
     wxAt: tm => `Updated ${tm} · Open-Meteo`,
     dirs: ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"],
@@ -75,7 +75,7 @@ const T = {
     navMap: "ম্যাপ", mapTitle: "কোথায় কী আছে", mapSub: "আসল জমির উপর রাস্তা, জায়গার নাম, নদী ও হাসপাতাল।",
     hintClick: "ম্যাপ নাড়াতে ও জুম করতে একবার ক্লিক করুন", hintTap: "ম্যাপ নাড়াতে একবার ট্যাপ করুন", baseSat: "স্যাটেলাইট", baseMap: "ম্যাপ",
     mapSrc: "স্যাটেলাইট, রাস্তা ও জায়গার নাম: Esri · উঁচু-নিচু: Mapzen Terrain Tiles (AWS), উচ্চতা ৪ গুণ বাড়িয়ে দেখানো · নদী: HydroSHEDS · হাসপাতাল: স্বাস্থ্য অধিদপ্তরের রেজিস্ট্রি · রাস্তা, নদী ও খাল: OpenStreetMap (OpenFreeMap-এর মাধ্যমে), ছোট খাল বাদ থাকতে পারে · বৃষ্টি ও বাতাস: Open-Meteo, এই মুহূর্তের, প্রতি ১০ মিনিটে মিলিয়ে নেওয়া হয়। সত্যিই বৃষ্টি বা বাতাস থাকলে তবেই নড়ে; কতটা জোরে ও কোন দিকে তা দেখায়, ঠিক কোথায় ফোঁটা পড়ছে তা নয়।",
-    tgBtn: "এই উপজেলার বন্যা সতর্কবার্তা Telegram-এ পান", wxBtn: "বৃষ্টি ও বাতাস", lgFlow: "নদী ও খালের উপর চলমান আলো দেখায় পানি কোন দিকে বইছে",
+    tgBtn: "এই উপজেলার বন্যা সতর্কবার্তা Telegram-এ পান", ffwcBtn: "সরকারি নদীর পানির স্তর (FFWC) ↗", wxBtn: "বৃষ্টি ও বাতাস", lgFlow: "নদী ও খালের উপর চলমান আলো দেখায় পানি কোন দিকে বইছে",
     wxRain: v => `এখন বৃষ্টি হচ্ছে: ${v} মিমি/ঘণ্টা`, wxDry: "এখন বৃষ্টি নেই", wxWind: (v, d, g) => `বাতাস ${v} কিমি/ঘণ্টা, ${d} দিক থেকে, দমকা ${g}`, wxCalm: "বাতাস প্রায় নেই",
     wxAt: tm => `হালনাগাদ ${tm} · Open-Meteo`,
     dirs: ["উত্তর", "উত্তর-পূর্ব", "পূর্ব", "দক্ষিণ-পূর্ব", "দক্ষিণ", "দক্ষিণ-পশ্চিম", "পশ্চিম", "উত্তর-পশ্চিম"],
@@ -318,6 +318,7 @@ function render() {
   $("title").textContent = n.name;
   $("tg").href = `https://t.me/DurjogBartaBangladesh_bot?start=${encodeURIComponent(nodeId)}`;
   $("tg-t").textContent = tt.tgBtn;
+  $("ffwc-t").textContent = tt.ffwcBtn;
   $("crumb").textContent = tt.crumb(n.district, n.division);
   const oneIn = s && s.flooded_windows ? Math.max(1, Math.round(s.windows / s.flooded_windows)) : 0;
   $("lead").innerHTML = s ? tt.lead(nf(s.flooded_windows), nf(s.windows), nf(oneIn)) : "";
