@@ -361,7 +361,12 @@ def handle_message(chat_id: int, text: str) -> list[dict]:
         sub = db.get(Subscriber, chat_id) or Subscriber(chat_id=chat_id, lang="bn", node_ids=[], active=True, voice=True)
         db.add(sub)
         replies: list[dict] = []
-        if cmd == "/start" or (cmd.startswith("/") and cmd not in ("/subscribe", "/unsubscribe", "/list", "/status",
+        # a "Get alerts on Telegram" button on the website opens t.me/<bot>?start=<upazila id>: subscribe straight away
+        payload = arg.strip()
+        if cmd == "/start" and payload and payload.startswith("upz_") and db.get(Node, payload):
+            replies.append({"text": UI["start"]})
+            replies += _subscribe(db, sub, payload)
+        elif cmd == "/start" or (cmd.startswith("/") and cmd not in ("/subscribe", "/unsubscribe", "/list", "/status",
                                                                     "/voice", "/lang", "/model")):
             replies.append({"text": UI["start"]})
         elif cmd == "/model":

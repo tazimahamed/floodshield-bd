@@ -75,6 +75,9 @@ const T = {
     inside: "Inside Bangladesh", outside: "Outside Bangladesh",
     cycSay: (n50, n150) => `Since 1960, <b>${n50}</b> storms passed within 50 km of here and <b>${n150}</b> within 150 km.`,
     kmAway: km => `${km} km away`, nextDays: "next 24 hours",
+    tgBtn: "Get alerts for this upazila on Telegram", tgNote: "Opens Telegram and adds this upazila to Durjog Barta. Free; stop any time with /unsubscribe.",
+    tgTitle: "🔔 Alerts on your phone", tgAll: "Open Durjog Barta on Telegram",
+    tgAllNote: "Free alerts in Bangla and English, with a voice message. Send your upazila name to the bot.",
   },
   bn: {
     tagline: "বন্যার আগাম সতর্কতা · বাংলাদেশ",
@@ -151,6 +154,9 @@ const T = {
     inside: "বাংলাদেশের ভেতরে", outside: "বাংলাদেশের বাইরে",
     cycSay: (n50, n150) => `১৯৬০ থেকে <b>${n50}</b>টি ঝড় এখানকার ৫০ কিমির মধ্যে দিয়ে এবং <b>${n150}</b>টি ১৫০ কিমির মধ্যে দিয়ে গেছে।`,
     kmAway: km => `${km} কিমি দূরে`, nextDays: "আগামী ২৪ ঘণ্টা",
+    tgBtn: "এই উপজেলার সতর্কবার্তা Telegram-এ পান", tgNote: "Telegram খুলে এই উপজেলাটি দুর্যোগ বার্তায় যোগ হবে। বিনামূল্যে; বন্ধ করতে /unsubscribe লিখুন।",
+    tgTitle: "🔔 ফোনে সতর্কবার্তা", tgAll: "Telegram-এ দুর্যোগ বার্তা খুলুন",
+    tgAllNote: "বাংলা ও ইংরেজিতে বিনামূল্যে সতর্কবার্তা, সাথে ভয়েস বার্তা। বটকে আপনার উপজেলার নাম পাঠান।",
   },
 };
 
@@ -613,6 +619,8 @@ function select(id, zoom = false) {
   $("side").querySelector(".drawer-body").scrollTop = 0;
   renderDetail();
   renderStrip();
+  // one tap: Telegram opens the bot, which subscribes this upazila from the start link
+  $("tg-link").href = `https://t.me/DurjogBartaBangladesh_bot?start=${encodeURIComponent(id)}`;
   loadRain(id);
   showUpstream(id);
   showHospitals(id);
