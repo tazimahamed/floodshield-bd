@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
-  <link rel="stylesheet" href="/static/report.css">
+  <link rel="stylesheet" href="/static/report.css?v=6">
 </head>
 <body class="page">
   <header class="topbar">
@@ -24,12 +24,17 @@
     <section class="warn-strip"><span>⚠️</span><p data-i18n="official"></p></section>
     <div class="about-grid" id="cards"></div>
     <section class="card"><h2 data-i18n="limitsTitle"></h2><ul class="limits" id="limits"></ul></section>
-    <a class="btn ghost small" href="/model" style="align-self:flex-start" data-i18n="modelLink"></a>
+    <div class="cta-row">
+      <a class="cta" href="/" data-i18n="mapLink"></a>
+      <a class="cta alt" href="/model" data-i18n="modelLink"></a>
+    </div>
+    <p class="site-foot" data-i18n-html="foot"></p>
   </main>
   <script>
     const T = {
       en: {
-        back: "← Map", title: "About the data", modelLink: "How accurate is the model? →",
+        back: "← Map", title: "About the data", modelLink: "How accurate is the model? →", mapLink: "🗺️ Open the flood map",
+        foot: "Emergency <b>999</b> · Disaster information <b>1090</b> · Official river forecasts: ffwc.gov.bd",
         intro: "FloodShield BD shows flood risk, rainfall, flood history and cyclone history for every upazila in Bangladesh. Every number comes from a public scientific or official source, listed below.",
         official: "This site does not replace official warnings. In an emergency, follow the Flood Forecasting and Warning Centre (ffwc.gov.bd), the Bangladesh Meteorological Department and your upazila administration. Emergency: 999 · Disaster information: 1090.",
         limitsTitle: "What it cannot tell you",
@@ -46,7 +51,8 @@
                  "Rain forecasts get less certain beyond 2–3 days.", "Upazilas are treated as a whole; flooding inside one is patchy."],
       },
       bn: {
-        back: "← ম্যাপ", title: "ডেটা সম্পর্কে", modelLink: "মডেল কতটা নির্ভুল? →",
+        back: "← ম্যাপ", title: "ডেটা সম্পর্কে", modelLink: "মডেল কতটা নির্ভুল? →", mapLink: "🗺️ বন্যার ম্যাপ খুলুন",
+        foot: "জরুরি সেবা <b>৯৯৯</b> · দুর্যোগের তথ্য <b>১০৯০</b> · নদীর সরকারি পূর্বাভাস: ffwc.gov.bd",
         intro: "FloodShield BD বাংলাদেশের প্রতিটি উপজেলার বন্যার ঝুঁকি, বৃষ্টি, বন্যার ইতিহাস ও ঘূর্ণিঝড়ের ইতিহাস দেখায়। প্রতিটি সংখ্যা নিচের কোনো প্রকাশ্য বৈজ্ঞানিক বা সরকারি উৎস থেকে আসে।",
         official: "এই সাইট সরকারি সতর্কবার্তার বিকল্প নয়। জরুরি অবস্থায় বন্যা পূর্বাভাস ও সতর্কীকরণ কেন্দ্র (ffwc.gov.bd), আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের নির্দেশনা মানুন। জরুরি সেবা: ৯৯৯ · দুর্যোগের তথ্য: ১০৯০।",
         limitsTitle: "যা এটি বলতে পারে না",
@@ -70,6 +76,7 @@
       document.documentElement.lang = lang;
       document.body.classList.toggle("bn", lang === "bn");
       document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t[el.dataset.i18n]);
+      document.querySelectorAll("[data-i18n-html]").forEach(el => el.innerHTML = t[el.dataset.i18nHtml]);
       document.getElementById("cards").innerHTML = t.cards.map(([i, h, p]) => `<section class="card reveal"><div class="ico">${i}</div><h2>${h}</h2><p>${p}</p></section>`).join("");
       document.getElementById("limits").innerHTML = t.limits.map(l => `<li>${l}</li>`).join("");
       document.getElementById("lang").textContent = lang === "en" ? "বাংলা" : "English";

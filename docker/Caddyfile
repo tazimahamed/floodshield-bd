@@ -1,4 +1,8 @@
 {$SITE_ADDRESS} {
 	encode gzip
+	# Pages must revalidate so a redesign shows up at once; static files may be cached for an hour
+	@pages not path /static/* /api/*
+	header @pages Cache-Control "no-cache"
+	header /static/* Cache-Control "public, max-age=3600"
 	reverse_proxy app:8000
 }

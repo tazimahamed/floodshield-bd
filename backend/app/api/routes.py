@@ -5,6 +5,7 @@ from datetime import date, timedelta
 
 from fastapi import APIRouter, HTTPException, Query, Request, Response
 from fastapi.encoders import jsonable_encoder
+from geoalchemy2 import Geography, Geometry
 from sqlalchemy import func, select, text
 
 from app.db.models import Asset, Cyclone, CycloneExposure, CyclonePoint, Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, HealthFacility, IngestRun, ModelVersion, Node, RainForecast, River
@@ -309,6 +310,23 @@ def node_shape(node_id: str):
         if not g:
             raise HTTPException(404, "Unknown upazila")
         return {"type": "Feature", "geometry": json.loads(g), "properties": {}}
+
+
+@router.get("/nodes/{node_id}/rivers")
+def node_rivers(node_id: str, min_upland_km2: float = 100):
+    """HydroRIVERS reaches that cross this upazila (plus 2 km around it), for the report's 3D map."""
+    with SessionLocal() as db:
+        node = db.get(Node, node_id)
+        if not node:
+            raise HTTPException(404, "Unknown upazila")
+        area = func.ST_Buffer(Node.geom.cast(Geography), 2000).cast(Geometry)
+        clip = select(area).where(Node.id == node_id).scalar_subquery()
+        rows = db.execute(select(River, func.ST_AsGeoJSON(func.ST_Intersection(River.geom, clip)))
+                          .where(River.upland_skm >= min_upland_km2, func.ST_Intersects(River.geom, clip))).all()
+        return {"type": "FeatureCollection", "features": [{
+            "type": "Feature", "geometry": json.loads(g),
+            "properties": {"upland_km2": r.upland_skm, "discharge_m3s": r.dis_av_cms, "order": r.ord_stra},
+        } for r, g in rows if g], "source": "HydroRIVERS v1.0 (Lehner & Grill 2013, HydroSHEDS)"}
 
 
 @router.get("/nodes/{node_id}/report")
