@@ -2,7 +2,7 @@
 const T = {
   en: {
     back: "← Map", calTitle: "Flood calendar, 2017 to today",
-    calSub: "Each box is a 15-day stretch of the year, starting on the date above it. Empty boxes have no satellite data yet. The number is how much of the upazila was under unusual flood water, as seen from satellite. Red boxes were floods.",
+    calSub: "Each box is a 15-day stretch of the year, starting on the date above it. The water in each box and the number show how much of the upazila the satellite saw under unusual flood water. Sand-coloured boxes: almost none (under 0.5%). Striped boxes: no satellite picture for that fortnight. Red boxes were floods.",
     rainTitle: "What brings floods here", monsoonTitle: "Monsoon rain each year", monsoonSub: "June to September, this upazila.",
     cycTitle: "🌀 Cyclones that passed close by",
     navOverview: "Overview", navCalendar: "Flood calendar", navRain: "Rain", navCyc: "Cyclones",
@@ -20,7 +20,7 @@ const T = {
     before: "Before floods", normal: "Normal times",
     story: (f, n, low, up) => `Floods here have usually come after about <b>${f} mm</b> of rain in two weeks. In normal half-months it was about ${n} mm. The least rain that was still followed by a flood was ${low} mm.${up ? ` Upstream, rain before floods was about ${up} mm.` : ""}`,
     noStory: "There were no floods here in the satellite record, so there is no rain pattern to show.",
-    legendLow: "none", legendHigh: "more water",
+    legendLow: "little", legendHigh: "more water", legendDry: "almost none", legendNoImg: "no picture",
     tipRange: (a, b) => `${a} – ${b}`, tipWater: p => `Unusual water: ${p}% of the upazila`,
     tipRain: (b, u) => `Rain in the 2 weeks before: ${b} mm (upstream ${u} mm)`, tipFlood: "Flood",
     cycSummary: (n50, n150) => `Since 1960, <b>${n50}</b> cyclone or depression centres passed within 50 km of this upazila, and ${n150} within 150 km.`,
@@ -48,7 +48,7 @@ const T = {
   },
   bn: {
     back: "← ম্যাপ", calTitle: "বন্যার ক্যালেন্ডার, ২০১৭ থেকে আজ পর্যন্ত",
-    calSub: "প্রতিটি ঘর বছরের ১৫ দিনের একটি সময়, উপরে লেখা তারিখ থেকে শুরু। ফাঁকা ঘরে এখনো স্যাটেলাইট ডেটা নেই। সংখ্যাটি দেখায় স্যাটেলাইটে উপজেলার কতটা অংশ অস্বাভাবিক বন্যার পানির নিচে দেখা গেছে। লাল ঘর মানে বন্যা।",
+    calSub: "প্রতিটি ঘর বছরের ১৫ দিনের একটি সময়, উপরে লেখা তারিখ থেকে শুরু। ঘরের পানি ও সংখ্যাটি দেখায় স্যাটেলাইটে উপজেলার কতটা অংশ অস্বাভাবিক বন্যার পানির নিচে দেখা গেছে। বালু রঙের ঘর: প্রায় নেই (০.৫%-এর কম)। ডোরাকাটা ঘর: ওই পাক্ষিকে স্যাটেলাইটের ছবি নেই। লাল ঘর মানে বন্যা।",
     rainTitle: "এখানে বন্যা কখন হয়", monsoonTitle: "প্রতি বছর বর্ষার বৃষ্টি", monsoonSub: "জুন থেকে সেপ্টেম্বর, এই উপজেলায়।",
     cycTitle: "🌀 কাছ দিয়ে যাওয়া ঘূর্ণিঝড়",
     navOverview: "সারসংক্ষেপ", navCalendar: "বন্যার ক্যালেন্ডার", navRain: "বৃষ্টি", navCyc: "ঘূর্ণিঝড়",
@@ -66,7 +66,7 @@ const T = {
     before: "বন্যার আগে", normal: "স্বাভাবিক সময়ে",
     story: (f, n, low, up) => `এখানে সাধারণত দুই সপ্তাহে প্রায় <b>${f} মিমি</b> বৃষ্টির পরে বন্যা হয়েছে। স্বাভাবিক সময়ে তা ছিল প্রায় ${n} মিমি। সবচেয়ে কম যে বৃষ্টির পরেও বন্যা হয়েছে: ${low} মিমি।${up ? ` উজানে বন্যার আগে বৃষ্টি ছিল প্রায় ${up} মিমি।` : ""}`,
     noStory: "স্যাটেলাইটের রেকর্ডে এখানে কোনো বন্যা নেই, তাই বৃষ্টির ধরন দেখানো সম্ভব নয়।",
-    legendLow: "নেই", legendHigh: "বেশি পানি",
+    legendLow: "কম", legendHigh: "বেশি পানি", legendDry: "প্রায় নেই", legendNoImg: "ছবি নেই",
     tipRange: (a, b) => `${a} – ${b}`, tipWater: p => `অস্বাভাবিক পানি: উপজেলার ${p}%`,
     tipRain: (b, u) => `আগের ২ সপ্তাহে বৃষ্টি: ${b} মিমি (উজানে ${u} মিমি)`, tipFlood: "বন্যা",
     cycSummary: (n50, n150) => `১৯৬০ থেকে <b>${n50}</b>টি ঘূর্ণিঝড় বা নিম্নচাপের কেন্দ্র এই উপজেলার ৫০ কিমির মধ্যে দিয়ে গেছে, আর ${n150}টি ১৫০ কিমির মধ্যে দিয়ে।`,
@@ -113,7 +113,7 @@ const yearNum = y => String(y).replace(/\d/g, d => lang === "bn" ? "০১২৩
 const monthYear = iso => new Date(iso).toLocaleDateString(loc(), { month: "long", year: "numeric" });
 const dayMonth = iso => new Date(iso).toLocaleDateString(loc(), { day: "numeric", month: "short" });
 // unusual-water scale for the calendar (share of the upazila, %)
-const CAL = [[0.5, "#e8eef3"], [2, "#cfe3f2"], [5, "#8fc1e3"], [10, "#f08a5d"], [20, "#d9472b"], [101, "#8f1420"]];
+const CAL = [[0.5, "#e8eef3"], [2, "#a9cfee"], [5, "#5fa8de"], [10, "#f08a5d"], [20, "#d9472b"], [101, "#8f1420"]];
 const calColor = p => CAL.find(([max]) => p < max)[1];
 const CAT_KT = [17, 28, 34, 48, 64, 90, 120];
 const CAT_COLORS = ["#7fd0a8", "#3fb6a8", "#f2d43a", "#f39a2b", "#e8562c", "#c41d4a", "#7b1fa2"];
@@ -122,23 +122,28 @@ const catColor = kt => kt == null ? "#9aa5ae" : CAT_COLORS[CAT_KT.filter(k => kt
 function renderCalendar() {
   // the monsoon windows are fixed 15-day blocks from 1 June (1 Jun, 16 Jun, 1 Jul, 16 Jul, 31 Jul, ...),
   // so each year has the same eight columns; place them by order, not by calendar half-month
-  const tt = t(), byYear = {};
-  R.history.forEach((h, idx) => (byYear[h.start.slice(0, 4)] ??= []).push(idx));
+  // windows are 15-day blocks from 2 January; place each by its date, so a fortnight with no satellite
+  // picture leaves its own box empty instead of shifting the rest of the year one box to the left
+  const tt = t(), byYear = {}, cols = 24;
+  const col = iso => { const d = new Date(iso + "T00:00:00Z"), doy = (d - Date.UTC(d.getUTCFullYear(), 0, 1)) / 864e5 + 1; return Math.max(0, Math.min(cols - 1, Math.round((doy - 2) / 15))); };
+  R.history.forEach((h, idx) => { (byYear[h.start.slice(0, 4)] ??= [])[col(h.start)] = idx; });
   const years = Object.keys(byYear).sort((a, b) => b - a);
-  const cols = Math.max(...Object.values(byYear).map(v => v.length));
-  const ref = byYear[years[0]].length === cols ? byYear[years[0]] : Object.values(byYear).find(v => v.length === cols);
-  const head = `<tr><th></th>${ref.map(i => `<th>${dayMonth(R.history[i].start)}</th>`).join("")}</tr>`;
+  const today = new Date().toISOString().slice(0, 10);
+  const head = `<tr><th></th>${[...Array(cols).keys()].map(k => `<th>${dayMonth(new Date(Date.UTC(2026, 0, 2 + k * 15)).toISOString())}</th>`).join("")}</tr>`;
   $("cal").innerHTML = head + years.map(y => `<tr><th class="yr">${yearNum(y)}</th>${[...Array(cols).keys()].map(k => {
     const idx = byYear[y][k];
-    if (idx == null) return `<td class="none">·</td>`;
+    if (idx == null) {  // not yet happened, or no satellite picture for that fortnight
+      const startIso = new Date(Date.UTC(+y, 0, 2 + k * 15)).toISOString().slice(0, 10);
+      return startIso > today ? `<td class="future"></td>` : `<td class="noimg" title="${tt.legendNoImg}"></td>`;
+    }
     const h = R.history[idx], p = h.flooded_pct;
     const d = (years.indexOf(y) * cols + k) * 12;
-    if (p < 0.5 && !h.flooded) return `<td class="none" style="animation-delay:${d}ms" data-i="${idx}"></td>`;
+    if (p < 0.5 && !h.flooded) return `<td class="dry" style="animation-delay:${d}ms" data-i="${idx}"></td>`;
     // each box fills with water to how much of the upazila was under unusual water (full at 20% or more)
     const lvl = h.flooded ? 100 : Math.min(100, 14 + p * 4.3);
     return `<td class="w${h.flooded ? " flood" : ""}" style="--wc:${calColor(p)};--lvl:${lvl.toFixed(0)}%;--d:${d}ms;animation-delay:${d}ms" data-i="${idx}"><span>${nf(p, p < 10 ? 1 : 0)}%</span></td>`;
   }).join("")}</tr>`).join("");
-  $("cal-legend").innerHTML = `${tt.legendLow} ${CAL.map(([, c]) => `<i style="background:${c}"></i>`).join("")} ${tt.legendHigh}`;
+  $("cal-legend").innerHTML = `<span class="lg-k"><i class="dry"></i>${tt.legendDry}</span><span class="lg-k">${tt.legendLow} ${CAL.slice(1).map(([, c]) => `<i style="background:${c}"></i>`).join("")} ${tt.legendHigh}</span><span class="lg-k"><i class="noimg"></i>${tt.legendNoImg}</span>`;
   document.querySelectorAll(".cal td[data-i]").forEach(td => {
     td.onmouseenter = e => showTip(e, R.history[+td.dataset.i]);
     td.onmousemove = moveTip;
@@ -226,7 +231,9 @@ async function cycMap() {
     attributionControl: { compact: true }, preserveDrawingBuffer: true,
     style: { version: 8, sources: { sat: esri("World_Imagery", "Esri, Maxar, Earthstar Geographics · NOAA IBTrACS"),
       places: esri("Reference/World_Boundaries_and_Places", "Esri") },
-      layers: [{ id: "sat", type: "raster", source: "sat", paint: { "raster-brightness-max": 0.8, "raster-saturation": -0.15 } },
+      layers: [{ id: "osm-base-bg", type: "background", paint: { "background-color": "#eef0e6" } },
+        ...osmBaseLayers(),
+        { id: "sat", type: "raster", source: "sat", paint: { "raster-brightness-max": 0.8, "raster-saturation": -0.15 } },
         { id: "places", type: "raster", source: "places", paint: { "raster-opacity": 0.8 } }] } });
   const seg = (pts, upto) => {  // coloured pieces of the path up to a fractional point index
     const f = [], n = Math.min(upto, pts.length - 1);
@@ -378,14 +385,23 @@ function rainStats(h) {
   const peak = next.reduce((a, p) => p.v > (a?.v ?? 0) ? p : a, null);
   return { pts, now, past: past.reduce((a, p) => a + p.v, 0), next: next.reduce((a, p) => a + p.v, 0), peak };
 }
+let rainRO = null;
 function renderRainNow() {
+  if (!rainRO && window.ResizeObserver) {  // redraw when the card changes size (window resize, layout change)
+    let tm = 0, last = "";
+    rainRO = new ResizeObserver(es => { const r = es[0].contentRect, k = `${Math.round(r.width)}x${Math.round(r.height)}`;
+      if (k !== last) { last = k; clearTimeout(tm); tm = setTimeout(() => RS && RS.pts && RS.pts.length && renderRainNow(), 150); } });
+    rainRO.observe($("rain-chart"));
+  }
   const tt = t(), box = $("rain-chart");
   if (!RS || !RS.pts.length) { box.innerHTML = `<p class="story">${tt.noRain}</p>`; $("rain-stats").innerHTML = ""; return; }
   const hourLabel = ts => new Date(ts).toLocaleString(loc(), { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: lang === "en" ? true : undefined, timeZone: "Asia/Dhaka" });
   const st = (k, v, d = "") => `<div><small>${k}</small><b>${v}</b>${d ? `<span>${d}</span>` : ""}</div>`;
   $("rain-stats").innerHTML = st(tt.sPast, `${nf(RS.past, 1)} ${tt.mm}`) + st(tt.sNext, `${nf(RS.next, 1)} ${tt.mm}`) +
     (RS.peak && RS.peak.v >= 0.1 ? st(tt.sPeak, `${nf(RS.peak.v, 1)} ${tt.mmh}`, hourLabel(RS.peak.ts)) : st(tt.sPeak, tt.sPeakNone));
-  const W = 640, H = 230, L = 36, Rt = 44, Tp = 18, B = 34, pw = W - L - Rt, ph = H - Tp - B;
+  // draw at the box's real size, so the chart fills the card next to the map instead of leaving a gap
+  const W = Math.max(320, Math.round(box.clientWidth) || 640), H = Math.max(220, Math.round(box.clientHeight) || 230);
+  const L = 36, Rt = 44, Tp = 18, B = 34, pw = W - L - Rt, ph = H - Tp - B;
   const t0 = RS.now - 72 * HOUR, span = 144 * HOUR, X = ts => L + (ts - t0) / span * pw;
   const vmax = Math.max(1, ...RS.pts.map(p => p.v)), Y = v => Tp + ph - v / vmax * ph;
   let cum = 0; const cumPts = RS.pts.map(p => [p.ts, cum += p.v]); const cmax = Math.max(1, cum), Yc = v => Tp + ph - v / cmax * ph;
@@ -446,26 +462,26 @@ async function map3d() {
   const risk = R.current ? RISK_COLOR[R.current.risk] : "#3b9ad6";
   const dem = { type: "raster-dem", tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"], encoding: "terrarium", tileSize: 256, maxzoom: 14 };
   const map = MAP = new maplibregl.Map({
-    container: "map3d", bounds, fitBoundsOptions: { padding: 36 }, pitch: 58, bearing: -18, maxPitch: 75, maxZoom: 18.5,
+    container: "map3d", bounds, fitBoundsOptions: { padding: 36 }, pitch: 58, bearing: -18, maxPitch: 75, maxZoom: 17,
     scrollZoom: false, preserveDrawingBuffer: true, attributionControl: { compact: true },
     style: { version: 8, sources: {
         sat: esri("World_Imagery", "Esri, Maxar, Earthstar Geographics"),
-        street: esri("World_Street_Map", "Esri, HERE, Garmin, OpenStreetMap contributors"),
         // sharp roads, rivers, canals and names drawn as lines from OpenStreetMap (free, no key)
         osm: { type: "vector", url: "https://tiles.openfreemap.org/planet",
           attribution: "<a href=\"https://openfreemap.org\" target=\"_blank\">OpenFreeMap</a> © OpenMapTiles · © OpenStreetMap contributors" },
         dem, hs: { ...dem },
       },
       glyphs: "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
-      layers: [{ id: "sat", type: "raster", source: "sat", paint: { "raster-contrast": 0.08, "raster-saturation": 0.1 } },
-        { id: "street", type: "raster", source: "street", layout: { visibility: "none" } },
+      layers: [{ id: "osm-base-bg", type: "background", paint: { "background-color": "#eef0e6" } },
+        ...osmBaseLayers(),
+        { id: "sat", type: "raster", source: "sat", paint: { "raster-contrast": 0.08, "raster-saturation": 0.1 } },
         { id: "hill", type: "hillshade", source: "hs", paint: { "hillshade-exaggeration": 0.35, "hillshade-shadow-color": "#08131c" } },
         ...osmLayers()],
       sky: { "sky-color": "#bfe3ff", "horizon-color": "#eaf6ff", "fog-color": "#eaf6ff", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.6, "fog-ground-blend": 0.4 } },
   });
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
   map.on("load", () => {
-    map.setTerrain({ source: "dem", exaggeration: 4 });
+    map.setTerrain({ source: "dem", exaggeration: exag() });
     const world = [[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]];
     map.addSource("mask", { type: "geojson", data: { type: "Feature", geometry: { type: "Polygon", coordinates: [world, ...outerRings(shape.geometry)] } } });
     map.addLayer({ id: "mask", type: "fill", source: "mask", paint: { "fill-color": "#0a1722", "fill-opacity": 0.38 } }, "osm-place");
@@ -497,20 +513,32 @@ async function map3d() {
     const turn = () => { if (!spin || map.getPitch() < 20) return; map.easeTo({ bearing: map.getBearing() + 12, duration: 6000, easing: x => x }); };
     map.on("moveend", turn); setTimeout(turn, 900);
   });
-  const view = three => {
-    $("v3d").classList.toggle("on", three); $("v2d").classList.toggle("on", !three);
-    map.setTerrain(three ? { source: "dem", exaggeration: 4 } : null);
-    map.easeTo({ pitch: three ? 58 : 0, bearing: three ? -18 : 0, duration: 900 });
+  // hills are drawn 4x taller when seen from far away (Bangladesh is very flat), nearer their real height up close
+  const exag = () => { const z = map.getZoom(); return z <= 10 ? 4 : z >= 15 ? 1.3 : 4 - (z - 10) * 0.54; };
+  let three = true;
+  map.on("zoomend", () => { if (three && map.getTerrain()) map.setTerrain({ source: "dem", exaggeration: exag() }); });
+  const view = on3 => {
+    three = on3;
+    $("v3d").classList.toggle("on", on3); $("v2d").classList.toggle("on", !on3);
+    map.setTerrain(on3 ? { source: "dem", exaggeration: exag() } : null);
+    map.easeTo({ pitch: on3 ? 58 : 0, bearing: on3 ? -18 : 0, duration: 900 });
   };
   $("v3d").onclick = () => view(true);
   $("v2d").onclick = () => view(false);
   const base = sat => {
     $("bSat").classList.toggle("on", sat); $("bMap").classList.toggle("on", !sat);
     map.setLayoutProperty("sat", "visibility", sat ? "visible" : "none");
-    map.setLayoutProperty("street", "visibility", sat ? "none" : "visible");
-    // the street map draws its own roads and names; rivers and canals stay on both
-    map.getStyle().layers.filter(l => l.id.startsWith("osm-road") || l.id === "osm-place")
-      .forEach(l => map.setLayoutProperty(l.id, "visibility", sat ? "visible" : "none"));
+    map.getStyle().layers.filter(l => l.id.startsWith("osm-base-") && l.id !== "osm-base-bg")
+      .forEach(l => map.setLayoutProperty(l.id, "visibility", sat ? "none" : "visible"));
+    // the same roads, water and names, recoloured for a light map
+    map.setPaintProperty("osm-water", "fill-color", sat ? "#3aa6e8" : "#a9d3f0");
+    map.setPaintProperty("osm-water", "fill-opacity", sat ? 0.22 : 1);
+    map.setPaintProperty("osm-waterway", "line-color", sat ? ["match", ["get", "class"], "river", "#5ec8ff", "canal", "#6fd6ff", "#8adfff"] : "#5aa9e0");
+    map.setPaintProperty("osm-road-casing", "line-color", sat ? "#141414" : "#b9a88e");
+    map.setPaintProperty("osm-road-casing", "line-opacity", sat ? 0.55 : 0.9);
+    map.setPaintProperty("osm-place", "text-color", sat ? "#ffffff" : "#2a2f35");
+    map.setPaintProperty("osm-place", "text-halo-color", sat ? "rgba(10,20,30,.85)" : "#ffffff");
+    map.setPaintProperty("mask", "fill-opacity", sat ? 0.38 : 0.18);
   };
   let loaded = false; map.once("load", () => { loaded = true; });
   const ready = f => loaded ? f() : map.once("load", f);
@@ -526,13 +554,29 @@ async function map3d() {
   map.getContainer().addEventListener("mouseleave", () => { if (!touch) map.scrollZoom.disable(); });
   map.getContainer().addEventListener("mouseenter", () => { if (!touch && hint.hidden) map.scrollZoom.enable(); });
 }
+/* ---------- the light street map: land cover, towns and 3D buildings from OpenStreetMap ---------- */
+function osmBaseLayers() {
+  const cls = ["get", "class"], hide = { visibility: "none" };
+  return [
+    { id: "osm-base-landcover", type: "fill", source: "osm", "source-layer": "landcover", layout: hide,
+      paint: { "fill-color": ["match", cls, "wood", "#c9e2b8", "grass", "#dcebc9", "farmland", "#eef2d8", "wetland", "#d3ebe6", "sand", "#f3ead2", "#e4eed6"], "fill-opacity": 0.9 } },
+    { id: "osm-base-landuse", type: "fill", source: "osm", "source-layer": "landuse", layout: hide,
+      filter: ["match", cls, ["residential", "suburb", "neighbourhood", "commercial", "industrial", "retail", "school", "hospital", "cemetery"], true, false],
+      paint: { "fill-color": ["match", cls, ["residential", "suburb", "neighbourhood"], "#ebe5dc", "hospital", "#f6dede", "school", "#f2ead2", ["commercial", "retail"], "#f1e3dc", "industrial", "#e6e0ea", "#e7e4dc"] } },
+    { id: "osm-base-park", type: "fill", source: "osm", "source-layer": "park", layout: hide, paint: { "fill-color": "#cfe8bf", "fill-opacity": 0.8 } },
+    { id: "osm-base-building", type: "fill-extrusion", source: "osm", "source-layer": "building", minzoom: 14, layout: hide,
+      paint: { "fill-extrusion-color": "#ded6ca", "fill-extrusion-height": ["coalesce", ["get", "render_height"], 6],
+        "fill-extrusion-base": ["coalesce", ["get", "render_min_height"], 0], "fill-extrusion-opacity": 0.85 } },
+  ];
+}
+
 /* ---------- OpenStreetMap roads, rivers, canals and names (vector, from OpenFreeMap) ---------- */
 function osmLayers() {
   const cls = ["get", "class"];
   const z = (pairs) => ["interpolate", ["exponential", 1.5], ["zoom"], ...pairs];
   // road widths per class at zoom 8 and zoom 18 (pixels)
   const w = (k) => z([8, ["match", cls, ["motorway", "trunk"], 1.6 * k, "primary", 1.2 * k, "secondary", 0.8 * k, "tertiary", 0.5 * k, 0.3 * k],
-                      18, ["match", cls, ["motorway", "trunk"], 22 * k, "primary", 18 * k, "secondary", 14 * k, "tertiary", 11 * k, ["minor", "service"], 7 * k, 3 * k]]);
+                      17, ["match", cls, ["motorway", "trunk"], 12 * k, "primary", 10 * k, "secondary", 8 * k, "tertiary", 6 * k, ["minor", "service"], 4 * k, 2 * k]]);
   const roads = ["match", cls, ["motorway", "trunk", "primary", "secondary", "tertiary", "minor", "service", "track"], true, false];
   const name = ["coalesce", ["get", "name:latin"], ["get", "name:en"], ["get", "name"]];
   return [
@@ -540,7 +584,7 @@ function osmLayers() {
     { id: "osm-waterway", type: "line", source: "osm", "source-layer": "waterway", minzoom: 9,
       filter: ["match", cls, ["river", "canal", "stream", "drain", "ditch"], true, false], layout: { "line-cap": "round", "line-join": "round" },
       paint: { "line-color": ["match", cls, "river", "#5ec8ff", "canal", "#6fd6ff", "#8adfff"], "line-opacity": 0.9,
-        "line-width": z([9, ["match", cls, "river", 1.2, 0.5], 18, ["match", cls, "river", 10, "canal", 6, 3]]) } },
+        "line-width": z([9, ["match", cls, "river", 1.2, 0.5], 17, ["match", cls, "river", 7, "canal", 4, 2]]) } },
     { id: "osm-road-casing", type: "line", source: "osm", "source-layer": "transportation", minzoom: 8, filter: roads,
       layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#141414", "line-opacity": 0.55, "line-width": w(1.6) } },
     { id: "osm-road", type: "line", source: "osm", "source-layer": "transportation", minzoom: 8, filter: roads,

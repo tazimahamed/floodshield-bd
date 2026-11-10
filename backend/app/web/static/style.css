@@ -345,3 +345,13 @@ body.bn .bay-label { letter-spacing: 0; }
 @media (prefers-reduced-motion: reduce) { .cm .ring { animation: none; opacity: .5; } }
 .cm.lbl-l .lbl { left: auto; right: 36px; }
 .cm.lbl-b .lbl { left: 50%; top: 36px; transform: translateX(-50%); }
+
+.coast-far .cm-wrap.t2 { display: none; }
+.cm.island .dot { background: #0f9488; } .cm.island .ring { border-color: #6fe3d4; }
+.cm.wetland .dot, .cm.swamp .dot { background: #2f7d5b; } .cm.wetland .ring, .cm.swamp .ring { border-color: #8fe0b4; }
+.cm.dam .dot, .cm.barrage .dot { background: #5b5fc7; } .cm.dam .ring, .cm.barrage .ring { border-color: #aab0ff; }
+.cm.bridge .dot { background: #6b7280; } .cm.bridge .ring { border-color: #d1d5db; }
+.cm.meet .dot { background: #1d6fd1; } .cm.meet .ring { border-color: #8cc2ff; }
+.cm-ico.island { background: #0f9488; } .cm-ico.wetland, .cm-ico.swamp { background: #2f7d5b; }
+.cm-ico.dam, .cm-ico.barrage { background: #5b5fc7; } .cm-ico.bridge { background: #6b7280; } .cm-ico.meet { background: #1d6fd1; }
+.cm-wrap.t2 .cm { transform: scale(.85); }

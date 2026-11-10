@@ -3,21 +3,27 @@
    so this file never shows a signal number or a "safe" verdict; it links to BMD instead. */
 const COAST_T = {
   en: {
-    port: "Seaport", forest: "Mangrove forest", beach: "Sea beach", bay: "Bay of Bengal",
+    port: "Seaport", forest: "Mangrove forest", beach: "Sea beach", bay: "Bay of Bengal", island: "Island", wetland: "Haor (wetland)",
+    swamp: "Swamp forest", dam: "Lake and dam", barrage: "Barrage", bridge: "Bridge", meet: "Where rivers meet",
+    rainNow: "Rain now", rainNone: "No rain", mmh: "mm/h",
     waveNow: "Waves now", waveMax: "Highest wave, next 3 days", windNow: "Wind now", gust: "Gusts up to",
     m: "m", kmh: "km/h", from: d => `from the ${d}`, period: s => `a wave every ${s} s`,
     bayLine: (h, d) => `Waves ${h} m ${d}`,
     src: "Sea just off this place, from the Open-Meteo marine model and the NOAA GFS forecast. Not an official warning.",
+    srcLand: "Weather right now at this place, from Open-Meteo. Not an official warning.",
     signals: "Port danger signals are issued only by the Bangladesh Meteorological Department:",
     openUpz: "Open this upazila", noSea: "No sea forecast for this spot right now.",
     dirs: ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"],
   },
   bn: {
-    port: "সমুদ্রবন্দর", forest: "ম্যানগ্রোভ বন", beach: "সমুদ্রসৈকত", bay: "বঙ্গোপসাগর",
+    port: "সমুদ্রবন্দর", forest: "ম্যানগ্রোভ বন", beach: "সমুদ্রসৈকত", bay: "বঙ্গোপসাগর", island: "দ্বীপ", wetland: "হাওর",
+    swamp: "জলাবন", dam: "হ্রদ ও বাঁধ", barrage: "ব্যারাজ", bridge: "সেতু", meet: "নদীর মিলনস্থল",
+    rainNow: "এখন বৃষ্টি", rainNone: "বৃষ্টি নেই", mmh: "মিমি/ঘণ্টা",
     waveNow: "এখন ঢেউ", waveMax: "আগামী ৩ দিনে সবচেয়ে উঁচু ঢেউ", windNow: "এখন বাতাস", gust: "দমকা হাওয়া",
     m: "মিটার", kmh: "কিমি/ঘণ্টা", from: d => `${d} দিক থেকে`, period: s => `প্রতি ${s} সেকেন্ডে একটি ঢেউ`,
     bayLine: (h, d) => `ঢেউ ${h} মিটার, ${d}`,
     src: "এই জায়গার কাছের সাগরের তথ্য, Open-Meteo marine মডেল ও NOAA GFS পূর্বাভাস থেকে। এটি সরকারি সতর্কবার্তা নয়।",
+    srcLand: "এই জায়গার এখনকার আবহাওয়া, Open-Meteo থেকে। এটি সরকারি সতর্কবার্তা নয়।",
     signals: "বন্দরের বিপদ সংকেত দেয় শুধু বাংলাদেশ আবহাওয়া অধিদপ্তর:",
     openUpz: "এই উপজেলা দেখুন", noSea: "এই জায়গার জন্য এখন সাগরের পূর্বাভাস নেই।",
     dirs: ["উত্তর", "উত্তর-পূর্ব", "পূর্ব", "দক্ষিণ-পূর্ব", "দক্ষিণ", "দক্ষিণ-পশ্চিম", "পশ্চিম", "উত্তর-পশ্চিম"],
@@ -47,6 +53,48 @@ const PLACES = [
   { kind: "beach", lat: 21.815, lon: 90.12, sea: [21.72, 90.12], below: true,
     name: { en: "Kuakata", bn: "কুয়াকাটা" },
     fact: { en: "A beach in Patuakhali where both sunrise and sunset can be seen over the sea.", bn: "পটুয়াখালীর সৈকত, যেখান থেকে সাগরে সূর্যোদয় ও সূর্যাস্ত দুটোই দেখা যায়।" } },
+  { kind: "island", lat: 20.627, lon: 92.323, sea: [20.60, 92.28],
+    name: { en: "St Martin's Island", bn: "সেন্টমার্টিন দ্বীপ" },
+    fact: { en: "Bangladesh's only coral island.", bn: "বাংলাদেশের একমাত্র প্রবাল দ্বীপ।" } },
+  { kind: "dam", lat: 22.60, lon: 92.20,
+    name: { en: "Kaptai Lake", bn: "কাপ্তাই হ্রদ" },
+    fact: { en: "Bangladesh's largest man-made lake, formed by the Kaptai Dam on the Karnaphuli in 1962.", bn: "বাংলাদেশের সবচেয়ে বড় কৃত্রিম হ্রদ, ১৯৬২ সালে কর্ণফুলী নদীতে কাপ্তাই বাঁধ দিয়ে তৈরি।" } },
+  { kind: "barrage", lat: 26.175, lon: 89.05,
+    name: { en: "Teesta Barrage", bn: "তিস্তা ব্যারাজ" },
+    fact: { en: "Irrigation barrage on the Teesta River at Dalia, Lalmonirhat.", bn: "লালমনিরহাটের ডালিয়ায় তিস্তা নদীর উপর সেচ ব্যারাজ।" } },
+  { kind: "wetland", lat: 25.14, lon: 91.07,
+    name: { en: "Tanguar Haor", bn: "টাঙ্গুয়ার হাওর" },
+    fact: { en: "A large haor in Sunamganj and a Ramsar wetland. It fills with water every monsoon.", bn: "সুনামগঞ্জের বড় হাওর, রামসার জলাভূমি। প্রতি বর্ষায় পানিতে ভরে যায়।" } },
+  { kind: "bridge", lat: 23.44, lon: 90.265,
+    name: { en: "Padma Bridge", bn: "পদ্মা সেতু" },
+    fact: { en: "Road and rail bridge over the Padma, opened in 2022.", bn: "পদ্মা নদীর উপর সড়ক ও রেল সেতু, চালু হয় ২০২২ সালে।" } },
+  { kind: "island", lat: 22.69, lon: 90.65, tier: 2,
+    name: { en: "Bhola", bn: "ভোলা" },
+    fact: { en: "Bangladesh's largest island, in the Meghna estuary.", bn: "বাংলাদেশের সবচেয়ে বড় দ্বীপ, মেঘনার মোহনায়।" } },
+  { kind: "island", lat: 22.33, lon: 91.10, sea: [22.05, 91.10], tier: 2,
+    name: { en: "Hatiya", bn: "হাতিয়া" },
+    fact: { en: "An island at the mouth of the Meghna, open to cyclone storm surges.", bn: "মেঘনার মোহনার দ্বীপ, ঘূর্ণিঝড়ের জলোচ্ছ্বাসের মুখে।" } },
+  { kind: "island", lat: 22.48, lon: 91.45, sea: [22.30, 91.50], tier: 2,
+    name: { en: "Sandwip", bn: "সন্দ্বীপ" },
+    fact: { en: "An island in the Bay of Bengal near Chattogram.", bn: "চট্টগ্রামের কাছে বঙ্গোপসাগরের দ্বীপ।" } },
+  { kind: "wetland", lat: 24.66, lon: 92.05, tier: 2,
+    name: { en: "Hakaluki Haor", bn: "হাকালুকি হাওর" },
+    fact: { en: "One of Bangladesh's largest haors, in Moulvibazar and Sylhet.", bn: "মৌলভীবাজার ও সিলেটে, দেশের সবচেয়ে বড় হাওরগুলোর একটি।" } },
+  { kind: "swamp", lat: 25.01, lon: 91.93, tier: 2,
+    name: { en: "Ratargul", bn: "রাতারগুল" },
+    fact: { en: "A freshwater swamp forest in Sylhet that stands in water in the rainy season.", bn: "সিলেটের মিঠাপানির জলাবন, বর্ষায় গাছগুলো পানিতে দাঁড়িয়ে থাকে।" } },
+  { kind: "bridge", lat: 24.395, lon: 89.78, tier: 2,
+    name: { en: "Jamuna Bridge", bn: "যমুনা সেতু" },
+    fact: { en: "Bridge over the Jamuna, opened in 1998.", bn: "যমুনা নদীর উপর সেতু, চালু হয় ১৯৯৮ সালে।" } },
+  { kind: "bridge", lat: 24.066, lon: 89.028, tier: 2,
+    name: { en: "Hardinge Bridge", bn: "হার্ডিঞ্জ ব্রিজ" },
+    fact: { en: "Railway bridge over the Padma at Paksey, opened in 1915.", bn: "পাকশীতে পদ্মার উপর রেল সেতু, চালু হয় ১৯১৫ সালে।" } },
+  { kind: "meet", lat: 23.23, lon: 90.64, tier: 2,
+    name: { en: "Chandpur", bn: "চাঁদপুর" },
+    fact: { en: "Where the Padma meets the Meghna.", bn: "এখানে পদ্মা মেঘনার সাথে মিলেছে।" } },
+  { kind: "meet", lat: 23.77, lon: 89.76, tier: 2,
+    name: { en: "Goalundo", bn: "গোয়ালন্দ" },
+    fact: { en: "Near here the Jamuna joins the Padma.", bn: "এর কাছে যমুনা পদ্মার সাথে মিলেছে।" } },
 ];
 const BAY = [19.7, 89.9];  // label and sample point out in the bay
 // rough water outline of the northern Bay of Bengal (lon, lat), only used to keep the moving swell off land
@@ -58,6 +106,13 @@ const ICONS = {
   port: '<path d="M12 3v15M8 7h8M5 13a7 7 0 0 0 14 0"/><circle cx="12" cy="4.5" r="1.5"/>',
   forest: '<path d="M12 21v-5M7 16h10l-5-12z"/><path d="M8.5 11h7"/>',
   beach: '<path d="M4 20c2-1.5 4-1.5 6 0s4 1.5 6 0 3-1 4-.5"/><path d="M12 17V8M5 9a7 7 0 0 1 14 0z"/>',
+  island: '<path d="M3 18c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0"/><path d="M7 15c1-3 4-5 5-5s4 2 5 5"/><path d="M12 10V5l3 2"/>',
+  wetland: '<path d="M3 17c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0M3 21c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0"/><path d="M8 14V6M12 14V4M16 14V7"/>',
+  swamp: '<path d="M3 20c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0"/><path d="M12 18v-6M8 12h8l-4-8z"/>',
+  dam: '<path d="M4 6h16M5 6l2 14h10l2-14"/><path d="M9 11c1 .8 2 .8 3 0s2-.8 3 0"/>',
+  barrage: '<path d="M3 8h18M5 8v10M10 8v10M14 8v10M19 8v10"/><path d="M3 20c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/>',
+  bridge: '<path d="M2 16h20M4 16v4M20 16v4"/><path d="M4 16c3-7 13-7 16 0"/><path d="M8 16v-4M12 16v-5M16 16v-4"/>',
+  meet: '<path d="M5 3c0 6 7 7 7 12v6M19 3c0 6-7 7-7 12"/>',
 };
 const svgIcon = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>`;
 
@@ -89,6 +144,10 @@ function placePopup(i) {
     grid += row(tt.waveNow, `${nf(s.current.wave_height, 1)} ${tt.m}`) +
       row(tt.waveMax, `${nf(Math.max(...s.daily.wave_height_max.filter(v => v != null)), 1)} ${tt.m}`);
   }
+  if (w && w.current && w.current.precipitation != null) {
+    const r = w.current.precipitation * 3600 / (w.current.interval || 900);
+    grid += row(tt.rainNow, r >= 0.05 ? `${nf(r, 1)} ${tt.mmh}` : tt.rainNone);
+  }
   if (w && w.current) {
     grid += row(tt.windNow, `${nf(Math.round(w.current.wind_speed_10m))} ${tt.kmh} <span>${tt.from(compass(w.current.wind_direction_10m))}</span>`) +
       row(tt.gust, `${nf(Math.round(w.current.wind_gusts_10m))} ${tt.kmh}`);
@@ -97,9 +156,9 @@ function placePopup(i) {
   return `<div class="cm-pop"><div class="cm-head"><span class="cm-ico ${p.kind}">${svgIcon(p.kind)}</span>
       <div><b>${p.name[lang]}</b><small>${tt[p.kind]}</small></div></div>
     <p>${p.fact[lang]}</p>
-    ${grid ? `<div class="cm-grid">${grid}</div>` : `<p class="cm-src">${coastSea ? tt.noSea : t().loading}</p>`}
-    <p class="cm-src">${tt.src}</p>
-    <p class="cm-src">${tt.signals} <a href="https://www.bmd.gov.bd" target="_blank" rel="noopener">bmd.gov.bd</a></p>
+    ${grid ? `<div class="cm-grid">${grid}</div>` : `<p class="cm-src">${coastWind ? tt.noSea : t().loading}</p>`}
+    <p class="cm-src">${p.sea ? tt.src : tt.srcLand}</p>
+    ${p.kind === "port" || p.sea ? `<p class="cm-src">${tt.signals} <a href="https://www.bmd.gov.bd" target="_blank" rel="noopener">bmd.gov.bd</a></p>` : ""}
     ${upz ? `<button class="btn small cm-open" data-id="${upz.id}">${tt.openUpz}: ${upz.name}</button>` : ""}</div>`;
 }
 
@@ -113,11 +172,13 @@ function bayHtml() {
 function drawCoast() {
   coastLayer = L.layerGroup();
   PLACES.forEach((p, i) => {
-    const icon = L.divIcon({ className: "cm-wrap", iconSize: [34, 34], iconAnchor: [17, 17],
-      html: `<div class="cm ${p.kind}${p.left ? " lbl-l" : ""}${p.below ? " lbl-b" : ""}"><span class="ring"></span><span class="dot">${svgIcon(p.kind)}</span><span class="lbl">${p.name[lang]}</span></div>` });
-    const m = L.marker([p.lat, p.lon], { icon, pane: "coast", keyboard: true, title: p.name.en, riseOnHover: true })
-      // keep the popup clear of the search panel (top-left) and the tool rail (right)
-      .bindPopup(() => placePopup(i), { maxWidth: 290, className: "cm-popup",
+    const icon = L.divIcon({ className: `cm-wrap${p.tier === 2 ? " t2" : ""}`, iconSize: [34, 34], iconAnchor: [17, 17],
+      html: `<div aria-label="${p.name.en}" class="cm ${p.kind}${p.left ? " lbl-l" : ""}${p.below ? " lbl-b" : ""}"><span class="ring"></span><span class="dot">${svgIcon(p.kind)}</span><span class="lbl">${p.name[lang]}</span></div>` });
+    const m = L.marker([p.lat, p.lon], { icon, pane: "coast", keyboard: true, riseOnHover: true });
+    // before the popup opens: leave room for the details drawer on the right when it is open
+    m.on("click", () => { const pp = m.getPopup(); if (pp) pp.options.autoPanPaddingBottomRight = [document.body.classList.contains("drawer-open") ? 450 : 70, 40]; });
+    // keep the popup clear of the search panel (top-left) and the tool rail (right)
+    m.bindPopup(() => placePopup(i), { maxWidth: 290, className: "cm-popup",
         autoPanPaddingTopLeft: innerWidth > 760 ? [390, 20] : [10, 250], autoPanPaddingBottomRight: [70, 40] });
     m.on("popupopen", e => {
       const b = e.popup.getElement().querySelector(".cm-open");
@@ -142,14 +203,18 @@ function relabelCoast() {
 }
 
 async function loadSea() {
-  const pts = [...PLACES.map(p => p.sea), BAY];
-  const qs = `latitude=${pts.map(p => p[0]).join(",")}&longitude=${pts.map(p => p[1]).join(",")}&forecast_days=3&timezone=Asia%2FDhaka`;
+  // waves only for places on the sea (plus the bay label); rain and wind for every place
+  const seaIdx = PLACES.map((p, i) => p.sea ? i : -1).filter(i => i >= 0);
+  const seaPts = [...seaIdx.map(i => PLACES[i].sea), BAY], allPts = [...PLACES.map(p => p.sea || [p.lat, p.lon]), BAY];
+  const qs = pts => `latitude=${pts.map(p => p[0]).join(",")}&longitude=${pts.map(p => p[1]).join(",")}&forecast_days=3&timezone=Asia%2FDhaka`;
   const get = url => fetch(url).then(r => r.ok ? r.json() : null).then(j => j && (Array.isArray(j) ? j : [j])).catch(() => null);
-  [coastSea, coastWind] = await Promise.all([
-    get(`https://marine-api.open-meteo.com/v1/marine?${qs}&current=wave_height,wave_direction,wave_period&daily=wave_height_max`),
-    get(`https://api.open-meteo.com/v1/forecast?${qs}&current=wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=kmh`),
+  const [sea, wx] = await Promise.all([
+    get(`https://marine-api.open-meteo.com/v1/marine?${qs(seaPts)}&current=wave_height,wave_direction,wave_period&daily=wave_height_max`),
+    get(`https://api.open-meteo.com/v1/forecast?${qs(allPts)}&current=precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=kmh`),
   ]);
-  coastSea = coastSea || [];
+  coastSea = Array(PLACES.length + 1).fill(null);
+  if (sea) { seaIdx.forEach((pi, k) => { coastSea[pi] = sea[k]; }); coastSea[PLACES.length] = sea[seaIdx.length]; }
+  coastWind = wx;
   relabelCoast();
   swell.update();
 }
@@ -240,6 +305,8 @@ function toggleCoast() {
 
 drawCoast();
 loadSea();
+const coastZoom = () => map.getContainer().classList.toggle("coast-far", map.getZoom() < 7.5);
+map.on("zoomend", coastZoom); coastZoom();
 $("show-coast").onchange = toggleCoast;
 const _applyLangBase = applyLang;
 applyLang = function () { _applyLangBase(); relabelCoast(); };
