@@ -1,4 +1,5 @@
 import logging
+import threading
 from datetime import datetime, timedelta, timezone
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -36,6 +37,8 @@ log = logging.getLogger(__name__)
 
 SCHED: BackgroundScheduler | None = None
 RETRY_MIN = 60
+OUTLOOK_HOURS = 24  # heat and waves are daily values: once a day keeps Open-Meteo use well under the free 10,000 calls
+_CYCLE = threading.Lock()  # the 6-hourly job and an hourly retry must never run (and spend the quota) together
 _RL = {"told": False}  # whether the admin already heard about the current rate-limit outage
 
 
@@ -44,6 +47,16 @@ def _is_rate_limit(e: Exception) -> bool:
 
 
 def gfs_then_flood_forecast() -> None:
+    if not _CYCLE.acquire(blocking=False):
+        log.info("A forecast cycle is already running; this one is skipped")
+        return
+    try:
+        _forecast_cycle()
+    finally:
+        _CYCLE.release()
+
+
+def _forecast_cycle() -> None:
     try:
         run_gfs_ingest()
         safe_run_forecast()
@@ -68,14 +81,14 @@ def gfs_then_flood_forecast() -> None:
             notify_admin(f"Forecast cycle failed: {type(e).__name__}")
 
 
-def _first_run(last: datetime | None) -> datetime:
+def _first_run(last: datetime | None, hours: float | None = None) -> datetime:
     """Run at once only if the last good run is older than one cycle; a restart must not spend the API quota again."""
     now = datetime.now(timezone.utc)
     if last is None:
         return now
     if last.tzinfo is None:
         last = last.replace(tzinfo=timezone.utc)
-    return max(now, last + timedelta(hours=settings.ingest_interval_hours))
+    return max(now, last + timedelta(hours=hours or settings.ingest_interval_hours))
 
 
 def _last_gfs_ok() -> datetime | None:
@@ -112,7 +125,7 @@ async def lifespan(app: FastAPI):
     global SCHED
     scheduler = SCHED = BackgroundScheduler(timezone="UTC")
     # first run right after start only when the stored forecast is older than one cycle
-    gfs_at, outlook_at = _first_run(_last_gfs_ok()), _first_run(_last_outlook_ok())
+    gfs_at, outlook_at = _first_run(_last_gfs_ok()), _first_run(_last_outlook_ok(), OUTLOOK_HOURS)
     log.info("Next forecast run %s UTC, next outlook %s UTC", f"{gfs_at:%H:%M}", f"{outlook_at:%H:%M}")
     scheduler.add_job(gfs_then_flood_forecast, "interval", hours=settings.ingest_interval_hours,
                       id="gfs_ingest", max_instances=1, coalesce=True, next_run_time=gfs_at)
@@ -120,7 +133,7 @@ async def lifespan(app: FastAPI):
     if settings.telegram_bot_token:
         scheduler.add_job(poll_updates, "interval", seconds=5, id="telegram_poll", max_instances=1, coalesce=True)
         scheduler.add_job(warm_voice, id="warm_voice")  # load the Bangla voice model before the first message
-    scheduler.add_job(refresh_outlook, "interval", hours=settings.ingest_interval_hours, id="outlook", max_instances=1,
+    scheduler.add_job(refresh_outlook, "interval", hours=OUTLOOK_HOURS, id="outlook", max_instances=1,
                       coalesce=True, next_run_time=outlook_at)
     # how the model did over the last 12 months: daily after the ERA5 refresh, and at startup if the file is missing or old
     first = {"next_run_time": datetime.now(timezone.utc) + timedelta(minutes=3)} if model_calendar.needs_build() else {}
