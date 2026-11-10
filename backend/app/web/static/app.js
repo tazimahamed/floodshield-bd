@@ -215,19 +215,22 @@ map.createPane("geo").style.zIndex = 650;
 map.getPane("geo").style.pointerEvents = "none";
 map.createPane("rivers").style.zIndex = 450;
 map.createPane("track").style.zIndex = 655;
+map.on("zoomend", () => map.getContainer().classList.toggle("rivers-far", map.getZoom() < 7));
 let baseLayers = [];
 function setBasemap() {
   baseLayers.forEach(l => l.remove());
   const ref = mapDark ? "Canvas/World_Dark_Gray_Reference" : "Ocean/World_Ocean_Reference";
-  const attribution = "Basemap © Esri, GEBCO, NOAA, Garmin, HERE, © OpenStreetMap contributors · Boundaries BBS/OCHA · Rivers HydroSHEDS · Sea: Open-Meteo";
-  // the Ocean basemap shows the real sea floor (shallow shelf, the Swatch of No Ground canyon) but has no tiles
-  // past ~zoom 10 on land ("Map data not yet available"), so stretch zoom-10 tiles. In dark mode it is dimmed,
-  // and close up (past zoom 10) the plain dark map takes over so streets stay sharp.
-  const ocean = L.tileLayer(`${ESRI}/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}`,
-    { maxZoom: mapDark ? 10 : 16, maxNativeZoom: 10, className: mapDark ? "sea-dark" : "", attribution });
-  baseLayers = [ocean,
-    ...(mapDark ? [L.tileLayer(`${ESRI}/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`, { minZoom: 10.01, maxZoom: 16 })] : []),
-    L.tileLayer(`${ESRI}/${ref}/MapServer/tile/{z}/{y}/{x}`, { pane: "labels", maxZoom: 16, maxNativeZoom: mapDark ? 16 : 10, opacity: 0.9 }),
+  const attribution = mapDark
+    ? "Imagery © Esri, Maxar, Earthstar Geographics · Labels © Esri · Boundaries BBS/OCHA · Rivers HydroSHEDS · Sea: Open-Meteo"
+    : "Basemap © Esri, GEBCO, NOAA, Garmin, HERE, © OpenStreetMap contributors · Boundaries BBS/OCHA · Rivers HydroSHEDS · Sea: Open-Meteo";
+  // dark mode: satellite imagery, so the Bay of Bengal, the delta and the rivers show their real colours.
+  // light mode: the Ocean basemap (sea-floor shading); it has no land tiles past ~zoom 10, so zoom-10 tiles are stretched.
+  baseLayers = mapDark ? [
+    L.tileLayer(`${ESRI}/World_Imagery/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 16, maxNativeZoom: 17, className: "sat-dark", attribution }),
+    L.tileLayer(`${ESRI}/${ref}/MapServer/tile/{z}/{y}/{x}`, { pane: "labels", maxZoom: 16, maxNativeZoom: 16, opacity: 0.85 }),
+  ] : [
+    L.tileLayer(`${ESRI}/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 16, maxNativeZoom: 10, attribution }),
+    L.tileLayer(`${ESRI}/${ref}/MapServer/tile/{z}/{y}/{x}`, { pane: "labels", maxZoom: 16, maxNativeZoom: 10, opacity: 0.9 }),
   ];
   baseLayers.forEach(l => l.addTo(map));
   $("map").style.background = mapDark ? "#1b232c" : "#cfe0ec";
@@ -236,7 +239,7 @@ function setBasemap() {
   restyleRivers();
   if (layer) restyle();
 }
-const maskOpacity = () => $("show-basins").checked ? 0.15 : (mapDark ? 0.32 : 0.3);
+const maskOpacity = () => $("show-basins").checked ? 0.15 : (mapDark ? 0.2 : 0.3);
 
 async function drawCountry() {
   const f = await (await fetch("/api/v1/country-outline")).json();
@@ -743,18 +746,77 @@ async function showHospitals(id) {
 }
 
 /* ---------- layers ---------- */
+// Rivers: OpenStreetMap water areas (each river at its real width) and river lines, drawn in one blue together with
+// the sea, so the Padma, Meghna and the delta channels run on into the Bay of Bengal. HydroRIVERS lines stop at
+// Chandpur because HydroSHEDS counts the estuary below it as sea, so they are used only to place the river names.
+let riverNames = null, riverData = null, waterLayer = null;
+map.createPane("water").style.zIndex = 300;
+map.getPane("water").style.pointerEvents = "none";
+function waterStyle() {
+  const blue = mapDark ? "#2f9df0" : "#3b8fd6";
+  return { version: 8, sources: { osm: { type: "vector", url: "https://tiles.openfreemap.org/planet" } },
+    layers: [
+      { id: "water", type: "fill", source: "osm", "source-layer": "water",
+        paint: { "fill-color": blue, "fill-opacity": ["match", ["get", "class"], "ocean", mapDark ? 0.32 : 0.25, mapDark ? 0.62 : 0.55] } },
+      { id: "river-glow", type: "line", source: "osm", "source-layer": "waterway", filter: ["==", ["get", "class"], "river"],
+        layout: { "line-cap": "round", "line-join": "round" },
+        paint: { "line-color": "#7fd3ff", "line-opacity": mapDark ? 0.25 : 0.2, "line-blur": 2,
+          "line-width": ["interpolate", ["linear"], ["zoom"], 5, 2, 8, 5, 12, 9] } },
+      { id: "river", type: "line", source: "osm", "source-layer": "waterway", filter: ["==", ["get", "class"], "river"],
+        layout: { "line-cap": "round", "line-join": "round" },
+        paint: { "line-color": blue, "line-opacity": 0.95, "line-width": ["interpolate", ["linear"], ["zoom"], 5, 0.8, 8, 1.8, 12, 3.5] } },
+      { id: "canal", type: "line", source: "osm", "source-layer": "waterway", minzoom: 9,
+        filter: ["match", ["get", "class"], ["canal", "stream"], true, false],
+        paint: { "line-color": blue, "line-opacity": 0.8, "line-width": ["interpolate", ["linear"], ["zoom"], 9, 0.5, 14, 2] } },
+    ] };
+}
 function restyleRivers() {
-  riverLayer && riverLayer.setStyle(f => ({ color: mapDark ? "#5fb3ff" : "#2b7bbf", opacity: mapDark ? 0.75 : 0.85,
-    weight: Math.max(0.8, Math.log10(f.properties.upland_km2) - 2.8) }));
+  if (!waterLayer) return;
+  const on = map.hasLayer(waterLayer);
+  waterLayer.remove();
+  waterLayer = L.maplibreGL({ style: waterStyle(), pane: "water", interactive: false,
+    attribution: "Rivers © OpenStreetMap contributors (OpenFreeMap)" });
+  if (on) waterLayer.addTo(map);
+}
+// the big rivers by name; each label snaps onto the nearest real river line big enough, or is left out
+const RIVER_NAMES = [
+  { en: "Padma", bn: "পদ্মা", at: [23.95, 89.35], up: 500000, r: 0.25 },
+  { en: "Jamuna", bn: "যমুনা", at: [24.75, 89.72], up: 400000, r: 0.25 },
+  { en: "Meghna", bn: "মেঘনা", at: [22.85, 90.7], up: 1000000, r: 0.3 },
+  { en: "Meghna", bn: "মেঘনা", at: [24.0, 90.98], up: 30000, r: 0.2, minor: true },
+  { en: "Old Brahmaputra", bn: "পুরাতন ব্রহ্মপুত্র", at: [24.75, 90.4], up: 2000, r: 0.12, minor: true },
+  { en: "Teesta", bn: "তিস্তা", at: [25.85, 89.35], up: 10000, r: 0.15, minor: true },
+  { en: "Surma", bn: "সুরমা", at: [24.9, 91.85], up: 5000, r: 0.12, minor: true },
+  { en: "Kushiyara", bn: "কুশিয়ারা", at: [24.7, 91.95], up: 5000, r: 0.1, minor: true },
+  { en: "Karnaphuli", bn: "কর্ণফুলী", at: [22.45, 92.0], up: 5000, r: 0.15, minor: true },
+];
+function placeRiverNames() {
+  if (!riverData) return;
+  riverNames && riverNames.remove();
+  riverNames = L.layerGroup();
+  RIVER_NAMES.forEach(n => {
+    let best = n.r * n.r, pt = null;
+    riverData.features.forEach(f => {
+      if ((f.properties.upland_km2 || 0) < n.up) return;
+      const lines = f.geometry.type === "MultiLineString" ? f.geometry.coordinates : [f.geometry.coordinates];
+      lines.forEach(c => c.forEach(([x, y]) => { const d = (x - n.at[1]) ** 2 + (y - n.at[0]) ** 2; if (d < best) { best = d; pt = [y, x]; } }));
+    });
+    if (!pt) return;
+    riverNames.addLayer(L.marker(pt, { pane: "labels", interactive: false, keyboard: false,
+      icon: L.divIcon({ className: `river-name${n.minor ? " minor" : ""}`, iconSize: [140, 20], iconAnchor: [70, 10], html: `<span>${n[lang]}</span>` }) }));
+  });
+  riverNames.addTo(map);
 }
 async function toggleRivers() {
-  if (!$("show-rivers").checked) { riverLayer && riverLayer.remove(); return; }
-  if (!riverLayer) {
-    const r = await (await fetch("/api/v1/rivers")).json();
-    riverLayer = L.geoJSON(r, { pane: "rivers", interactive: false });
-    restyleRivers();
+  if (!$("show-rivers").checked) { [waterLayer, riverNames].forEach(l => l && l.remove()); return; }
+  if (!window.maplibregl || !L.maplibreGL) return;  // no WebGL library: the satellite still shows the rivers
+  if (!waterLayer) {
+    waterLayer = L.maplibreGL({ style: waterStyle(), pane: "water", interactive: false,
+      attribution: "Rivers © OpenStreetMap contributors (OpenFreeMap)" });
   }
-  riverLayer.addTo(map);
+  waterLayer.addTo(map);
+  if (!riverData) riverData = await (await fetch("/api/v1/rivers")).json().catch(() => null);
+  placeRiverNames();
 }
 
 async function toggleBasins() {
@@ -823,6 +885,7 @@ function applyLang() {
   if (cycList.length) renderStormCards();
   if (cyc && cycTrack.length) setStormTime(pbIdx);
   if (data) { renderSide(); if (selected) renderStrip(); }
+  if (riverNames && $("show-rivers").checked) placeRiverNames();
 }
 
 /* ---------- wiring ---------- */
