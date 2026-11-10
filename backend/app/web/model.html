@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
-  <link rel="stylesheet" href="/static/report.css?v=6">
+  <link rel="stylesheet" href="/static/report.css?v=16">
 </head>
 <body class="page">
   <header class="topbar">
@@ -24,6 +24,15 @@
   <main class="report about">
     <section class="hero" style="display:block"><h1 data-i18n="title"></h1><p class="lead" data-i18n="intro"></p></section>
     <section class="tiles3" id="tiles"></section>
+    <section class="card mc" id="mc" hidden>
+      <h2 data-i18n="mcTitle"></h2>
+      <p class="sub" data-i18n="mcSub"></p>
+      <div class="mc-sum" id="mc-sum"></div>
+      <div class="mc-key"><span><i class="hit"></i><span data-i18n="mcHit"></span></span><span><i class="miss"></i><span data-i18n="mcMiss"></span></span><span><i class="fa"></i><span data-i18n="mcFa"></span></span></div>
+      <div class="mc-grid" id="mc-grid"></div>
+      <div class="mc-detail" id="mc-detail"></div>
+      <ul class="limits mc-notes" id="mc-notes"></ul>
+    </section>
     <section class="card">
       <h2 data-i18n="yearTitle"></h2>
       <p class="sub" data-i18n="yearSub"></p>
@@ -55,6 +64,22 @@
           "The likely-flooded range is too narrow: it holds the true value less often than it should.",
           "It is trained on satellite maps, so floods the radar missed are also missing from its lessons."],
         version: (v, n, y) => `Model ${v} · ${n.toLocaleString()} test cases · ${y}`,
+        mcTitle: "The last 12 months, fortnight by fortnight",
+        mcSub: "For each 15-day stretch, what the model said at its start compared with what the satellite then saw. Tap a box to see which upazilas.",
+        mcHit: "Flood it warned about", mcMiss: "Flood it missed", mcFa: "False alarms (warned, no flood)",
+        sumMonsoon: (h, n, p) => `<b>Monsoon (June–October):</b> caught <b>${h}</b> of ${n} floods (${p}%)`,
+        sumYear: (h, n, p) => `<b>All 12 months:</b> caught <b>${h}</b> of ${n} floods (${p}%)`,
+        sumFa: (f, p) => `${f} false alarms: ${p}% of its warnings were not followed by a flood`,
+        noFloods: "No flood seen", partial: "part of the country had no picture",
+        dCaught: "Caught", dMissed: "Missed", dFa: "False alarms", dQuiet: "Rightly calm",
+        dHead: (a, b, n) => `${a} – ${b} · ${n} upazilas mapped`,
+        lCaught: "Floods it warned about", lMissed: "Floods it missed", lFa: "Warned, but no flood",
+        rowChance: c => `${c}% chance`, rowFlood: f => `${f}% under water`, none: "None",
+        notes: ["This test uses the rain that actually fell, so mistakes in the rain forecast are not included. The real forecast can do worse.",
+          "\"Warned\" means the model gave medium or high risk (a chance of 25% or more), the levels people see on the map.",
+          "\"Flood\" means the satellite saw unusual water over at least 5% of the upazila. Outside the monsoon some of that water may not be flooding; the model is built for the monsoon.",
+          "The low warning level is chosen so floods are not missed, which is why many warnings are not followed by a flood."],
+        mcSrc: (d, v) => `Updated ${d} · model ${v} · satellite: Sentinel-1`,
       },
       bn: {
         back: "← ম্যাপ", about: "ⓘ ডেটা সম্পর্কে", title: "মডেল কতটা নির্ভুল?",
@@ -69,9 +94,25 @@
           "সম্ভাব্য ডোবার পরিসর বেশি সরু: যতবার আসল মান পড়া উচিত, তার চেয়ে কম পড়ে।",
           "স্যাটেলাইট ম্যাপ দেখে শেখে, তাই রাডারে ধরা না পড়া বন্যা মডেলও শেখেনি।"],
         version: (v, n, y) => `মডেল ${v} · ${n.toLocaleString()}টি পরীক্ষা · ${y}`,
+        mcTitle: "গত ১২ মাস, প্রতি পাক্ষিকে",
+        mcSub: "প্রতিটি ১৫ দিনের শুরুতে মডেল কী বলেছিল, আর পরে স্যাটেলাইটে কী দেখা গেছে। কোন উপজেলা, দেখতে একটি ঘরে চাপুন।",
+        mcHit: "যে বন্যার আগাম সতর্কতা দিয়েছিল", mcMiss: "যে বন্যা মিস করেছে", mcFa: "ভুল সতর্কতা (সতর্ক করেছে, বন্যা হয়নি)",
+        sumMonsoon: (h, n, p) => `<b>বর্ষা (জুন–অক্টোবর):</b> ${n}টি বন্যার <b>${h}টি</b> আগে ধরেছে (${p}%)`,
+        sumYear: (h, n, p) => `<b>পুরো ১২ মাস:</b> ${n}টি বন্যার <b>${h}টি</b> আগে ধরেছে (${p}%)`,
+        sumFa: (f, p) => `${f}টি ভুল সতর্কতা: সতর্কতার ${p}%-এর পরে বন্যা হয়নি`,
+        noFloods: "বন্যা দেখা যায়নি", partial: "দেশের একাংশের ছবি নেই",
+        dCaught: "ধরেছে", dMissed: "মিস", dFa: "ভুল সতর্কতা", dQuiet: "ঠিকভাবে শান্ত",
+        dHead: (a, b, n) => `${a} – ${b} · ${n}টি উপজেলার ছবি আছে`,
+        lCaught: "যে বন্যার সতর্কতা দিয়েছিল", lMissed: "যে বন্যা মিস করেছে", lFa: "সতর্ক করেছে, কিন্তু বন্যা হয়নি",
+        rowChance: c => `সম্ভাবনা ${c}%`, rowFlood: f => `${f}% পানির নিচে`, none: "নেই",
+        notes: ["এই পরীক্ষায় সত্যিই যে বৃষ্টি হয়েছিল তা ব্যবহার করা হয়েছে, তাই বৃষ্টির পূর্বাভাসের ভুল এতে নেই। আসল পূর্বাভাস এর চেয়ে খারাপ হতে পারে।",
+          "\"সতর্ক করেছে\" মানে মডেল মাঝারি বা উচ্চ ঝুঁকি দিয়েছিল (সম্ভাবনা ২৫% বা বেশি), ম্যাপে মানুষ যে স্তর দেখে।",
+          "\"বন্যা\" মানে স্যাটেলাইটে উপজেলার অন্তত ৫% এলাকায় অস্বাভাবিক পানি দেখা গেছে। বর্ষার বাইরে সেই পানির কিছু হয়তো বন্যা নয়; মডেলটি বর্ষার জন্য বানানো।",
+          "বন্যা যেন মিস না হয়, তাই সতর্কতার স্তর নিচু রাখা হয়েছে। এ কারণেই অনেক সতর্কতার পরে বন্যা হয় না।"],
+        mcSrc: (d, v) => `হালনাগাদ ${d} · মডেল ${v} · স্যাটেলাইট: Sentinel-1`,
       },
     };
-    let lang = "en", model = null;
+    let lang = "en", model = null, cal = null, pick = null;
     try { lang = localStorage.getItem("fs-lang") || "en"; } catch (e) {}
     const pct = x => Math.round(x * 100);
     function render() {
@@ -92,10 +133,47 @@
       const sorted = [...ys].sort((a, c) => a[1].auc - c[1].auc), lo = sorted[0], hi = sorted[sorted.length - 1];
       document.getElementById("weak").innerHTML = t.weak(pct(lo[1].auc), lo[0], pct(hi[1].auc), hi[0]).map(l => `<li>${l}</li>`).join("");
       document.getElementById("version").textContent = t.version(model.version, m.n, `${ys[0][0]}–${ys[ys.length - 1][0]}`);
+      renderCal();
+    }
+    /* ---------- last 12 months, fortnight by fortnight ---------- */
+    const nf = (v, d = 0) => Number(v).toLocaleString(lang === "bn" ? "bn-BD" : "en-GB", { maximumFractionDigits: d });
+    const dm = iso => new Date(iso + "T00:00:00Z").toLocaleDateString(lang === "bn" ? "bn-BD" : "en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+    const dmy = iso => new Date(iso + "T00:00:00Z").toLocaleDateString(lang === "bn" ? "bn-BD" : "en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+    const slug = x => (x || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const esc = x => String(x ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+    function renderCal() {
+      if (!cal) return;
+      const t = T[lang], ok = cal.windows.filter(w => w.hits != null);
+      document.getElementById("mc").hidden = false;
+      const pc = (a, b) => b ? nf(Math.round(100 * a / b)) : "–";
+      const M = cal.monsoon, Y = cal.totals;
+      document.getElementById("mc-sum").innerHTML =
+        `<div class="mc-chip">${t.sumMonsoon(nf(M.hits), nf(M.flooded), pc(M.hits, M.flooded))}<small>${t.sumFa(nf(M.false_alarms), pc(M.false_alarms, M.hits + M.false_alarms))}</small></div>` +
+        `<div class="mc-chip">${t.sumYear(nf(Y.hits), nf(Y.flooded), pc(Y.hits, Y.flooded))}<small>${t.sumFa(nf(Y.false_alarms), pc(Y.false_alarms, Y.hits + Y.false_alarms))}</small></div>`;
+      const max = Math.max(1, ...ok.map(w => w.flooded));
+      document.getElementById("mc-grid").innerHTML = cal.windows.map((w, i) => {
+        if (w.hits == null) return `<div class="mc-cell off"><span class="mc-d">${dm(w.start)}</span></div>`;
+        const hh = w.hits / max * 100, mh = w.misses / max * 100;
+        return `<button class="mc-cell${i === pick ? " on" : ""}${w.partial ? " part" : ""}" data-i="${i}" style="--d:${i * 30}ms" title="${w.partial ? t.partial : ""}">
+          <span class="mc-d">${dm(w.start)}</span>
+          <span class="mc-bar">${w.flooded ? `<i class="miss" style="height:${mh}%"></i><i class="hit" style="height:${hh}%"></i>` : ""}</span>
+          <span class="mc-n">${w.flooded ? `<b class="h">${nf(w.hits)}</b>/<b>${nf(w.flooded)}</b>` : `<small>${t.noFloods}</small>`}</span>
+          <span class="mc-fa${w.false_alarms ? "" : " zero"}">${nf(w.false_alarms)}</span></button>`;
+      }).join("");
+      document.querySelectorAll(".mc-cell[data-i]").forEach(b => b.onclick = () => { pick = +b.dataset.i; renderCal(); document.getElementById("mc-detail").scrollIntoView({ behavior: "smooth", block: "nearest" }); });
+      if (pick == null) { const ix = cal.windows.map((w, i) => [w.flooded || 0, i]).sort((a, b) => b[0] - a[0])[0]; pick = ix ? ix[1] : 0; return renderCal(); }
+      const w = cal.windows[pick], row = (r, kind) => `<li><a href="/upazila/${slug(r.district)}/${slug(r.name)}">${esc(r.name)}</a> <small>${esc(r.district)}</small>
+          <span>${kind === "fa" ? t.rowChance(nf(r.chance)) : `${t.rowFlood(nf(r.flooded_pct, 1))} · ${t.rowChance(nf(r.chance))}`}</span></li>`;
+      const list = (title, cls, rows, n, kind) => `<div class="mc-list ${cls}"><h3>${title} <b>${nf(n)}</b></h3>${rows.length ? `<ul>${rows.map(r => row(r, kind)).join("")}</ul>${n > rows.length ? `<p class="more">+${nf(n - rows.length)}</p>` : ""}` : `<p class="more">${t.none}</p>`}</div>`;
+      document.getElementById("mc-detail").innerHTML = w && w.hits != null ? `<p class="mc-dh">${t.dHead(dmy(w.start), dmy(w.end), nf(w.mapped))}${w.partial ? ` · ⚠ ${t.partial}` : ""}</p>
+        <div class="mc-counts"><span class="hit"><b>${nf(w.hits)}</b>${t.dCaught}</span><span class="miss"><b>${nf(w.misses)}</b>${t.dMissed}</span><span class="fa"><b>${nf(w.false_alarms)}</b>${t.dFa}</span><span class="q"><b>${nf(w.quiet)}</b>${t.dQuiet}</span></div>
+        <div class="mc-lists">${list(t.lCaught, "hit", w.caught_list, w.hits, "hit")}${list(t.lMissed, "miss", w.missed_list, w.misses, "miss")}${list(t.lFa, "fa", w.false_alarm_list, w.false_alarms, "fa")}</div>` : "";
+      document.getElementById("mc-notes").innerHTML = t.notes.map(n => `<li>${n}</li>`).join("") + `<li class="src">${t.mcSrc(dmy(cal.built_at.slice(0, 10)), esc(cal.model_version))}</li>`;
     }
     document.getElementById("lang").onclick = () => { lang = lang === "en" ? "bn" : "en"; try { localStorage.setItem("fs-lang", lang); } catch (e) {} render(); };
     render();
     fetch("/api/v1/models").then(r => r.json()).then(ms => { model = ms.find(x => x.active); render(); });
+    fetch("/api/v1/model/calendar").then(r => r.ok ? r.json() : null).then(j => { if (j) { cal = j; render(); } }).catch(() => {});
   </script>
 </body>
 </html>

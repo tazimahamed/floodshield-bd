@@ -164,8 +164,9 @@ def voice_script(level: str, node: Node, rain: dict | None = None) -> str:
 
 UI = {
     "start": ("দুর্যোগ বার্তা বাংলাদেশে স্বাগতম! 🙏\nআপনার উপজেলা বা জেলার নাম লিখে পাঠান — যেমন Chhatak, Jessore বা যশোর। "
-              "বানান একটু ভুল হলেও চলবে।\n\nWelcome to Durjog Barta Bangladesh! Just send the name of your upazila or "
-              "district — e.g. Chhatak or Jessore. Small spelling mistakes are fine."),
+              "বানান একটু ভুল হলেও চলবে।\n📊 /model — গত ১২ মাসে মডেল কতটা ঠিক ছিল\n\nWelcome to Durjog Barta Bangladesh! Just send the name of your upazila or "
+              "district — e.g. Chhatak or Jessore. Small spelling mistakes are fine.\n📊 /model — how right the model was over the last 12 months"),
+    "model_none": "মডেলের হিসাব এখনো তৈরি হচ্ছে, কিছুক্ষণ পরে আবার চেষ্টা করুন। / The model report is still being prepared; please try again later.",
     "pick_district": "📍 {district} জেলার কোন উপজেলা? নিচ থেকে বেছে নিন।\nWhich upazila in {district}? Tap one below.",
     "pick": "🔎 আপনি কি এগুলোর কোনোটি বোঝাতে চেয়েছেন?\nDid you mean one of these?",
     "not_found": ("😕 “{q}” নামে কিছু পাইনি। জেলার নাম লিখে দেখুন (যেমন Sylhet বা সিলেট), তারপর তালিকা থেকে উপজেলা বেছে নিন।\n"
@@ -315,6 +316,42 @@ def _status_messages(db, sub: Subscriber, node_ids: list[str]) -> list[tuple[str
     return out
 
 
+_BN_DIGITS = str.maketrans("0123456789", "০১২৩৪৫৬৭৮৯")
+_BN_MONTHS = ["জানু", "ফেব্রু", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টে", "অক্টো", "নভে", "ডিসে"]
+_EN_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
+def model_summary() -> str:
+    """/model: how the model did over the last 12 months (from the model calendar), in Bangla and English."""
+    from app.services.model_calendar import load
+
+    cal = load()
+    if not cal:
+        return UI["model_none"]
+    m = cal["monsoon"]
+    pct = round(100 * m["hits"] / m["flooded"]) if m["flooded"] else 0
+    bn = lambda x: str(x).translate(_BN_DIGITS)
+    day_bn = lambda iso: f"{bn(int(iso[8:10]))} {_BN_MONTHS[int(iso[5:7]) - 1]}"
+    day_en = lambda iso: f"{int(iso[8:10])} {_EN_MONTHS[int(iso[5:7]) - 1]}"
+    last = [w for w in cal["windows"] if w.get("hits") is not None][-3:]
+    lines_bn = "\n".join(f"• {day_bn(w['start'])}–{day_bn(w['end'])}: বন্যা {bn(w['flooded'])}, ধরেছে {bn(w['hits'])}, "
+                         f"মিস {bn(w['misses'])}, ভুল সতর্কতা {bn(w['false_alarms'])}" for w in last)
+    lines_en = "\n".join(f"• {day_en(w['start'])}–{day_en(w['end'])}: floods {w['flooded']}, caught {w['hits']}, "
+                         f"missed {w['misses']}, false alarms {w['false_alarms']}" for w in last)
+    link = f"\n🔗 https://{settings.site_address}/model" if settings.site_address else ""
+    return (
+        f"📊 গত ১২ মাসে মডেল কতটা ঠিক ছিল\n"
+        f"বর্ষায় (জুন–অক্টোবর) স্যাটেলাইটে মোট {bn(m['flooded'])} বার কোনো উপজেলায় বন্যা দেখা গেছে (প্রতি পাক্ষিকে একবার করে গোনা)। "
+        f"মডেল আগে থেকে সতর্ক করেছিল {bn(m['hits'])} বার ({bn(pct)}%), মিস করেছে {bn(m['misses'])} বার। "
+        f"ভুল সতর্কতা: {bn(m['false_alarms'])}টি।\n\nশেষ ৩টি পাক্ষিক:\n{lines_bn}\n\n"
+        f"এটা সত্যিই হওয়া বৃষ্টি দিয়ে করা পরীক্ষা; আসল পূর্বাভাস এর চেয়ে খারাপ হতে পারে।\n\n"
+        f"📊 How right the model was, last 12 months\n"
+        f"Monsoon (Jun–Oct): the satellite saw a flood in an upazila {m['flooded']} times (once per fortnight). "
+        f"The model warned ahead {m['hits']} times ({pct}%) and missed {m['misses']}. False alarms: {m['false_alarms']}.\n\n"
+        f"Last 3 fortnights:\n{lines_en}\n\nTested with the rain that actually fell; the live forecast can do worse.{link}"
+    )
+
+
 def handle_message(chat_id: int, text: str) -> list[dict]:
     """Returns the replies to send: [{"text", "buttons"?, "voice"?}]."""
     raw = text.strip()
@@ -325,8 +362,10 @@ def handle_message(chat_id: int, text: str) -> list[dict]:
         db.add(sub)
         replies: list[dict] = []
         if cmd == "/start" or (cmd.startswith("/") and cmd not in ("/subscribe", "/unsubscribe", "/list", "/status",
-                                                                    "/voice", "/lang")):
+                                                                    "/voice", "/lang", "/model")):
             replies.append({"text": UI["start"]})
+        elif cmd == "/model":
+            replies.append({"text": model_summary()})
         elif cmd == "/voice":
             sub.voice = sub.voice is False
             replies.append({"text": UI["voice_on" if sub.voice else "voice_off"]})

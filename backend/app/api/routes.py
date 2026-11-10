@@ -463,6 +463,17 @@ def model_versions():
                 for m in db.scalars(select(ModelVersion).order_by(ModelVersion.trained_at.desc())).all()]
 
 
+@router.get("/model/calendar")
+def model_calendar_view():
+    """Last 12 months, fortnight by fortnight: floods the model caught, missed, and its false alarms."""
+    from app.services.model_calendar import load
+
+    data = load()
+    if not data:
+        raise HTTPException(503, "The model calendar is being built; try again in a few minutes.")
+    return data
+
+
 _outline_cache: dict = {}
 
 

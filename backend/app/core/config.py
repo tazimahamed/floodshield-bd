@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     healthchecks_era5_url: str = ""
     admin_chat_id: str = ""
     rate_limit_per_minute: int = 600  # per IP, generous because mobile users share IPs; 0 turns it off
+    site_address: str = ""  # public host name (also used by Caddy), for links the bot sends
 
     open_meteo_gfs_url: str = "https://api.open-meteo.com/v1/gfs"
     ingest_interval_hours: int = 6

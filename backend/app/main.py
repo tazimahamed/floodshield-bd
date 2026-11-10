@@ -22,6 +22,7 @@ from app.services.era5 import refresh_recent
 from app.db.models import DailyOutlook, IngestRun
 from app.db.session import SessionLocal
 from app.services.ingest import SOURCE as INGEST_SOURCE, run_gfs_ingest
+from app.services import model_calendar
 from app.services.ops import notify_admin, ping
 from app.services.outlook import refresh_outlook
 
@@ -121,6 +122,9 @@ async def lifespan(app: FastAPI):
         scheduler.add_job(warm_voice, id="warm_voice")  # load the Bangla voice model before the first message
     scheduler.add_job(refresh_outlook, "interval", hours=settings.ingest_interval_hours, id="outlook", max_instances=1,
                       coalesce=True, next_run_time=outlook_at)
+    # how the model did over the last 12 months: daily after the ERA5 refresh, and at startup if the file is missing or old
+    first = {"next_run_time": datetime.now(timezone.utc) + timedelta(minutes=3)} if model_calendar.needs_build() else {}
+    scheduler.add_job(model_calendar.refresh, "cron", hour=4, minute=30, id="model_calendar", max_instances=1, coalesce=True, **first)
     # also at startup: a machine that was off at 03:00 would otherwise fall behind until forecasts fail
     scheduler.add_job(era5_refresh, "cron", hour=3, id="era5_refresh", max_instances=1, coalesce=True,
                       next_run_time=datetime.now(timezone.utc))
