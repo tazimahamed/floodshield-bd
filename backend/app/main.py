@@ -1,10 +1,12 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import httpx
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI, Request
+from sqlalchemy import func, select
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,7 +19,9 @@ from app.ml.forecast import safe_run_forecast
 from app.services.alerts import dispatch_alerts, poll_updates
 from app.services.tts import warm as warm_voice
 from app.services.era5 import refresh_recent
-from app.services.ingest import run_gfs_ingest
+from app.db.models import DailyOutlook, IngestRun
+from app.db.session import SessionLocal
+from app.services.ingest import SOURCE as INGEST_SOURCE, run_gfs_ingest
 from app.services.ops import notify_admin, ping
 from app.services.outlook import refresh_outlook
 
@@ -29,16 +33,67 @@ WEB_DIR = Path(__file__).parent / "web"
 log = logging.getLogger(__name__)
 
 
+SCHED: BackgroundScheduler | None = None
+RETRY_MIN = 60
+_RL = {"told": False}  # whether the admin already heard about the current rate-limit outage
+
+
+def _is_rate_limit(e: Exception) -> bool:
+    return isinstance(e, httpx.HTTPStatusError) and e.response is not None and e.response.status_code == 429
+
+
 def gfs_then_flood_forecast() -> None:
     try:
         run_gfs_ingest()
         safe_run_forecast()
         dispatch_alerts()
         ping(settings.healthchecks_forecast_url)
+        if _RL["told"]:
+            notify_admin("Forecast cycle is working again: the Open-Meteo limit has reset.")
+        _RL["told"] = False
     except Exception as e:
         log.exception("Forecast cycle failed")
         ping(settings.healthchecks_forecast_url, failed=True)
-        notify_admin(f"Forecast cycle failed: {type(e).__name__}")
+        if _is_rate_limit(e) and SCHED is not None:
+            # Open-Meteo's free daily quota ran out: try again later instead of waiting a full cycle
+            at = datetime.now(timezone.utc) + timedelta(minutes=RETRY_MIN)
+            SCHED.add_job(gfs_then_flood_forecast, "date", run_date=at, id="gfs_retry", replace_existing=True)
+            if not _RL["told"]:  # one message per outage, not one per hourly retry
+                notify_admin(f"Forecast cycle skipped: Open-Meteo request limit reached (429). "
+                             f"The site keeps showing the last forecast. Retrying every {RETRY_MIN} min "
+                             f"from {(at + timedelta(hours=6)):%H:%M} Dhaka time.")
+                _RL["told"] = True
+        else:
+            notify_admin(f"Forecast cycle failed: {type(e).__name__}")
+
+
+def _first_run(last: datetime | None) -> datetime:
+    """Run at once only if the last good run is older than one cycle; a restart must not spend the API quota again."""
+    now = datetime.now(timezone.utc)
+    if last is None:
+        return now
+    if last.tzinfo is None:
+        last = last.replace(tzinfo=timezone.utc)
+    return max(now, last + timedelta(hours=settings.ingest_interval_hours))
+
+
+def _last_gfs_ok() -> datetime | None:
+    try:
+        with SessionLocal() as db:
+            # the columns come back without a zone in the database's Dhaka time, so ask for UTC explicitly
+            return db.scalar(select(func.timezone("UTC", func.max(IngestRun.finished_at))).where(
+                IngestRun.source == INGEST_SOURCE, IngestRun.status == "done"))
+    except Exception:
+        log.exception("Could not read the last ingest time")
+        return None
+
+
+def _last_outlook_ok() -> datetime | None:
+    try:
+        with SessionLocal() as db:
+            return db.scalar(select(func.timezone("UTC", func.max(DailyOutlook.issued_at))))
+    except Exception:  # table not created yet on a fresh database
+        return None
 
 
 def era5_refresh() -> None:
@@ -53,16 +108,19 @@ def era5_refresh() -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    scheduler = BackgroundScheduler(timezone="UTC")
-    # first run right after start, so a restarted server never shows an old forecast
+    global SCHED
+    scheduler = SCHED = BackgroundScheduler(timezone="UTC")
+    # first run right after start only when the stored forecast is older than one cycle
+    gfs_at, outlook_at = _first_run(_last_gfs_ok()), _first_run(_last_outlook_ok())
+    log.info("Next forecast run %s UTC, next outlook %s UTC", f"{gfs_at:%H:%M}", f"{outlook_at:%H:%M}")
     scheduler.add_job(gfs_then_flood_forecast, "interval", hours=settings.ingest_interval_hours,
-                      id="gfs_ingest", max_instances=1, coalesce=True, next_run_time=datetime.now(timezone.utc))
+                      id="gfs_ingest", max_instances=1, coalesce=True, next_run_time=gfs_at)
     scheduler.add_job(graph_tables, id="warm_graph")  # build the upstream graph cache in the background
     if settings.telegram_bot_token:
         scheduler.add_job(poll_updates, "interval", seconds=5, id="telegram_poll", max_instances=1, coalesce=True)
         scheduler.add_job(warm_voice, id="warm_voice")  # load the Bangla voice model before the first message
     scheduler.add_job(refresh_outlook, "interval", hours=settings.ingest_interval_hours, id="outlook", max_instances=1,
-                      coalesce=True, next_run_time=datetime.now(timezone.utc))
+                      coalesce=True, next_run_time=outlook_at)
     # also at startup: a machine that was off at 03:00 would otherwise fall behind until forecasts fail
     scheduler.add_job(era5_refresh, "cron", hour=3, id="era5_refresh", max_instances=1, coalesce=True,
                       next_run_time=datetime.now(timezone.utc))
