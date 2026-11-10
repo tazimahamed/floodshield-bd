@@ -231,9 +231,7 @@ async function cycMap() {
     attributionControl: { compact: true }, preserveDrawingBuffer: true,
     style: { version: 8, sources: { sat: esri("World_Imagery", "Esri, Maxar, Earthstar Geographics · NOAA IBTrACS"),
       places: esri("Reference/World_Boundaries_and_Places", "Esri") },
-      layers: [{ id: "osm-base-bg", type: "background", paint: { "background-color": "#eef0e6" } },
-        ...osmBaseLayers(),
-        { id: "sat", type: "raster", source: "sat", paint: { "raster-brightness-max": 0.8, "raster-saturation": -0.15 } },
+      layers: [{ id: "sat", type: "raster", source: "sat", paint: { "raster-brightness-max": 0.8, "raster-saturation": -0.15 } },
         { id: "places", type: "raster", source: "places", paint: { "raster-opacity": 0.8 } }] } });
   const seg = (pts, upto) => {  // coloured pieces of the path up to a fractional point index
     const f = [], n = Math.min(upto, pts.length - 1);
