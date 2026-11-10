@@ -364,3 +364,52 @@ body.bn .bay-label { letter-spacing: 0; }
 .river-name.minor span { font-size: 11.5px; }
 .rivers-far .river-name.minor { display: none; }
 body.bn .river-name span { letter-spacing: 0; font-style: normal; }
+
+/* ---------- upazila details: plain words, icons, gentle motion ---------- */
+#detail:not([hidden]) .panel { animation: dIn .45s cubic-bezier(.2,.8,.2,1) both; }
+#detail .panel:nth-child(2) { animation-delay: .06s; } #detail .panel:nth-child(3) { animation-delay: .12s; }
+#detail .panel:nth-child(4) { animation-delay: .18s; } #detail .panel:nth-child(5) { animation-delay: .24s; }
+#detail .panel:nth-child(6) { animation-delay: .3s; } #detail .panel:nth-child(7) { animation-delay: .36s; }
+@keyframes dIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.risk-top { display: flex; align-items: center; gap: 12px; }
+.risk-ico { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; flex-shrink: 0; color: #fff; background: var(--low); }
+.risk-card.medium .risk-ico { background: var(--med); } .risk-card.high .risk-ico { background: var(--high); animation: pulseR 2s ease-in-out infinite; }
+.risk-ico svg { width: 26px; height: 26px; }
+@keyframes pulseR { 0%, 100% { box-shadow: 0 0 0 0 rgba(212,56,42,.45); } 50% { box-shadow: 0 0 0 8px rgba(212,56,42,0); } }
+.risk-card p.say { font-size: 14.5px; font-weight: 600; color: var(--text); line-height: 1.45; margin: 10px 0 2px; }
+.meter span { transition: width 1s cubic-bezier(.2,.8,.2,1); }
+.meter i { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(0,0,0,.18); }
+.tiles span b { font-size: 18px; } .tiles span em { font-style: normal; font-size: 11px; font-weight: 600; color: var(--muted); margin-left: 2px; }
+.rain-cls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: -4px 0 12px; padding: 8px 10px; border-radius: var(--radius-sm);
+  background: var(--brand-50); font-size: 13px; cursor: help; }
+.rain-cls b { color: var(--text); } .rain-cls small { color: var(--muted); }
+.rain-cls .drops { display: inline-flex; gap: 2px; }
+.rain-cls .drops i { width: 8px; height: 11px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: var(--line); }
+.rain-cls .drops i.on { background: var(--rain); animation: dropIn .4s both; }
+.rain-cls .drops i.on:nth-child(2) { animation-delay: .08s; } .rain-cls .drops i.on:nth-child(3) { animation-delay: .16s; }
+.rain-cls .drops i.on:nth-child(4) { animation-delay: .24s; } .rain-cls .drops i.on:nth-child(5) { animation-delay: .32s; }
+.rain-cls.lv4, .rain-cls.lv5 { background: var(--high-bg); } .rain-cls.lv4 .drops i.on, .rain-cls.lv5 .drops i.on { background: var(--high); }
+@keyframes dropIn { from { transform: translateY(-6px); opacity: 0; } to { transform: none; opacity: 1; } }
+.say-sm { font-size: 13.5px; line-height: 1.5; margin: 0 0 8px; color: var(--text); }
+.split { display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: var(--surface-2); margin: 4px 0 6px; }
+.split .in { background: #2e9e5b; } .split .out { background: #f2a90f; }
+.split span { animation: grow 1s cubic-bezier(.2,.8,.2,1) both; transform-origin: left; }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.split-key { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.split-key i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.split-key i.in { background: #2e9e5b; } .split-key i.out { background: #f2a90f; }
+.mini-h { font-size: 12.5px; font-weight: 700; color: var(--muted); margin: 4px 0 6px; text-transform: uppercase; letter-spacing: .04em; }
+body.bn .mini-h { text-transform: none; letter-spacing: 0; }
+.cyc-mini { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.cyc-mini li { display: flex; gap: 10px; align-items: center; border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: var(--radius-sm); padding: 8px 10px; }
+.cyc-mini .spin { width: 26px; height: 26px; color: var(--c); flex-shrink: 0; animation: spinL 3s linear infinite; }
+.cyc-mini .spin svg { width: 100%; height: 100%; display: block; }
+@keyframes spinL { to { transform: rotate(-360deg); } }
+.cyc-mini b { display: block; font-size: 14px; } .cyc-mini em { display: block; font-style: normal; font-size: 12px; font-weight: 700; color: var(--c); }
+.cyc-mini span:not(.spin) { font-size: 12.5px; color: var(--muted); }
+.hosp-act { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; font-size: 13px; }
+.hosp-act a.call { background: var(--low-bg); color: var(--low); padding: 4px 10px; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) {
+  #detail .panel, .split span, .rain-cls .drops i.on, .cyc-mini .spin, .risk-card.high .risk-ico { animation: none !important; }
+  .meter span { transition: none; }
+}

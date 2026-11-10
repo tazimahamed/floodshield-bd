@@ -64,6 +64,17 @@ const T = {
     stripRain: v => `Next 72h rain ${v}`, risk: "risk",
     sourcesTitle: "ⓘ Data sources", aboutLink: "ⓘ About the data & official warnings",
     noResults: "No matching upazila", now: "Now",
+    riskSay: { low: "Flooding is unlikely here in the next 15 days.",
+      medium: "There is some chance of flooding here in the next 15 days. Keep an eye on FFWC and Met Department news.",
+      high: "Flooding is likely here in the next 15 days. Follow FFWC, the Met Department and your upazila office." },
+    rainClasses: ["Little or no rain", "Light rain", "Moderate rain", "Moderately heavy rain", "Heavy rain", "Very heavy rain"],
+    rainClsNote: "Words follow the Met Department (BMD) scale for rain in 24 hours.",
+    upSay: (area, times) => `Rain falling on <b>${area} km²</b> of land flows through this upazila${times ? `, about <b>${times} times</b> its own size` : ""}.`,
+    upOutSay: (pct, txt) => pct > 0 ? `<b>${txt}%</b> of that land is outside Bangladesh, so rain in India or Nepal can raise the water here too.` : "All of that land is inside Bangladesh.",
+    upRainSay: v => `Rain expected over that land in the next 3 days: <b>${v}</b>.`,
+    inside: "Inside Bangladesh", outside: "Outside Bangladesh",
+    cycSay: (n50, n150) => `Since 1960, <b>${n50}</b> storms passed within 50 km of here and <b>${n150}</b> within 150 km.`,
+    kmAway: km => `${km} km away`, nextDays: "next 24 hours",
   },
   bn: {
     tagline: "বন্যার আগাম সতর্কতা · বাংলাদেশ",
@@ -129,6 +140,17 @@ const T = {
     stripRain: v => `আগামী ৭২ ঘণ্টায় বৃষ্টি ${v}`, risk: "ঝুঁকি",
     sourcesTitle: "ⓘ ডেটার উৎস", aboutLink: "ⓘ ডেটা ও সরকারি সতর্কবার্তা সম্পর্কে",
     noResults: "কোনো উপজেলা মেলেনি", now: "এখন",
+    riskSay: { low: "আগামী ১৫ দিনে এখানে বন্যার সম্ভাবনা কম।",
+      medium: "আগামী ১৫ দিনে এখানে কিছুটা বন্যার সম্ভাবনা আছে। FFWC ও আবহাওয়া অধিদপ্তরের খবর খেয়াল রাখুন।",
+      high: "আগামী ১৫ দিনে এখানে বন্যার সম্ভাবনা বেশি। FFWC, আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের নির্দেশনা মেনে চলুন।" },
+    rainClasses: ["সামান্য বা বৃষ্টি নেই", "হালকা বৃষ্টি", "মাঝারি বৃষ্টি", "মাঝারি ধরনের ভারী বৃষ্টি", "ভারী বৃষ্টি", "অতি ভারী বৃষ্টি"],
+    rainClsNote: "বৃষ্টির ভাগ আবহাওয়া অধিদপ্তরের ২৪ ঘণ্টার মাপ অনুযায়ী।",
+    upSay: (area, times) => `<b>${area} বর্গকিমি</b> জমিতে পড়া বৃষ্টির পানি এই উপজেলা দিয়ে বয়ে যায়${times ? `, যা এই উপজেলার প্রায় <b>${times} গুণ</b>` : ""}।`,
+    upOutSay: (pct, txt) => pct > 0 ? `ওই জমির <b>${txt}%</b> বাংলাদেশের বাইরে, তাই ভারত বা নেপালে বৃষ্টি হলেও এখানে পানি বাড়তে পারে।` : "পুরো জমিই বাংলাদেশের ভেতরে।",
+    upRainSay: v => `আগামী ৩ দিনে ওই এলাকায় বৃষ্টির পূর্বাভাস: <b>${v}</b>।`,
+    inside: "বাংলাদেশের ভেতরে", outside: "বাংলাদেশের বাইরে",
+    cycSay: (n50, n150) => `১৯৬০ থেকে <b>${n50}</b>টি ঝড় এখানকার ৫০ কিমির মধ্যে দিয়ে এবং <b>${n150}</b>টি ১৫০ কিমির মধ্যে দিয়ে গেছে।`,
+    kmAway: km => `${km} কিমি দূরে`, nextDays: "আগামী ২৪ ঘণ্টা",
   },
 };
 
@@ -617,6 +639,18 @@ function renderStrip() {
     + (p.rain_72h_mm != null ? ` <span style="opacity:.7">· ${tt.stripRain(`${nf(p.rain_72h_mm, 1)} ${tt.mm}`)}</span>` : "");
 }
 
+// Met Department (BMD) words for rain in 24 hours: light 1-10 mm, moderate 11-22, moderately heavy 23-43, heavy 44-88, very heavy 89+
+const rainClass = mm => mm == null || mm < 1 ? 0 : mm <= 10 ? 1 : mm <= 22 ? 2 : mm <= 43 ? 3 : mm <= 88 ? 4 : 5;
+const RISK_ICON = {
+  low: '<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+  medium: '<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',
+  high: '<path d="M3 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M3 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M12 3v7M12 12h.01"/>',
+};
+function countTo(el, to, fmt, ms = 900) {
+  const t0 = performance.now();
+  const stepFn = now => { const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(to * e); if (k < 1) requestAnimationFrame(stepFn); };
+  requestAnimationFrame(stepFn);
+}
 function renderDetail() {
   const p = selected, tt = t();
   $("d-name").textContent = p.name;
@@ -626,15 +660,26 @@ function renderDetail() {
   else {
     const pct = Math.round(p.flood_prob * 100);
     box.className = `risk-card ${r}`;
-    box.innerHTML = `<span class="lvl">${tt.riskOf[r]}</span>
-      <div class="prob">${nf(pct)}% <small>${tt.chance}</small></div>
-      <div class="meter"><span style="width:${pct}%;background:var(--${r === "medium" ? "med" : r})"></span></div>
+    box.innerHTML = `<div class="risk-top"><span class="risk-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${RISK_ICON[r]}</svg></span>
+        <div><span class="lvl">${tt.riskOf[r]}</span><div class="prob"><span class="num">0</span>% <small>${tt.chance}</small></div></div></div>
+      <p class="say">${tt.riskSay[r]}</p>
+      <div class="meter"><span style="width:0;background:var(--${r === "medium" ? "med" : r})"></span><i style="left:25%"></i><i style="left:50%"></i></div>
       ${p.flood_frac != null ? `<p>${tt.likelyRange(nf(p.flood_frac * 100), nf((p.frac_p10 ?? p.flood_frac) * 100), nf((p.frac_p90 ?? p.flood_frac) * 100))}</p>` : ""}
       <p>${tt.riskLimit}</p>
       ${hind ? `<p>${dateFmt(hind.day)}${p.observed_frac != null ? ` · Sentinel-1: ${nf(p.observed_frac * 100, 1)}% ${tt.flooded}` : ""}</p>` : ""}`;
+    countTo(box.querySelector(".num"), pct, v => nf(Math.round(v)));
+    requestAnimationFrame(() => requestAnimationFrame(() => { box.querySelector(".meter span").style.width = `${Math.max(2, pct)}%`; }));
   }
-  const v = x => x == null ? "–" : `${nf(x, 1)}`;
-  $("d-past").textContent = v(p.rain_past_72h_mm); $("d-24").textContent = v(p.rain_24h_mm); $("d-72").textContent = v(p.rain_72h_mm);
+  // rain tiles: millimetres, plus the Met Department's word for the next 24 hours
+  const v = (id, x) => { const el = $(id); el.innerHTML = x == null ? "–" : `<b>0</b><em>${tt.mm}</em>`; if (x != null) countTo(el.querySelector("b"), x, y => nf(y, 1)); };
+  v("d-past", p.rain_past_72h_mm); v("d-24", p.rain_24h_mm); v("d-72", p.rain_72h_mm);
+  let rc = $("d-rcls");
+  if (!rc) { rc = document.createElement("div"); rc.id = "d-rcls"; $("d-24").closest(".tiles").after(rc); }
+  const k = rainClass(p.rain_24h_mm);
+  rc.className = `rain-cls lv${k}`;
+  rc.title = tt.rainClsNote;
+  rc.innerHTML = p.rain_24h_mm == null ? "" :
+    `<span class="drops">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= k ? "on" : ""}"></i>`).join("")}</span><b>${tt.rainClasses[k]}</b><small>${tt.nextDays}</small>`;
 }
 
 async function loadOutlook(id) {
@@ -698,14 +743,31 @@ function drawChart(h) {
   ctx.textAlign = "left";
 }
 
+// rough area of an upazila in km² (fine at this size: plane geometry with the latitude correction)
+function areaKm2(g) {
+  if (!g) return 0;
+  const polys = g.type === "Polygon" ? [g.coordinates] : g.coordinates;
+  let a = 0;
+  polys.forEach(pl => pl.forEach((ring, ri) => {
+    let s = 0;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) s += (ring[j][0] - ring[i][0]) * (ring[j][1] + ring[i][1]);
+    const lat = ring[0][1] * Math.PI / 180, km2 = Math.abs(s / 2) * 111.32 * Math.cos(lat) * 110.57;
+    a += ri === 0 ? km2 : -km2;
+  }));
+  return a;
+}
 async function showUpstream(id) {
   const res = await fetch(`/api/v1/nodes/${id}/upstream`), tt = t();
   if (!res.ok || selected?.id !== id) return;
   const u = await res.json();
-  $("d-up").innerHTML = `<dl class="kv">
-    <dt>${tt.upArea}</dt><dd>${nf(u.catchment_km2)} km²</dd>
-    <dt>${tt.upOut}</dt><dd>${nf(u.outside_bd_km2)} km² (${nf(u.catchment_km2 ? 100 * u.outside_bd_km2 / u.catchment_km2 : 0)}%)</dd>
-    <dt>${tt.upRain}</dt><dd>${u.rain_72h_mm == null ? "–" : `${nf(u.rain_72h_mm, 1)} ${tt.mm}`}</dd></dl>`;
+  const pct = u.catchment_km2 ? Math.round(100 * u.outside_bd_km2 / u.catchment_km2) : 0;
+  const own = areaKm2(data.features.find(f => f.properties.id === id)?.geometry);
+  const times = own > 0 && u.catchment_km2 / own >= 1.5 ? nf(Math.round(u.catchment_km2 / own)) : null;
+  $("d-up").innerHTML = `<p class="say-sm">${tt.upSay(nf(u.catchment_km2), times)}</p>
+    <div class="split"><span class="in" style="width:${100 - pct}%"></span><span class="out" style="width:${pct}%"></span></div>
+    <div class="split-key"><span><i class="in"></i>${tt.inside} ${nf(100 - pct)}%</span><span><i class="out"></i>${tt.outside} ${nf(pct)}%</span></div>
+    <p class="say-sm">${tt.upOutSay(pct, nf(pct))}</p>
+    ${u.rain_72h_mm == null ? "" : `<p class="say-sm">${tt.upRainSay(`${nf(u.rain_72h_mm, 1)} ${tt.mm}`)}</p>`}`;
   if (hiLayer) hiLayer.remove();
   if (!basinData) basinData = await (await fetch("/api/v1/basins")).json();
   const ids = new Set(u.basins);
@@ -722,9 +784,14 @@ async function showCycloneHistory(id) {
   if (!r.within_150km) return;
   const strong = r.cyclones.filter(c => c.max_wind_kt && c.min_km <= 100)
     .sort((a, b) => b.max_wind_kt - a.max_wind_kt).slice(0, 3);
-  $("d-cyc").innerHTML = `<p class="note">${tt.cycHist(nf(r.within_50km), nf(r.within_150km))}</p>` + (strong.length
-    ? `<dl class="kv"><dt style="grid-column:1/3;font-weight:600;color:var(--text)">${tt.cycStrongest}</dt>${strong.map(c =>
-        `<dt>${c.name} ${c.season} · ${nf(c.min_km)} km</dt><dd>${c.max_wind_kt} kt · ${Math.round(c.max_wind_kt * 1.852)} km/h</dd>`).join("")}</dl>`
+  const CK = [17, 28, 34, 48, 64, 90, 120], CC = ["#7fd0a8", "#3fb6a8", "#f2d43a", "#f39a2b", "#e8562c", "#c41d4a", "#7b1fa2"];
+  const ci = kt => CK.filter(k => kt >= k).length - 1;
+  const yr = y => lang === "bn" ? String(y).replace(/\d/g, x => "০১২৩৪৫৬৭৮৯"[x]) : y;
+  $("d-cyc").innerHTML = `<p class="say-sm">${tt.cycSay(nf(r.within_50km), nf(r.within_150km))}</p>` + (strong.length
+    ? `<p class="mini-h">${tt.cycStrongest}</p><ul class="cyc-mini">${strong.map(c => `<li style="--c:${CC[ci(c.max_wind_kt)] || "#9aa5ae"}">
+        <span class="spin" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 4c-6 0-10 3-12 7 4-3 9-3 12 0 3 3 3 8 0 11a8 8 0 0 1-3 2c6 1 13-3 14-10 0-6-5-10-11-10z" fill="currentColor"/><path d="M20 36c6 0 10-3 12-7-4 3-9 3-12 0-3-3-3-8 0-11a8 8 0 0 1 3-2c-6-1-13 3-14 10 0 6 5 10 11 10z" fill="currentColor" opacity=".75"/></svg></span>
+        <div><b>${c.name === "Unnamed" ? yr(c.season) : `${c.name} ${yr(c.season)}`}</b><em>${tt.cats[ci(c.max_wind_kt)] || ""}</em>
+        <span>${tt.kmAway(nf(c.min_km))} · ${nf(Math.round(c.max_wind_kt * 1.852))} ${tt.kmh}</span></div></li>`).join("")}</ul>`
     : "");
 }
 
@@ -738,7 +805,7 @@ async function showHospitals(id) {
   if (!r.hospitals.length) return;
   $("d-hosp").innerHTML = r.hospitals.map(h => `<li><b>${(lang === "bn" && h.name_bn) || h.name}</b>
     <span class="meta">${h.type}${h.beds ? ` · ${nf(h.beds)} ${tt.beds}` : ""}</span><br>
-    ${h.mobile ? `<a href="tel:${h.mobile}">📞 ${tt.call} ${h.mobile}</a> · ` : ""}<a href="${h.profile_url}" target="_blank" rel="noopener">${tt.profile}</a></li>`).join("");
+    <span class="hosp-act">${h.mobile ? `<a class="call" href="tel:${h.mobile}">📞 ${tt.call} ${h.mobile}</a>` : ""}<a href="${h.profile_url}" target="_blank" rel="noopener">${tt.profile} ↗</a></span></li>`).join("");
   $("hosp-note").textContent = tt.hospNote(r.fetched_at ? dateFmt(r.fetched_at) : "–");
   hospLayer = L.layerGroup(r.hospitals.map(h => L.marker([h.lat, h.lon], {
     icon: L.divIcon({ className: "hosp-pin", html: "🏥", iconSize: [26, 26], iconAnchor: [13, 13] }) })

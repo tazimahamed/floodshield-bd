@@ -219,81 +219,75 @@ async function loadSea() {
   swell.update();
 }
 
-/* moving swell: short crests drifting the way the waves travel, only over the sea */
+/* moving sea: a wave texture painted on the real sea area (OpenStreetMap ocean polygons, drawn in the river layer),
+   travelling the way the real waves travel (Open-Meteo marine), with longer waves moving faster as on real water.
+   The real wave height sets how bright and choppy it looks; the wave period sets the pace. */
 const swell = (() => {
-  const cv = document.createElement("canvas"); cv.className = "swell"; cv.setAttribute("aria-hidden", "true");
-  map.getContainer().appendChild(cv);
-  const ctx = cv.getContext("2d");
-  const lons = SEA.map(p => p[0]), lats = SEA.map(p => p[1]);
-  const box = [Math.min(...lons), Math.min(...lats), Math.max(...lons), Math.max(...lats)];
-  let crests = [], dir = 180, height = 0.8, period = 8, on = true, moving = false, W = 0, H = 0, last = 0;
+  const N = 192, im = new ImageData(N, N), d = im.data;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const spot = () => {
-    for (let k = 0; k < 40; k++) {
-      const lon = box[0] + Math.random() * (box[2] - box[0]), lat = box[1] + Math.random() * (box[3] - box[1]);
-      if (insidePoly(lon, lat, SEA)) return { lon, lat };
-    }
-    return { lon: 89.9, lat: 19.7 };
-  };
-  // tiny glints of light on the water (sun or moon on wave faces), drifting with the swell
-  const seed = () => { crests = Array.from({ length: 180 }, () => ({ ...spot(), life: Math.random(), r: 0.5 + Math.random() * 0.8, sp: 0.6 + Math.random() * 0.8 })); };
-  const size = () => {
-    const d = Math.min(2, devicePixelRatio || 1); W = map.getContainer().clientWidth; H = map.getContainer().clientHeight;
-    cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
-  };
-  let phase = 0;
-  function frame(ts) {
-    requestAnimationFrame(frame);
-    const dt = Math.min(0.05, (ts - last) / 1000 || 0); last = ts;
-    if (!on || moving || document.hidden) return;
-    ctx.clearRect(0, 0, W, H);
-    const toward = (dir + 180) * Math.PI / 180, ux = Math.sin(toward), uy = -Math.cos(toward);  // screen: y grows down
-    const t = ts / 1000, hgt = Math.min(height, 3);
-    // swell: long, gently wavering lines across the travel direction, moving at a pace set by the real wave period
-    const gap = 20, pace = reduce ? 0 : 5 + period * 1.1;  // pixels per second
-    phase = (phase + pace * dt) % gap;
-    ctx.save();
-    ctx.beginPath();
-    SEA.forEach(([lon, lat], i) => { const q = map.latLngToContainerPoint([lat, lon]); i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); });
-    ctx.closePath(); ctx.clip();
-    const cx = W / 2, cy = H / 2, diag = Math.hypot(W, H) / 2 + gap, n = Math.ceil(diag / gap);
-    const amp = 2.4 + hgt * 1.6, light = 0.1 + hgt * 0.05;
-    ctx.lineWidth = 1.3;
-    for (let k = -n; k <= n; k++) {
-      const off = k * gap + phase, ox = cx + ux * off, oy = cy + uy * off;
-      ctx.beginPath();
-      for (let s = -diag; s <= diag; s += 18) {
-        // sum of two sines along the line keeps the crests irregular, like real swell seen from far above
-        const w = amp * (Math.sin(s * 0.021 + k * 1.7 + t * 0.5) * 0.7 + Math.sin(s * 0.047 - k * 0.9 + t * 0.8) * 0.3);
-        const x = ox - uy * s + ux * w, y = oy + ux * s + uy * w;
-        s === -diag ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  const fps = matchMedia("(pointer: coarse)").matches ? 8 : 14;
+  let dir = 180, height = 0.8, period = 8, on = true, gl = null, comps = [], last = 0, t = 0;
+  function build() {
+    const toward = (dir + 180) * Math.PI / 180, ux = Math.sin(toward), uy = -Math.cos(toward);  // image y grows down
+    const rot = deg => { const r = deg * Math.PI / 180; return [ux * Math.cos(r) - uy * Math.sin(r), ux * Math.sin(r) + uy * Math.cos(r)]; };
+    // [cycles per tile, angle off the main direction, amplitude]: swell trains travelling nearly the same way give
+    // long, thin, broken crest lines (as real swell looks from above); a little cross chop keeps it from looking ruled
+    comps = [[6, 0, 1], [8, 7, 0.75], [11, -9, 0.6], [15, 14, 0.38], [21, -22, 0.24], [29, 40, 0.12], [37, -55, 0.08]].map(([n, deg, a], i) => {
+      const [x, y] = rot(deg); let kx = Math.round(x * n), ky = Math.round(y * n);
+      if (!kx && !ky) ky = n;
+      return { kx: 6.2832 * kx / N, ky: 6.2832 * ky / N, a, p0: (i * 2.399) % 6.2832, w: Math.sqrt(Math.hypot(kx, ky)) };
+    });
+  }
+  function paint() {
+    const A = comps.reduce((s, c) => s + c.a, 0), hgt = Math.min(height, 3);
+    const crest = 0.2 - hgt * 0.03, light = 70 + hgt * 30, dark = 38 + hgt * 14, pace = 0.42 * Math.sqrt(period / 8);
+    const ph = comps.map(c => c.w * pace * t - c.p0);
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        let h = 0;
+        for (let k = 0; k < comps.length; k++) { const c = comps[k]; h += c.a * Math.sin(c.kx * x + c.ky * y - ph[k]); }
+        h /= A;
+        const i = (y * N + x) * 4;
+        if (h > crest) {             // light catching the thin tops of the crests
+          const q = Math.min(1, (h - crest) / (0.9 - crest));
+          d[i] = 230; d[i + 1] = 247; d[i + 2] = 255; d[i + 3] = Math.min(220, q * Math.sqrt(q) * light * 1.6);
+        } else if (h < -0.15) {      // the shaded back of each wave
+          const q = (-h - 0.15) / 0.85;
+          d[i] = 2; d[i + 1] = 26; d[i + 2] = 52; d[i + 3] = q * dark;
+        } else d[i + 3] = 0;
       }
-      const fade = 0.55 + 0.45 * Math.sin(k * 2.3 + t * 0.3);
-      ctx.strokeStyle = `rgba(200,232,255,${(light * fade).toFixed(3)})`;
-      ctx.stroke();
-    }
-    ctx.restore();
-    const pxPerDeg = 256 * Math.pow(2, map.getZoom()) / 360;
-    for (const c of crests) {
-      if (!reduce) { const m = pace * c.sp * dt / pxPerDeg; c.lon += ux * m; c.lat -= uy * m; c.life += dt * 0.35; }
-      if (c.life > 1 || !insidePoly(c.lon, c.lat, SEA)) Object.assign(c, spot(), { life: 0 });
-      const q = map.latLngToContainerPoint([c.lat, c.lon]);
-      if (q.x < -5 || q.y < -5 || q.x > W + 5 || q.y > H + 5) continue;
-      const a = Math.pow(Math.sin(c.life * Math.PI), 3) * (0.25 + hgt * 0.1);
-      ctx.fillStyle = `rgba(235,248,255,${a.toFixed(2)})`;
-      ctx.beginPath(); ctx.arc(q.x, q.y, c.r, 0, 6.283); ctx.fill();
     }
   }
-  map.on("zoomstart", () => { moving = true; ctx.clearRect(0, 0, W, H); });
-  map.on("zoomend", () => { moving = false; });
-  new ResizeObserver(size).observe(map.getContainer());
-  size(); seed(); requestAnimationFrame(frame);
+  function attach() {
+    const m = typeof waterLayer !== "undefined" && waterLayer && waterLayer.getMaplibreMap && waterLayer.getMaplibreMap();
+    if (!m || !m.getStyle || !m.getSource("osm")) return false;
+    if (gl === m && m.getLayer("sea-waves")) return true;
+    try {
+      gl = m; build(); paint();
+      if (m.hasImage("sea-waves")) m.updateImage("sea-waves", im); else m.addImage("sea-waves", im);
+      m.addLayer({ id: "sea-waves", type: "fill", source: "osm", "source-layer": "water", filter: ["==", ["get", "class"], "ocean"],
+        layout: { visibility: on ? "visible" : "none" }, paint: { "fill-pattern": "sea-waves" } }, "river-glow");
+      return true;
+    } catch (e) { gl = null; return false; }
+  }
+  function frame(ts) {
+    requestAnimationFrame(frame);
+    if (!on || document.hidden || !attach()) return;
+    if (ts - last < 1000 / fps) return;
+    const dt = Math.min(0.2, (ts - last) / 1000 || 0); last = ts;
+    if (reduce) return;
+    t += dt; paint();
+    gl.updateImage("sea-waves", im); gl.triggerRepaint();
+  }
+  build(); requestAnimationFrame(frame);
   return {
     update() {
       const s = coastSea?.[PLACES.length];
-      if (s && s.current && s.current.wave_height != null) { dir = s.current.wave_direction; height = s.current.wave_height; period = s.current.wave_period || 8; }
+      if (s && s.current && s.current.wave_height != null) {
+        dir = s.current.wave_direction; height = s.current.wave_height; period = s.current.wave_period || 8; build();
+      }
     },
-    show(v) { on = v; cv.hidden = !v; },
+    show(v) { on = v; if (gl && gl.getLayer("sea-waves")) gl.setLayoutProperty("sea-waves", "visibility", v ? "visible" : "none"); },
   };
 })();
 
