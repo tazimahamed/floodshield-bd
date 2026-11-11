@@ -30,8 +30,14 @@ const T = {
     hintClick: "Click the map to move and zoom it", hintTap: "Tap the map to move it", baseSat: "Satellite", baseMap: "Map",
     mapSrc: "Satellite, roads and place names: Esri · Relief: Mapzen Terrain Tiles (AWS), height shown 4× taller · Rivers: HydroSHEDS · Hospitals: DGHS registry · Roads, rivers and canals: OpenStreetMap via OpenFreeMap (small khals may be missing) · Rain and wind: Open-Meteo, right now, checked every 10 minutes. Rain and wind move only when there really is rain or wind; they show how strong and which way, not where each drop falls.",
     tgBtn: "Get flood alerts for this upazila on Telegram", ffwcBtn: "Official river levels (FFWC) ↗", wxBtn: "Rain & wind", lgFlow: "Light moving on rivers and canals shows which way the water flows",
-    wxRain: v => `Raining now: ${v} mm/h`, wxDry: "No rain right now", wxWind: (v, d, g) => `Wind ${v} km/h from the ${d}, gusts ${g}`, wxCalm: "Calm, almost no wind",
-    wxAt: tm => `Updated ${tm} · Open-Meteo`,
+    wxRain: v => `Rain likely now: about ${v} mm/h`, wxDry: "No rain now, the models say", wxWind: (v, d, g) => `Wind ${v} km/h from the ${d}, gusts ${g}`, wxCalm: "Calm, almost no wind",
+    wxAt: tm => `updated ${tm} · Open-Meteo`,
+    lgRaised: "This upazila is drawn raised so it stands out; it is not really higher",
+    wxCloud: p => `Cloud over ${p}% of the sky`, wx24: v => `Last 24 hours: ${v} mm of rain`,
+    wxHourRain: v => `Rain likely in that hour: about ${v} mm`, wxHourDry: "No rain in that hour, the models say", wxAtHour: d => `🕒 ${d}`,
+    wxAgree: (n, of) => `${n} of ${of} weather models agree`, wxMaybe: of => `Rain not certain: only 1 of ${of} weather models shows any`,
+    wxReplay: "Replay the last 24 hours", wxLive: "Now",
+    wxNote: "Rain, wind and cloud are estimates from weather models (ECMWF, GFS and ICON, through Open-Meteo), not measurements from a rain gauge here. Rain is shown only when at least two of the three models agree. A short local shower can still be missed, so look outside too.",
     dirs: ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"],
     lgBoundary: "Upazila boundary", lgRivers: n => `Rivers and streams (${n} stretches)`, lgNoRivers: "No large river mapped inside",
     lgHosp: n => `Government hospitals (${n})`, lgNoHosp: "No government hospital with a checked location here", lgRelief: "Hills and high ground",
@@ -76,8 +82,14 @@ const T = {
     hintClick: "ম্যাপ নাড়াতে ও জুম করতে একবার ক্লিক করুন", hintTap: "ম্যাপ নাড়াতে একবার ট্যাপ করুন", baseSat: "স্যাটেলাইট", baseMap: "ম্যাপ",
     mapSrc: "স্যাটেলাইট, রাস্তা ও জায়গার নাম: Esri · উঁচু-নিচু: Mapzen Terrain Tiles (AWS), উচ্চতা ৪ গুণ বাড়িয়ে দেখানো · নদী: HydroSHEDS · হাসপাতাল: স্বাস্থ্য অধিদপ্তরের রেজিস্ট্রি · রাস্তা, নদী ও খাল: OpenStreetMap (OpenFreeMap-এর মাধ্যমে), ছোট খাল বাদ থাকতে পারে · বৃষ্টি ও বাতাস: Open-Meteo, এই মুহূর্তের, প্রতি ১০ মিনিটে মিলিয়ে নেওয়া হয়। সত্যিই বৃষ্টি বা বাতাস থাকলে তবেই নড়ে; কতটা জোরে ও কোন দিকে তা দেখায়, ঠিক কোথায় ফোঁটা পড়ছে তা নয়।",
     tgBtn: "এই উপজেলার বন্যা সতর্কবার্তা Telegram-এ পান", ffwcBtn: "সরকারি নদীর পানির স্তর (FFWC) ↗", wxBtn: "বৃষ্টি ও বাতাস", lgFlow: "নদী ও খালের উপর চলমান আলো দেখায় পানি কোন দিকে বইছে",
-    wxRain: v => `এখন বৃষ্টি হচ্ছে: ${v} মিমি/ঘণ্টা`, wxDry: "এখন বৃষ্টি নেই", wxWind: (v, d, g) => `বাতাস ${v} কিমি/ঘণ্টা, ${d} দিক থেকে, দমকা ${g}`, wxCalm: "বাতাস প্রায় নেই",
+    wxRain: v => `এখন সম্ভবত বৃষ্টি হচ্ছে: প্রায় ${v} মিমি/ঘণ্টা`, wxDry: "মডেল অনুযায়ী এখন বৃষ্টি নেই", wxWind: (v, d, g) => `বাতাস ${v} কিমি/ঘণ্টা, ${d} দিক থেকে, দমকা ${g}`, wxCalm: "বাতাস প্রায় নেই",
     wxAt: tm => `হালনাগাদ ${tm} · Open-Meteo`,
+    lgRaised: "চেনার সুবিধার জন্য উপজেলাটি উঁচু করে আঁকা; আসলে এটি উঁচু নয়",
+    wxCloud: p => `আকাশের ${p}% মেঘে ঢাকা`, wx24: v => `গত ২৪ ঘণ্টায় বৃষ্টি: ${v} মিমি`,
+    wxHourRain: v => `ওই ঘণ্টায় সম্ভবত বৃষ্টি: প্রায় ${v} মিমি`, wxHourDry: "মডেল অনুযায়ী ওই ঘণ্টায় বৃষ্টি হয়নি", wxAtHour: d => `🕒 ${d}`,
+    wxAgree: (n, of) => `${of}টি আবহাওয়া মডেলের ${n}টি একমত`, wxMaybe: of => `বৃষ্টি নিশ্চিত নয়: ${of}টি মডেলের মাত্র ১টিতে বৃষ্টি আছে`,
+    wxReplay: "গত ২৪ ঘণ্টা আবার দেখুন", wxLive: "এখন",
+    wxNote: "বৃষ্টি, বাতাস ও মেঘ আবহাওয়া মডেলের (ECMWF, GFS ও ICON, Open-Meteo-র মাধ্যমে) হিসাব, এখানকার বৃষ্টি মাপার যন্ত্রের মাপ নয়। তিনটি মডেলের অন্তত দুটি একমত হলে তবেই বৃষ্টি দেখানো হয়। তবু অল্প সময়ের স্থানীয় বৃষ্টি বাদ পড়তে পারে, তাই নিজেও বাইরে দেখে নিন।",
     dirs: ["উত্তর", "উত্তর-পূর্ব", "পূর্ব", "দক্ষিণ-পূর্ব", "দক্ষিণ", "দক্ষিণ-পশ্চিম", "পশ্চিম", "উত্তর-পশ্চিম"],
     lgBoundary: "উপজেলার সীমানা", lgRivers: n => `নদী ও খাল (${n}টি অংশ)`, lgNoRivers: "ভেতরে বড় কোনো নদী ম্যাপে নেই",
     lgHosp: n => `সরকারি হাসপাতাল (${n}টি)`, lgNoHosp: "যাচাই করা অবস্থানসহ কোনো সরকারি হাসপাতাল নেই", lgRelief: "পাহাড় ও উঁচু জমি",
@@ -433,7 +445,8 @@ function renderLegend() {
     (MAPINFO.rivers ? item("r", tt.lgRivers(nf(MAPINFO.rivers))) : item("r off", tt.lgNoRivers)) +
     (MAPINFO.hosp ? item("h", tt.lgHosp(nf(MAPINFO.hosp))) : item("h off", tt.lgNoHosp)) +
     (MAPINFO.webgl ? item("t", tt.lgRelief) : "") +
-    (MAPINFO.webgl && MAPINFO.rivers ? item("f", tt.lgFlow) : "");
+    (MAPINFO.webgl && MAPINFO.rivers ? item("f", tt.lgFlow) : "") +
+    (MAPINFO.webgl ? item("u", tt.lgRaised) : "");
   if (WXL) WXL.chip();
   if (MAPINFO.markers) MAPINFO.markers.forEach(([m, h]) => m.getPopup().setHTML(hospPopup(h)));
 }
@@ -461,9 +474,11 @@ async function map3d() {
   outerRings(shape.geometry).forEach(r => r.forEach(([x, y]) => { xs.push(x); ys.push(y); }));
   const bounds = [[Math.min(...xs), Math.min(...ys)], [Math.max(...xs), Math.max(...ys)]];
   const risk = R.current ? RISK_COLOR[R.current.risk] : "#3b9ad6";
-  const dem = { type: "raster-dem", tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"], encoding: "terrarium", tileSize: 256, maxzoom: 14 };
+  // lift the upazila by about 1.2% of its width (before the height exaggeration), so it stands up as a block
+  const widthM = Math.hypot((bounds[1][0] - bounds[0][0]) * 111320 * Math.cos(bounds[0][1] * Math.PI / 180), (bounds[1][1] - bounds[0][1]) * 110540);
+  const dem = raisedDem(shape, Math.max(90, Math.min(380, widthM * 0.012)));
   const map = MAP = new maplibregl.Map({
-    container: "map3d", bounds, fitBoundsOptions: { padding: 36 }, pitch: 58, bearing: -18, maxPitch: 75, maxZoom: 17,
+    container: "map3d", bounds, fitBoundsOptions: { padding: 36 }, pitch: 25, bearing: -50, maxPitch: 75, maxZoom: 18,
     scrollZoom: false, preserveDrawingBuffer: true, attributionControl: { compact: true },
     style: { version: 8, sources: {
         sat: esri("World_Imagery", "Esri, Maxar, Earthstar Geographics"),
@@ -482,18 +497,28 @@ async function map3d() {
   });
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
   map.on("load", () => {
-    map.setTerrain({ source: "dem", exaggeration: exag() });
+    // opening: the camera swings down while the upazila rises out of the ground
+    const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (calm) { map.setTerrain({ source: "dem", exaggeration: exag() }); map.jumpTo({ pitch: 58, bearing: -18 }); }
+    else {
+      rising = true;
+      map.setTerrain({ source: "dem", exaggeration: 0.05 });
+      map.easeTo({ pitch: 58, bearing: -18, duration: 2600, easing: x => 1 - Math.pow(1 - x, 3) });
+      const t0 = performance.now();
+      const rise = now => {
+        const k = Math.min(1, (now - t0 - 500) / 1900), e = k <= 0 ? 0 : 1 - Math.pow(1 - k, 3);
+        if (three) map.setTerrain({ source: "dem", exaggeration: 0.05 + (exag() - 0.05) * e });
+        if (k < 1) requestAnimationFrame(rise); else rising = false;
+      };
+      requestAnimationFrame(rise);
+    }
     const world = [[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]];
     map.addSource("mask", { type: "geojson", data: { type: "Feature", geometry: { type: "Polygon", coordinates: [world, ...outerRings(shape.geometry)] } } });
-    map.addLayer({ id: "mask", type: "fill", source: "mask", paint: { "fill-color": "#0a1722", "fill-opacity": 0.38 } }, "osm-place");
+    map.addLayer({ id: "mask", type: "fill", source: "mask", paint: { "fill-color": "#0a1722", "fill-opacity": 0.5 } }, "osm-place");
     map.addSource("upz", { type: "geojson", data: shape });
-    map.addLayer({ id: "upz-fill", type: "fill", source: "upz", paint: { "fill-color": risk, "fill-opacity": 0.06 } }, "osm-place");
-    // the chosen upazila stands up from the ground as a thin glass slab
-    map.addLayer({ id: "upz-3d", type: "fill-extrusion", source: "upz", paint: {
-      "fill-extrusion-color": "#8fdcff", "fill-extrusion-height": 180, "fill-extrusion-base": 0,
-      "fill-extrusion-opacity": 0.16, "fill-extrusion-vertical-gradient": true } }, "osm-road-label");
-    map.addLayer({ id: "upz-glow", type: "line", source: "upz", paint: { "line-color": "#7fd3ff", "line-width": 10, "line-blur": 8, "line-opacity": 0.75 } }, "osm-road-label");
-    map.addLayer({ id: "upz-line", type: "line", source: "upz", paint: { "line-color": "#ffffff", "line-width": 2.4 } }, "osm-road-label");
+    // the cliff of the raised block: a dark earth band along the edge, then a light rim on top
+    map.addLayer({ id: "upz-cliff", type: "line", source: "upz", paint: { "line-color": "#2b1d12", "line-width": 7, "line-blur": 1.5, "line-opacity": 0.92 } }, "osm-road-label");
+    map.addLayer({ id: "upz-line", type: "line", source: "upz", paint: { "line-color": "#e9f6ff", "line-width": 1, "line-opacity": 0.55 } }, "osm-road-label");
     map.addSource("riv", { type: "geojson", data: rivers });
     map.addLayer({ id: "riv-glow", type: "line", source: "riv", layout: { "line-cap": "round" },
       paint: { "line-color": "#38bdf8", "line-opacity": 0.3, "line-blur": 3, "line-width": ["interpolate", ["linear"], ["get", "order"], 3, 4, 9, 14] } }, "osm-road-casing");
@@ -503,7 +528,7 @@ async function map3d() {
       if (h.lat == null || h.lon == null) return;
       const el = document.createElement("div");
       el.className = "hmk"; el.innerHTML = "<div class=\"hpin\"><span>+</span></div>"; el.title = h.name;
-      const m = new maplibregl.Marker({ element: el, anchor: "bottom" }).setLngLat([h.lon, h.lat])
+      const m = new maplibregl.Marker({ element: el, anchor: "bottom", opacityWhenCovered: "1" }).setLngLat([h.lon, h.lat])
         .setPopup(new maplibregl.Popup({ offset: 26, closeButton: false }).setHTML(hospPopup(h))).addTo(map);
       MAPINFO.markers.push([m, h]);
     });
@@ -512,12 +537,12 @@ async function map3d() {
     const stop = () => { spin = false; };
     ["mousedown", "touchstart", "wheel"].forEach(ev => map.getCanvas().addEventListener(ev, stop, { passive: true }));
     const turn = () => { if (!spin || map.getPitch() < 20) return; map.easeTo({ bearing: map.getBearing() + 12, duration: 6000, easing: x => x }); };
-    map.on("moveend", turn); setTimeout(turn, 900);
+    map.on("moveend", turn);  // the first turn starts when the opening camera move ends
   });
   // hills are drawn 4x taller when seen from far away (Bangladesh is very flat), nearer their real height up close
   const exag = () => { const z = map.getZoom(); return z <= 10 ? 4 : z >= 15 ? 1.3 : 4 - (z - 10) * 0.54; };
-  let three = true;
-  map.on("zoomend", () => { if (three && map.getTerrain()) map.setTerrain({ source: "dem", exaggeration: exag() }); });
+  let three = true, rising = false;
+  map.on("zoomend", () => { if (three && !rising && map.getTerrain()) map.setTerrain({ source: "dem", exaggeration: exag() }); });
   const view = on3 => {
     three = on3;
     $("v3d").classList.toggle("on", on3); $("v2d").classList.toggle("on", !on3);
@@ -539,7 +564,7 @@ async function map3d() {
     map.setPaintProperty("osm-road-casing", "line-opacity", sat ? 0.55 : 0.9);
     map.setPaintProperty("osm-place", "text-color", sat ? "#ffffff" : "#2a2f35");
     map.setPaintProperty("osm-place", "text-halo-color", sat ? "rgba(10,20,30,.85)" : "#ffffff");
-    map.setPaintProperty("mask", "fill-opacity", sat ? 0.38 : 0.18);
+    map.setPaintProperty("mask", "fill-opacity", sat ? 0.5 : 0.22);
   };
   let loaded = false; map.once("load", () => { loaded = true; });
   const ready = f => loaded ? f() : map.once("load", f);
@@ -577,7 +602,7 @@ function osmLayers() {
   const z = (pairs) => ["interpolate", ["exponential", 1.5], ["zoom"], ...pairs];
   // road widths per class at zoom 8 and zoom 18 (pixels)
   const w = (k) => z([8, ["match", cls, ["motorway", "trunk"], 1.6 * k, "primary", 1.2 * k, "secondary", 0.8 * k, "tertiary", 0.5 * k, 0.3 * k],
-                      17, ["match", cls, ["motorway", "trunk"], 12 * k, "primary", 10 * k, "secondary", 8 * k, "tertiary", 6 * k, ["minor", "service"], 4 * k, 2 * k]]);
+                      17, ["match", cls, ["motorway", "trunk"], 12 * k, "primary", 10 * k, "secondary", 8 * k, "tertiary", 6.5 * k, ["minor", "service"], 5 * k, 2.6 * k]]);
   const roads = ["match", cls, ["motorway", "trunk", "primary", "secondary", "tertiary", "minor", "service", "track"], true, false];
   const name = ["coalesce", ["get", "name:latin"], ["get", "name:en"], ["get", "name"]];
   return [
@@ -587,14 +612,14 @@ function osmLayers() {
       paint: { "line-color": ["match", cls, "river", "#5ec8ff", "canal", "#6fd6ff", "#8adfff"], "line-opacity": 0.9,
         "line-width": z([9, ["match", cls, "river", 1.2, 0.5], 17, ["match", cls, "river", 7, "canal", 4, 2]]) } },
     { id: "osm-road-casing", type: "line", source: "osm", "source-layer": "transportation", minzoom: 8, filter: roads,
-      layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#141414", "line-opacity": 0.55, "line-width": w(1.6) } },
+      layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#141414", "line-opacity": 0.75, "line-width": w(1.7) } },
     { id: "osm-road", type: "line", source: "osm", "source-layer": "transportation", minzoom: 8, filter: roads,
       layout: { "line-cap": "round", "line-join": "round" },
       paint: { "line-color": ["match", cls, ["motorway", "trunk"], "#ffb547", "primary", "#ffd36b", "secondary", "#fff0a8", "track", "#e8dcc0", "#ffffff"],
-        "line-opacity": ["match", cls, ["minor", "service", "track"], 0.8, 1], "line-width": w(1) } },
+        "line-opacity": ["match", cls, ["minor", "service", "track"], 0.95, 1], "line-width": w(1) } },
     { id: "osm-road-label", type: "symbol", source: "osm", "source-layer": "transportation_name", minzoom: 11,
       layout: { "symbol-placement": "line", "text-field": ["coalesce", ["get", "ref"], name], "text-font": ["Noto Sans Bold"],
-        "text-size": z([11, 10, 18, 14]), "text-max-angle": 30 },
+        "text-size": z([11, 11, 18, 16]), "text-max-angle": 30 },
       paint: { "text-color": "#1d1d1d", "text-halo-color": "#fff7d6", "text-halo-width": 1.6 } },
     { id: "osm-place", type: "symbol", source: "osm", "source-layer": "place", minzoom: 8,
       // villages only once zoomed in, so the wide view is not buried in names
@@ -767,7 +792,43 @@ function flowLayer(map, rivers, bounds) {
   return { count: () => parts.length, lines: () => lines.length, water: () => [water.length, wparts.length] };
 }
 
-/* ---------- live rain and wind over the map (Open-Meteo, checked every 10 minutes) ---------- */
+/* ---------- the chosen upazila raised as a block: its ground is lifted in the elevation tiles ---------- */
+// The lift is for the eye only (the upazila is not really higher); the legend says so.
+function raisedDem(shape, lift) {
+  const polys = shape.geometry.type === "Polygon" ? [shape.geometry.coordinates] : shape.geometry.coordinates;
+  let x0 = 180, y0 = 90, x1 = -180, y1 = -90;
+  polys.forEach(p => p[0].forEach(([x, y]) => { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }));
+  const SRC = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium";
+  const merc = lat => { const s = Math.sin(lat * Math.PI / 180); return 0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI); };
+  maplibregl.addProtocol("updem", async (params, abort) => {
+    const [z, x, y] = params.url.slice(8).split("/").map(Number);
+    const buf = await (await fetch(`${SRC}/${z}/${x}/${y}.png`, { signal: abort.signal })).arrayBuffer();
+    const n = 2 ** z, px = lon => ((lon + 180) / 360 * n - x) * 256, py = lat => (merc(lat) * n - y) * 256;
+    if (px(x1) < -2 || px(x0) > 258 || py(y0) < -2 || py(y1) > 258) return { data: buf };  // tile does not touch the upazila
+    try {
+      const bmp = await createImageBitmap(new Blob([buf], { type: "image/png" }));
+      const c = document.createElement("canvas"), m = document.createElement("canvas");
+      c.width = c.height = m.width = m.height = 256;
+      const ctx = c.getContext("2d", { willReadFrequently: true }), mx = m.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(bmp, 0, 0);
+      mx.beginPath();
+      polys.forEach(p => p.forEach(ring => { ring.forEach(([lo, la], i) => i ? mx.lineTo(px(lo), py(la)) : mx.moveTo(px(lo), py(la))); mx.closePath(); }));
+      mx.fill("evenodd");
+      const im = ctx.getImageData(0, 0, 256, 256), d = im.data, k = mx.getImageData(0, 0, 256, 256).data;
+      for (let i = 0; i < d.length; i += 4) {
+        if (k[i + 3] < 128) continue;
+        const v = d[i] * 256 + d[i + 1] + d[i + 2] / 256 + lift;   // terrarium: height = R*256 + G + B/256 - 32768
+        d[i] = Math.floor(v / 256); d[i + 1] = Math.floor(v % 256); d[i + 2] = Math.floor((v - Math.floor(v)) * 256);
+      }
+      ctx.putImageData(im, 0, 0);
+      const blob = await new Promise(r => c.toBlob(r, "image/png"));
+      return { data: await blob.arrayBuffer() };
+    } catch (e) { return { data: buf }; }
+  });
+  return { type: "raster-dem", tiles: ["updem://{z}/{x}/{y}"], encoding: "terrarium", tileSize: 256, maxzoom: 14 };
+}
+
+/* ---------- live rain, wind and cloud over the map (Open-Meteo), with a replay of the last 24 hours ---------- */
 let WXL = null;
 function wxLayer(map, [lon, lat]) {
   const wrap = map.getContainer().parentElement, btn = $("bWx");
@@ -776,29 +837,44 @@ function wxLayer(map, [lon, lat]) {
   wrap.append(cv, chip);
   const ctx = cv.getContext("2d");
   let W = 0, H = 0, on = !matchMedia("(prefers-reduced-motion: reduce)").matches, seen = true;
-  let now = null, drops = [], gusts = [], splashes = [];
+  let live = null, hours = [], view = null, timer = 0;   // view: index into hours while replaying, null = now
+  let drops = [], gusts = [], splashes = [], clouds = [];
+  const cur = () => view == null ? live : hours[view];
+  const rate = () => cur() ? cur().rate : 0, kmh = () => cur() ? cur().kmh : 0;
+  // a soft cloud, drawn once and reused
+  const puff = (() => {
+    const c = document.createElement("canvas"); c.width = 260; c.height = 170;
+    const x = c.getContext("2d");
+    [[70, 100, 58], [120, 78, 66], [172, 96, 60], [100, 112, 52], [150, 116, 50], [205, 110, 40], [45, 112, 36]].forEach(([cx, cy, r]) => {
+      const g = x.createRadialGradient(cx, cy, 0, cx, cy, r);
+      g.addColorStop(0, "rgba(255,255,255,.75)"); g.addColorStop(0.6, "rgba(255,255,255,.35)"); g.addColorStop(1, "rgba(255,255,255,0)");
+      x.fillStyle = g; x.beginPath(); x.arc(cx, cy, r, 0, 6.283); x.fill();
+    });
+    return c;
+  })();
   const size = () => {
     const d = Math.min(2, devicePixelRatio || 1); W = wrap.clientWidth; H = wrap.clientHeight;
     cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); seed();
   };
-  const rate = () => now ? now.rate : 0, kmh = () => now ? now.kmh : 0;
-  // wind on screen: it blows toward (from + 180), turned by the map bearing and squashed by the tilt
-  const vec = () => {
-    if (!now || now.kmh < 3) return { x: 0, y: 0, s: 0 };
-    const a = (now.from + 180 - map.getBearing()) * Math.PI / 180, squash = Math.max(0.35, Math.cos(map.getPitch() * Math.PI / 180));
-    return { x: Math.sin(a), y: -Math.cos(a) * squash, s: 8 + now.kmh * 3.2 };
+  // direction on screen: wind blows toward (from + 180), turned by the map bearing and squashed by the tilt
+  const dirVec = () => {
+    const c = cur(); if (!c) return { x: 0, y: 0 };
+    const a = (c.from + 180 - map.getBearing()) * Math.PI / 180, squash = Math.max(0.35, Math.cos(map.getPitch() * Math.PI / 180));
+    return { x: Math.sin(a), y: -Math.cos(a) * squash };
   };
   const drop = () => {
     const big = Math.log2(1 + rate());  // heavier rain: bigger, longer, faster drops
-    return { x: Math.random() * W, y: -Math.random() * H * 0.3, l: 5 + big * 4 + Math.random() * 6, v: 300 + big * 140 + Math.random() * 120,
-      g: H * (0.35 + Math.random() * 0.65), a: 0.25 + Math.random() * 0.4 };
+    return { x: Math.random() * W, y: -Math.random() * H * 0.3, l: 6 + big * 5 + Math.random() * 7, v: 320 + big * 150 + Math.random() * 140,
+      g: H * (0.35 + Math.random() * 0.65), a: 0.3 + Math.random() * 0.45 };
   };
   function seed() {
-    const area = W * H / (640 * 460), r = rate(), k = kmh();
-    const nd = r < 0.05 ? 0 : Math.round(Math.min(420, 20 + r * 55) * area);
+    const area = W * H / (640 * 460), r = rate(), k = kmh(), cc = cur() ? cur().cloud || 0 : 0;
+    const nd = r < 0.05 ? 0 : Math.round(Math.min(480, 30 + r * 70) * area);
     drops = Array.from({ length: nd }, () => { const d = drop(); d.y = Math.random() * d.g; return d; });
     const ng = k < 3 ? 0 : Math.round(Math.min(150, (k - 2) * 6) * area);
     gusts = Array.from({ length: ng }, () => ({ x: Math.random() * W, y: Math.random() * H, ph: Math.random() * 6.3, life: Math.random() }));
+    const nc = Math.round(cc / 100 * 9 * Math.max(0.6, area));
+    clouds = Array.from({ length: nc }, () => ({ x: Math.random() * (W + 260) - 130, y: Math.random() * H * 0.8 - 40, s: 0.7 + Math.random() * 0.9, a: 0.3 + Math.random() * 0.3 }));
     splashes = [];
   }
   let last = 0;
@@ -807,74 +883,143 @@ function wxLayer(map, [lon, lat]) {
     const dt = Math.min(0.05, (ts - last) / 1000 || 0); last = ts;
     if (!on || !seen || document.hidden) return;
     ctx.clearRect(0, 0, W, H);
-    const w = vec(), t = ts / 1000, k = kmh();
+    const v = dirVec(), k = kmh(), s = k < 3 ? 0 : 8 + k * 3.2, t = ts / 1000, r = rate();
+    if (r >= 0.05) { ctx.fillStyle = `rgba(20,32,48,${Math.min(0.28, 0.06 + r * 0.02)})`; ctx.fillRect(0, 0, W, H); }  // rain dims the light
     ctx.lineCap = "round";
-    // wind: faint streaks drifting with the wind; stronger wind, more and brighter streaks
     const wa = Math.min(1, k / 18) * 0.7;
     for (const g of gusts) {
-      const wob = Math.sin(t * 1.3 + g.ph) * 0.22, cx = w.x * Math.cos(wob) - w.y * Math.sin(wob), cy = w.x * Math.sin(wob) + w.y * Math.cos(wob);
-      g.x += cx * w.s * dt; g.y += cy * w.s * dt; g.life += dt * 0.35;
+      const wob = Math.sin(t * 1.3 + g.ph) * 0.22, cx = v.x * Math.cos(wob) - v.y * Math.sin(wob), cy = v.x * Math.sin(wob) + v.y * Math.cos(wob);
+      g.x += cx * s * dt; g.y += cy * s * dt; g.life += dt * 0.35;
       if (g.life > 1 || g.x < -40 || g.x > W + 40 || g.y < -40 || g.y > H + 40) { g.x = Math.random() * W; g.y = Math.random() * H; g.life = 0; }
-      const a = Math.sin(g.life * Math.PI) * wa, len = 18 + w.s * 0.5;
+      const a = Math.sin(g.life * Math.PI) * wa, len = 18 + s * 0.5;
       const grd = ctx.createLinearGradient(g.x - cx * len, g.y - cy * len, g.x, g.y);
       grd.addColorStop(0, "rgba(255,255,255,0)"); grd.addColorStop(1, `rgba(255,255,255,${a.toFixed(2)})`);
       ctx.strokeStyle = grd; ctx.lineWidth = 1.6;
       ctx.beginPath(); ctx.moveTo(g.x - cx * len, g.y - cy * len); ctx.lineTo(g.x, g.y); ctx.stroke();
     }
-    // rain: thin falling streaks slanted by the wind, a small ring where each one lands
-    const slant = w.x * Math.min(0.55, w.s / 170);
+    const slant = v.x * Math.min(0.55, s / 170);
     for (const d of drops) {
       d.y += d.v * dt; d.x += slant * d.v * dt;
       if (d.y > d.g) {
-        if (splashes.length < 160) splashes.push({ x: d.x, y: d.y, life: 0, r: 2 + Math.random() * 3 + Math.log2(1 + rate()) });
+        if (splashes.length < 200) splashes.push({ x: d.x, y: d.y, life: 0, r: 2 + Math.random() * 3 + Math.log2(1 + r) });
         Object.assign(d, drop());
       }
       if (d.x > W) d.x -= W; else if (d.x < 0) d.x += W;
-      ctx.strokeStyle = `rgba(200,230,255,${d.a.toFixed(2)})`; ctx.lineWidth = 1;
+      ctx.strokeStyle = `rgba(205,232,255,${d.a.toFixed(2)})`; ctx.lineWidth = 1.1;
       ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x - slant * d.l, d.y - d.l); ctx.stroke();
     }
     for (let i = splashes.length - 1; i >= 0; i--) {
-      const s = splashes[i]; s.life += dt * 3;
-      if (s.life >= 1) { splashes.splice(i, 1); continue; }
-      ctx.strokeStyle = `rgba(215,238,255,${(0.5 * (1 - s.life)).toFixed(2)})`; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.ellipse(s.x, s.y, s.r * (0.4 + s.life), s.r * 0.35 * (0.4 + s.life), 0, 0, 6.283); ctx.stroke();
+      const p = splashes[i]; p.life += dt * 3;
+      if (p.life >= 1) { splashes.splice(i, 1); continue; }
+      ctx.strokeStyle = `rgba(220,240,255,${(0.55 * (1 - p.life)).toFixed(2)})`; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r * (0.4 + p.life), p.r * 0.35 * (0.4 + p.life), 0, 0, 6.283); ctx.stroke();
     }
+    // clouds: as many as the sky is covered, drifting with the wind, with a soft shadow on the ground
+    const cs = 5 + k * 0.9;
+    for (const c of clouds) {
+      c.x += v.x * cs * dt; c.y += v.y * cs * dt;
+      const w = 260 * c.s, h = 170 * c.s;
+      if (c.x < -w) c.x = W + 10; else if (c.x > W + 10) c.x = -w;
+      if (c.y < -h) c.y = H * 0.85; else if (c.y > H * 0.9) c.y = -h;
+      ctx.globalAlpha = c.a * 0.35; ctx.filter = "brightness(0)";
+      ctx.drawImage(puff, c.x + 26, c.y + 60, w, h * 0.8);
+      ctx.filter = "none"; ctx.globalAlpha = c.a * (r >= 0.05 ? 0.8 : 1);
+      ctx.drawImage(puff, c.x, c.y, w, h);
+    }
+    ctx.globalAlpha = 1;
   }
+  const hm = ts => new Date(ts).toLocaleTimeString(loc(), { hour: "numeric", minute: "2-digit", timeZone: "Asia/Dhaka" });
+  const dhm = ts => new Date(ts).toLocaleString(loc(), { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Dhaka" });
   function renderChip() {
-    const tt = t();
+    const tt = t(), c = cur();
     btn.textContent = tt.wxBtn;
-    if (!now) { chip.innerHTML = ""; chip.hidden = true; return; }
-    const rain = `<span class="wr">${now.rate >= 0.05 ? tt.wxRain(nf(now.rate, now.rate < 10 ? 1 : 0)) : tt.wxDry}</span>`;
-    const wd = `<span class="ww">${now.kmh < 3 ? tt.wxCalm : tt.wxWind(nf(Math.round(now.kmh)), tt.dirs[Math.round(now.from / 45) % 8], nf(Math.round(now.gust)))}</span>`;
-    const at = new Date(now.time).toLocaleTimeString(loc(), { hour: "numeric", minute: "2-digit", timeZone: "Asia/Dhaka" });
-    chip.innerHTML = rain + wd + `<small class="wt">${tt.wxAt(at)}</small>`; chip.hidden = false;
+    if (!c) { chip.innerHTML = ""; chip.hidden = true; return; }
+    const replay = view != null, r1 = nf(c.rate, c.rate < 10 ? 1 : 0);
+    const how = c.n == null ? "" : ` (${tt.wxAgree(nf(c.n), nf(c.of))})`;
+    const rain = `<span class="wr${c.rate < 0.05 && c.n === 1 ? " maybe" : ""}">${c.rate >= 0.05 ? (replay ? tt.wxHourRain(r1) : tt.wxRain(r1)) + how
+      : c.n === 1 ? tt.wxMaybe(nf(c.of)) : (replay ? tt.wxHourDry : tt.wxDry)}</span>`;
+    const wd = `<span class="ww">${c.kmh < 3 ? tt.wxCalm : tt.wxWind(nf(Math.round(c.kmh)), tt.dirs[Math.round(c.from / 45) % 8], nf(Math.round(c.gust)))}</span>`;
+    const cl = c.cloud == null ? "" : `<span class="wc">${tt.wxCloud(nf(Math.round(c.cloud)))}</span>`;
+    const sum = hours.reduce((a, h) => a + h.rate, 0);
+    chip.innerHTML = (replay ? `<span class="wh">${tt.wxAtHour(dhm(c.time))}</span>` : "") + rain + wd + cl +
+      (replay ? "" : `<small class="wt">${tt.wx24(nf(sum, 1))} · ${tt.wxAt(hm(c.time))}</small>`);
+    chip.hidden = false;
+    $("wxPlay").title = tt.wxReplay; $("wxLive").textContent = tt.wxLive; $("wxNote").textContent = tt.wxNote;
+    $("wxTime").textContent = replay ? dhm(c.time) : tt.wxLive;
+  }
+  function renderBars() {
+    const max = Math.max(0.5, ...hours.map(h => h.rate));
+    $("wxBars").innerHTML = hours.map((h, i) => `<i class="${i === view ? "on" : ""}" style="height:${Math.max(4, h.rate / max * 100)}%;${h.rate >= 0.05 ? "" : "opacity:.25"}" title="${dhm(h.time)} · ${nf(h.rate, 1)} mm"></i>`).join("");
+  }
+  function show(i) {  // i = hour index, or null for now
+    view = i == null || i >= hours.length ? null : i;
+    $("wxRange").value = view == null ? hours.length : view;
+    $("wxLive").classList.toggle("on", view == null);
+    seed(); renderChip(); renderBars();
+  }
+  function stop() { clearInterval(timer); timer = 0; $("wxPlay").textContent = "▶"; }
+  function play() {
+    if (timer) { stop(); return; }
+    if (!hours.length) return;
+    if (!on) setOn(true);
+    let i = view == null ? 0 : view;
+    show(i); $("wxPlay").textContent = "❚❚";
+    timer = setInterval(() => { i += 1; if (i >= hours.length) { stop(); show(null); } else show(i); }, 1100);
   }
   const setOn = v => { on = v; btn.classList.toggle("on", on); cv.hidden = !on; };
   btn.hidden = false; btn.onclick = () => setOn(!on); setOn(on);
+  $("wxPlay").onclick = play;
+  $("wxLive").onclick = () => { stop(); show(null); };
+  $("wxRange").oninput = e => { stop(); show(+e.target.value); };
   async function check() {
     try {
       const j = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(3)}&longitude=${lon.toFixed(3)}` +
-        `&current=precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=kmh&timezone=GMT`).then(r => r.ok ? r.json() : null);
+        `&current=precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover` +
+        `&hourly=precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover&past_days=1&forecast_days=1&wind_speed_unit=kmh&timezone=GMT`)
+        .then(r => r.ok ? r.json() : null);
       const c = j && j.current;
       if (!c || c.wind_speed_10m == null) return;
       // "current" precipitation is the total of the last interval (15 min); show it as a rate per hour
       const per = 3600 / (c.interval || 900);
-      now = { rate: (c.precipitation || 0) * per, kmh: c.wind_speed_10m, from: c.wind_direction_10m || 0, gust: c.wind_gusts_10m || c.wind_speed_10m,
-              time: Date.parse(c.time + "Z") };
-      seed(); renderChip();
+      live = { rate: (c.precipitation || 0) * per, kmh: c.wind_speed_10m, from: c.wind_direction_10m || 0, gust: c.wind_gusts_10m || c.wind_speed_10m,
+               cloud: c.cloud_cover, time: Date.parse(c.time + "Z") };
+      const h = j.hourly, nowMs = Date.now();
+      // rain: three independent weather models (Europe's ECMWF, the US GFS, Germany's ICON). It counts as rain only when
+      // at least two of them give 0.2 mm or more for the hour; one model's trace drizzle is not shown as rain.
+      const MODELS = ["ecmwf_ifs025", "gfs_seamless", "icon_seamless"], agree = {};
+      try {
+        const m = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(3)}&longitude=${lon.toFixed(3)}` +
+          `&hourly=precipitation&models=${MODELS.join(",")}&past_days=1&forecast_days=1&timezone=GMT`).then(r => r.ok ? r.json() : null);
+        if (m && m.hourly) m.hourly.time.forEach((x, i) => {
+          const v = MODELS.map(k => m.hourly[`precipitation_${k}`]?.[i]).filter(q => q != null).sort((a, b) => a - b);
+          if (v.length >= 2) agree[x] = { n: v.filter(q => q >= 0.2).length, of: v.length, med: v[Math.floor(v.length / 2)] };
+        });
+      } catch (e) { /* fall back to the single best-match model below */ }
+      const rainAt = (iso, single) => {
+        const a = agree[iso];
+        if (!a) return { rate: single >= 0.2 ? single : 0, n: null, of: null };
+        return { rate: a.n >= 2 ? Math.max(a.med, 0.2) : 0, n: a.n, of: a.of };
+      };
+      const hourIso = new Date(Math.floor(nowMs / 3600e3) * 3600e3).toISOString().slice(0, 16);
+      Object.assign(live, rainAt(hourIso, live.rate));
+      hours = h.time.map((x, i) => ({ time: Date.parse(x + "Z"), ...rainAt(x, h.precipitation[i] || 0), kmh: h.wind_speed_10m[i] || 0, from: h.wind_direction_10m[i] || 0,
+        gust: h.wind_gusts_10m[i] || 0, cloud: h.cloud_cover[i] })).filter(x => x.time <= nowMs && x.time > nowMs - 24 * 3600e3);
+      $("wxRange").max = hours.length;
+      $("wx-replay").hidden = false;
+      if (!timer) show(view);
     } catch (e) { /* keep the last reading */ }
   }
   new ResizeObserver(size).observe(wrap);
   new IntersectionObserver(es => { seen = es[0].isIntersecting; }).observe(wrap);
   size(); renderChip(); requestAnimationFrame(frame);
   check(); setInterval(() => { if (!document.hidden) check(); }, 10 * 60e3);
-  return { chip: renderChip, rain: () => {}, now: () => now };
+  return { chip: () => { renderChip(); renderBars(); }, rain: () => {}, now: () => live, hours: () => hours, show };
 }
 
 function esri(path, attribution) {
-  // Esri has real imagery to about zoom 17 in rural Bangladesh; past that it serves grey "Map data not yet
-  // available" tiles, so stop there and let MapLibre enlarge the zoom-17 picture instead
-  return { type: "raster", tileSize: 256, maxzoom: 17, attribution,
+  // Esri has real imagery to zoom 18 across Bangladesh (checked at 18 spots); past that it serves grey "Map data not yet
+  // available" tiles, so stop there and let MapLibre enlarge the zoom-18 picture instead
+  return { type: "raster", tileSize: 256, maxzoom: 18, attribution,
     tiles: [`https://server.arcgisonline.com/ArcGIS/rest/services/${path}/MapServer/tile/{z}/{y}/{x}`] };
 }
 

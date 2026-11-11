@@ -469,3 +469,31 @@ body.page::after { content: ""; position: absolute; left: 0; right: 0; top: 300p
 .ffwc-cta:hover { background: var(--brand-50); transform: translateY(-2px); }
 @media (max-width: 560px) { .ffwc-cta { margin-left: 0; } }
 @media print { .ffwc-cta { display: none; } }
+
+/* ---------- raised upazila, clouds, 24-hour replay ---------- */
+.map3d-wrap { height: 520px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 14px 34px rgba(8, 24, 40, .22); }
+.map3d-wrap::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; border-radius: inherit;
+  background: radial-gradient(ellipse at 50% 55%, transparent 55%, rgba(4, 14, 24, .38) 100%); }
+@media (max-width: 720px) { .map3d-wrap { height: 400px; } }
+.map-legend i.u { width: 18px; height: 12px; border-radius: 2px; background: linear-gradient(180deg, #6fae4e 0 55%, #2b1d12 55%); }
+.wx-chip .wc { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M7 18a5 5 0 1 1 1.3-9.8A6 6 0 0 1 19.7 10 4 4 0 0 1 19 18H7z'/%3E%3C/svg%3E"); }
+.wx-chip .wh { background: var(--brand); padding-left: 11px; }
+.wx-replay { display: flex; align-items: center; gap: 10px; margin: 10px 2px 2px; }
+.wx-play { width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; border: 0; background: var(--brand); color: #fff; font-size: 14px; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(14, 90, 138, .35); transition: transform .15s; }
+.wx-play:hover { transform: scale(1.08); }
+.wx-track { position: relative; flex: 1; height: 38px; }
+.wx-bars { position: absolute; inset: 0 6px 12px; display: flex; align-items: flex-end; gap: 2px; }
+.wx-bars i { flex: 1; min-width: 2px; border-radius: 2px 2px 0 0; background: #3b9ad6; transition: height .3s; }
+.wx-bars i.on { background: #f2a90f; opacity: 1 !important; }
+.wx-track input { position: absolute; left: 0; right: 0; bottom: -2px; width: 100%; margin: 0; accent-color: var(--brand); }
+.wx-time { font: 600 12.5px Inter, "Hind Siliguri", sans-serif; color: var(--muted); min-width: 92px; text-align: right; }
+.wx-live { border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); font: 700 12.5px Inter, "Hind Siliguri", sans-serif;
+  padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+.wx-live.on { background: #e5483a; border-color: #e5483a; color: #fff; }
+.wx-live.on::before { content: "● "; animation: liveDot 1.4s ease-in-out infinite; }
+@keyframes liveDot { 50% { opacity: .3; } }
+@media (max-width: 560px) { .wx-time { display: none; } }
+@media print { .wx-replay { display: none; } }
+.wx-chip { bottom: 36px; }
+.wx-chip .wr.maybe { opacity: .85; font-weight: 500; }

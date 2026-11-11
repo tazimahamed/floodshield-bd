@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
-  <link rel="stylesheet" href="/static/report.css?v=18">
+  <link rel="stylesheet" href="/static/report.css?v=19">
 </head>
 <body class="page dash-page">
   <header class="topbar">
@@ -62,6 +62,13 @@
           </div>
         </div>
         <div class="map3d-wrap"><div id="map3d"></div><div id="mini-map" hidden></div><div id="map-hint" class="map-hint" hidden></div></div>
+        <div class="wx-replay" id="wx-replay" hidden>
+          <button id="wxPlay" class="wx-play" aria-label="Replay">▶</button>
+          <div class="wx-track"><div class="wx-bars" id="wxBars"></div><input id="wxRange" type="range" min="0" max="24" value="24" aria-label="Hour"></div>
+          <span id="wxTime" class="wx-time"></span>
+          <button id="wxLive" class="wx-live on"></button>
+        </div>
+        <p class="src" id="wxNote"></p>
         <div class="map-legend" id="map-legend"></div>
         <p class="src" data-i18n="mapSrc"></p>
       </section>
@@ -112,6 +119,6 @@
   <div id="tip" class="tip" hidden></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-  <script src="/static/report.js?v=18"></script>
+  <script src="/static/report.js?v=21"></script>
 </body>
 </html>
