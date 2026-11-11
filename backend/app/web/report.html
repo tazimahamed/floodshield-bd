@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
-  <link rel="stylesheet" href="/static/report.css?v=19">
+  <link rel="stylesheet" href="/static/report.css?v=20">
 </head>
 <body class="page dash-page">
   <header class="topbar">
@@ -59,6 +59,7 @@
               <button id="v3d" class="on">3D</button><button id="v2d">2D</button>
             </div>
             <button id="bWx" class="wx-btn" hidden></button>
+            <button id="bHigh" class="wx-btn" hidden></button>
           </div>
         </div>
         <div class="map3d-wrap"><div id="map3d"></div><div id="mini-map" hidden></div><div id="map-hint" class="map-hint" hidden></div></div>
@@ -69,6 +70,7 @@
           <button id="wxLive" class="wx-live on"></button>
         </div>
         <p class="src" id="wxNote"></p>
+        <p class="high-note" id="high-note" hidden></p>
         <div class="map-legend" id="map-legend"></div>
         <p class="src" data-i18n="mapSrc"></p>
       </section>
@@ -81,6 +83,14 @@
         <div class="chart-key"><span><i class="k past"></i><span data-i18n="keyPast"></span></span><span><i class="k next"></i><span data-i18n="keyNext"></span></span><span><i class="k line"></i><span data-i18n="keyCum"></span></span></div>
       </section>
     </div>
+
+    <section class="card" id="upstream" hidden>
+      <div class="card-head"><div><h2 id="up-t"></h2><p class="sub" id="up-sub"></p></div></div>
+      <div class="up-wrap"><div id="up-map"></div></div>
+      <div class="up-key" id="up-key"></div>
+      <ol class="up-list" id="up-list"></ol>
+      <p class="src" id="up-src"></p>
+    </section>
 
     <section class="card reveal" id="calendar">
       <div class="card-head">
@@ -113,6 +123,10 @@
       </div>
       <div class="cyc-legend" id="cyc-legend"></div>
       <p class="src" id="cyc-src"></p>
+      <div class="rose-wrap" id="cyc-rose-wrap" hidden>
+        <h3 id="cyc-rose-t"></h3>
+        <div class="rose-row"><div id="cyc-rose"></div><p id="cyc-rose-say"></p></div>
+      </div>
     </section>
     <p class="not-official" data-i18n="notOfficial"></p>
   </main>
@@ -120,5 +134,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script src="/static/report.js?v=21"></script>
+  <script src="/static/extras.js?v=1"></script>
 </body>
 </html>

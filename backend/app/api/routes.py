@@ -426,6 +426,39 @@ def node_cyclones(node_id: str):
                 "within_50km": sum(i["min_km"] <= 50 for i in items), "cyclones": items}
 
 
+@router.get("/nodes/{node_id}/cyclone-directions")
+def node_cyclone_directions(node_id: str):
+    """Which way past cyclones were coming from when they passed closest to this upazila (within 150 km, since 1960).
+    History only: it does not say where a future storm will go."""
+    import math
+
+    with SessionLocal() as db:
+        c = db.execute(text("select st_x(st_centroid(geom)), st_y(st_centroid(geom)) from nodes where id = :n"), {"n": node_id}).first()
+        if not c:
+            raise HTTPException(404, "Unknown node")
+        lon0, lat0 = c
+        sids = [x for (x,) in db.execute(select(CycloneExposure.sid).where(CycloneExposure.node_id == node_id))]
+        counts, used = [0] * 8, 0
+        if sids:
+            tracks: dict[str, list] = {}
+            for p in db.scalars(select(CyclonePoint).where(CyclonePoint.sid.in_(sids)).order_by(CyclonePoint.sid, CyclonePoint.time)):
+                tracks.setdefault(p.sid, []).append((p.lon, p.lat))
+            k = math.cos(math.radians(lat0))
+            for pts in tracks.values():
+                if len(pts) < 2:
+                    continue
+                i = min(range(len(pts)), key=lambda j: ((pts[j][0] - lon0) * k) ** 2 + (pts[j][1] - lat0) ** 2)
+                a, b = pts[max(0, i - 1)], pts[min(len(pts) - 1, i + 1)]
+                dx, dy = (b[0] - a[0]) * k, b[1] - a[1]
+                if dx == 0 and dy == 0:
+                    continue
+                toward = math.degrees(math.atan2(dx, dy)) % 360   # the way the storm was moving
+                counts[round(((toward + 180) % 360) / 45) % 8] += 1  # the side it came from
+                used += 1
+        return {"source": "NOAA IBTrACS v04r01 (IMD New Delhi best track)", "storms": used,
+                "from": dict(zip(["N", "NE", "E", "SE", "S", "SW", "W", "NW"], counts))}
+
+
 @router.get("/hindcast")
 def hindcast_day(day: date = Query(...)):
     """Model output for a past day (ERA5-Land inputs), plus what Sentinel-1 actually saw in the

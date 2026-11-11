@@ -497,3 +497,32 @@ body.page::after { content: ""; position: absolute; left: 0; right: 0; top: 300p
 @media print { .wx-replay { display: none; } }
 .wx-chip { bottom: 36px; }
 .wx-chip .wr.maybe { opacity: .85; font-weight: 500; }
+
+/* ---------- extras: upstream rain map, higher land, storm directions ---------- */
+.up-wrap { position: relative; height: 420px; border-radius: 14px; overflow: hidden; background: #0a1722; margin-top: 6px; }
+#up-map { position: absolute; inset: 0; }
+.up-here { display: flex; align-items: center; gap: 6px; color: #fff; font: 700 12.5px Inter, "Hind Siliguri", sans-serif; text-shadow: 0 1px 4px #000; }
+.up-here i { width: 14px; height: 14px; border-radius: 50%; background: #ffd34d; box-shadow: 0 0 0 3px rgba(255,211,77,.35); animation: upPulse 1.8s ease-out infinite; }
+@keyframes upPulse { 0% { box-shadow: 0 0 0 0 rgba(255,211,77,.7); } 100% { box-shadow: 0 0 0 16px rgba(255,211,77,0); } }
+.up-pin { width: 24px; height: 24px; border-radius: 50%; background: #fff; color: #b3261e; font: 800 13px Inter, sans-serif; display: grid; place-items: center;
+  box-shadow: 0 0 0 3px #d42e5a, 0 3px 10px rgba(0,0,0,.5); }
+.up-key { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin: 10px 2px 4px; font-size: 12px; color: var(--muted); }
+.up-key span { margin-right: 6px; } .up-key i { width: 18px; height: 10px; border-radius: 3px; display: inline-block; } .up-key em { font-style: normal; margin-right: 6px; }
+.up-list { list-style: none; margin: 8px 0 6px; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14.5px; line-height: 1.45; }
+.up-list li.avg { background: var(--surface-2); border-radius: 10px; padding: 9px 12px; }
+.up-list li.h { font-weight: 700; margin-top: 4px; }
+.up-list .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #d42e5a; color: #fff; font: 800 12px Inter, sans-serif; margin-right: 8px; }
+.high-note { margin: 8px 2px 0; padding: 10px 12px; border-radius: 10px; background: #fff8d6; border: 1px solid #f1dc7a; color: #4a3d00; font-size: 13px; line-height: 1.5; }
+.rose-wrap { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.rose-wrap h3 { margin: 0 0 6px; font-size: 16px; }
+.rose-row { display: grid; grid-template-columns: 220px 1fr; gap: 18px; align-items: center; }
+#cyc-rose svg { width: 220px; height: 220px; display: block; }
+#cyc-rose .ring { fill: none; stroke: var(--line); stroke-dasharray: 3 4; }
+#cyc-rose .petal { fill: #8fb8d6; opacity: .85; transform-origin: 110px 110px; animation: petalIn .6s cubic-bezier(.2,.8,.2,1) both; }
+#cyc-rose .petal.top { fill: #c41d4a; opacity: 1; }
+#cyc-rose .hub { fill: var(--text); }
+#cyc-rose .rl { font: 600 11px Inter, "Hind Siliguri", sans-serif; fill: var(--muted); } #cyc-rose .rl.top { fill: #c41d4a; font-weight: 800; }
+@keyframes petalIn { from { transform: scale(0); } to { transform: scale(1); } }
+#cyc-rose-say { font-size: 15px; line-height: 1.6; margin: 0; } #cyc-rose-say small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 8px; }
+@media (max-width: 640px) { .rose-row { grid-template-columns: 1fr; justify-items: center; } .up-wrap { height: 320px; } }
+@media (prefers-reduced-motion: reduce) { .up-here i, #cyc-rose .petal { animation: none; } }
