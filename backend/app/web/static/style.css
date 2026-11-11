@@ -445,3 +445,26 @@ body.bn .mini-h { text-transform: none; letter-spacing: 0; }
 .wn-meter { position: relative; height: 7px; border-radius: 4px; background: rgba(0,0,0,.08); margin: 2px 0 6px; overflow: visible; }
 .wn-meter i { display: block; height: 100%; border-radius: 4px; background: #1d8cf8; animation: grow .9s cubic-bezier(.2,.8,.2,1) both; transform-origin: left; }
 .wn-meter b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--high); opacity: .7; }
+
+/* ---------- storms now (GDACS) ---------- */
+.storm-panel.quiet { padding: 10px 14px; }
+.st-none { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.45; }
+.storm-panel.live { border-color: #e5483a; box-shadow: 0 0 0 1px rgba(229,72,58,.35), var(--shadow); }
+.st-card { display: block; color: var(--text); border-left: 4px solid var(--c); border-radius: 10px; background: var(--surface-2); padding: 10px 12px; cursor: pointer; margin-top: 8px; }
+.st-card p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.45; }
+.st-test { background: #fff3d6; color: #7a5200; border-radius: 6px; padding: 4px 8px; font-weight: 700; font-size: 12px !important; }
+.st-top { display: flex; gap: 10px; align-items: center; }
+.st-top b { display: block; font-size: 16px; } .st-alert { font-size: 12px; font-weight: 700; color: var(--c); }
+.st-spin { width: 34px; height: 34px; color: var(--c); animation: stSpin 1.6s linear infinite; flex-shrink: 0; }
+.st-spin svg, .storm-eye svg { width: 100%; height: 100%; display: block; }
+@keyframes stSpin { to { transform: rotate(-360deg); } }
+.st-key { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+.st-key i { display: inline-block; width: 16px; height: 0; margin-right: 5px; vertical-align: middle; }
+.st-key i.past { border-top: 3px solid var(--c); } .st-key i.fc { border-top: 2px dashed var(--text); }
+.st-key i.wind { height: 9px; border-radius: 2px; background: var(--c); opacity: .35; }
+.st-src { font-size: 11.5px !important; color: var(--muted); }
+.storm-eye { background: none; border: 0; }
+.storm-eye span { position: absolute; inset: 0; animation: stSpin 1.4s linear infinite; filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 2px 6px #000); }
+.storm-eye b { position: absolute; left: 48px; top: 12px; white-space: nowrap; color: #fff; font: 700 13px var(--font); text-shadow: 0 1px 4px #000; }
+.shelter-btn { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; text-decoration: none; font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { .st-spin, .storm-eye span { animation: none; } }

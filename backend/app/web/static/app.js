@@ -76,6 +76,8 @@ const T = {
     cycSay: (n50, n150) => `Since 1960, <b>${n50}</b> storms passed within 50 km of here and <b>${n150}</b> within 150 km.`,
     kmAway: km => `${km} km away`, nextDays: "next 24 hours",
     ffwcLink: "See today's official river levels (FFWC) ↗",
+    shelterBtn: "Find shelters near here on Google Maps",
+    shelterNote: "Opens Google Maps searching near this upazila. Those places are not checked by us or the government: confirm with your union or upazila office which shelter to use.",
     waterLayer: "🛰️ Satellite: water now", wnTitle: "🛰️ Satellite: water now",
     wnSum: (a, b, n, m) => `Sentinel-1 radar pictures from <b>${a} – ${b}</b>: <b>${n}</b> upazilas have more water than usual over 5% or more of their land (${m} upazilas had a picture).`,
     wnNone: (a, b) => `Sentinel-1 radar pictures from ${a} – ${b}: no upazila has more water than usual over 5% of its land.`,
@@ -163,6 +165,8 @@ const T = {
     cycSay: (n50, n150) => `১৯৬০ থেকে <b>${n50}</b>টি ঝড় এখানকার ৫০ কিমির মধ্যে দিয়ে এবং <b>${n150}</b>টি ১৫০ কিমির মধ্যে দিয়ে গেছে।`,
     kmAway: km => `${km} কিমি দূরে`, nextDays: "আগামী ২৪ ঘণ্টা",
     ffwcLink: "আজকের সরকারি নদীর পানির স্তর দেখুন (FFWC) ↗",
+    shelterBtn: "কাছের আশ্রয়কেন্দ্র Google Maps-এ খুঁজুন",
+    shelterNote: "এই উপজেলার আশেপাশে খোঁজা অবস্থায় Google Maps খুলবে। ওই জায়গাগুলো আমরা বা সরকার যাচাই করিনি: কোন আশ্রয়কেন্দ্রে যাবেন, ইউনিয়ন বা উপজেলা অফিসে জেনে নিন।",
     waterLayer: "🛰️ স্যাটেলাইট: এখনকার পানি", wnTitle: "🛰️ স্যাটেলাইট: এখনকার পানি",
     wnSum: (a, b, n, m) => `Sentinel-1 রাডারের ছবি <b>${a} – ${b}</b>: <b>${n}</b>টি উপজেলায় জমির ৫% বা বেশি এলাকায় স্বাভাবিকের চেয়ে বেশি পানি (${m}টি উপজেলার ছবি পাওয়া গেছে)।`,
     wnNone: (a, b) => `Sentinel-1 রাডারের ছবি ${a} – ${b}: কোনো উপজেলায় জমির ৫% এলাকায় স্বাভাবিকের চেয়ে বেশি পানি নেই।`,
@@ -638,6 +642,12 @@ function select(id, zoom = false) {
   renderWaterDetail();
   // one tap: Telegram opens the bot, which subscribes this upazila from the start link
   $("tg-link").href = `https://t.me/DurjogBartaBangladesh_bot?start=${encodeURIComponent(id)}`;
+  // Google Maps search around the upazila (a link only: Google's places are not copied onto this site)
+  const sf = data.features.find(f => f.properties.id === id);
+  let sx = 0, sy = 0, sn = 0;
+  if (sf) (sf.geometry.type === "Polygon" ? [sf.geometry.coordinates] : sf.geometry.coordinates).forEach(p => p[0].forEach(([x, y]) => { sx += x; sy += y; sn++; }));
+  const sq = encodeURIComponent(`shelter ${selected.name} ${selected.district || ""}`);
+  $("shelter-link").href = sn ? `https://www.google.com/maps/search/${sq}/@${(sy / sn).toFixed(4)},${(sx / sn).toFixed(4)},12z` : `https://www.google.com/maps/search/${sq}`;
   loadRain(id);
   showUpstream(id);
   showHospitals(id);

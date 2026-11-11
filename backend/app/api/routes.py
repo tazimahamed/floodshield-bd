@@ -389,6 +389,14 @@ def cyclones(min_wind_kt: float = 34, named_only: bool = False):
         return {"source": "NOAA IBTrACS v04r01 (IMD New Delhi best track)", "cyclones": [_cyclone_info(c) for c in rows]}
 
 
+@router.get("/cyclones/active")
+def cyclones_active(event: int | None = None, episode: int | None = None):
+    """Tropical cyclones active now near Bangladesh (GDACS, track forecast from JTWC). Not BMD's signal."""
+    from app.services.active_storms import active
+
+    return active(event, episode)
+
+
 @router.get("/cyclones/{sid}")
 def cyclone_detail(sid: str):
     """Track (6-hourly fixes) and the upazilas within 150 km of it."""

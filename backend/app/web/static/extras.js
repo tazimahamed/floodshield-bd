@@ -10,6 +10,12 @@ const XT = {
     upNone: "No heavy rain (20 mm or more in 3 days) is forecast anywhere upstream.",
     upHeavy: n => `Heaviest rain forecast upstream (${n} place${n > 1 ? "s" : ""} marked on the map):`,
     upHere: "This upazila",
+    upModel: p => `Our model's chance of flooding here in the next 15 days, which already counts this upstream rain: <b>${p}%</b>`,
+    upTravel: (a, b) => `Rough travel time for river water from the farthest upstream land: <b>${a}–${b} days</b>.`,
+    upItemT: (a, b) => ` · water from there could take roughly ${a}–${b} days to get here`,
+    upTravelNote: "Travel times are a rough range from distance along the rivers and typical river speeds (about 100–200 km a day), not a forecast of when a flood arrives.",
+    stormBan: (n, km) => `🌀 Active storm <b>${n}</b> is about ${km} km from Bangladesh.`, stormMore: "See it on the map ↗",
+    shelter: "🏠 Find shelters near here on Google Maps", shelterNote: "Not checked by us or the government: confirm with your union or upazila office.",
     upSrc: "Rain: NOAA GFS forecast, per river basin (HydroBASINS). Rivers: HydroRIVERS. This shows where rain is expected and the way water travels. It does not give the chance of a flood or when water would arrive: we have no river model that passed our tests for that. For river levels, see FFWC.",
     upKey: "mm of rain in 3 days",
     dirs: ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"],
@@ -31,6 +37,12 @@ const XT = {
     upNone: "উজানের কোথাও ভারী বৃষ্টির (৩ দিনে ২০ মিমি বা বেশি) পূর্বাভাস নেই।",
     upHeavy: n => `উজানে সবচেয়ে বেশি বৃষ্টির পূর্বাভাস (ম্যাপে ${n}টি জায়গা চিহ্নিত):`,
     upHere: "এই উপজেলা",
+    upModel: p => `আগামী ১৫ দিনে এখানে বন্যার সম্ভাবনা, আমাদের মডেল অনুযায়ী (এই উজানের বৃষ্টিও হিসাবে ধরা আছে): <b>${p}%</b>`,
+    upTravel: (a, b) => `সবচেয়ে দূরের উজান থেকে নদীর পানি আসতে মোটামুটি <b>${a}–${b} দিন</b> লাগতে পারে।`,
+    upItemT: (a, b) => ` · সেখানকার পানি এখানে আসতে মোটামুটি ${a}–${b} দিন লাগতে পারে`,
+    upTravelNote: "সময়গুলো নদীপথের দূরত্ব আর নদীর সাধারণ গতি (দিনে প্রায় ১০০–২০০ কিমি) থেকে মোটা দাগের পরিসর, বন্যা কখন আসবে তার পূর্বাভাস নয়।",
+    stormBan: (n, km) => `🌀 সক্রিয় ঝড় <b>${n}</b> বাংলাদেশ থেকে প্রায় ${km} কিমি দূরে।`, stormMore: "ম্যাপে দেখুন ↗",
+    shelter: "🏠 কাছের আশ্রয়কেন্দ্র Google Maps-এ খুঁজুন", shelterNote: "আমরা বা সরকার যাচাই করিনি: ইউনিয়ন বা উপজেলা অফিসে জেনে নিন।",
     upSrc: "বৃষ্টি: NOAA GFS পূর্বাভাস, প্রতিটি নদী অববাহিকার জন্য (HydroBASINS)। নদী: HydroRIVERS। এটি দেখায় কোথায় বৃষ্টি হতে পারে আর পানি কোন পথে আসে। বন্যার সম্ভাবনা বা পানি কখন পৌঁছাবে তা বলে না: এর জন্য আমাদের পরীক্ষায় পাস করা কোনো নদী-মডেল নেই। নদীর পানির স্তরের জন্য FFWC দেখুন।",
     upKey: "৩ দিনে বৃষ্টি, মিমি",
     dirs: ["উত্তর", "উত্তর-পূর্ব", "পূর্ব", "দক্ষিণ-পূর্ব", "দক্ষিণ", "দক্ষিণ-পশ্চিম", "পশ্চিম", "উত্তর-পশ্চিম"],
@@ -76,9 +88,14 @@ function upText() {
   $("up-t").textContent = tt.upT;
   $("up-sub").textContent = tt.upSub(nf(u.info.catchment_km2), nf(u.pctOut));
   $("up-key").innerHTML = `<span>${tt.upKey}</span>` + RAIN_STEPS.slice(1).map(([b, c]) => `<i style="background:${c}"></i><em>${nf(b)}+</em>`).join("");
-  $("up-list").innerHTML = `<li class="avg">${tt.upAvg(nf(u.info.rain_72h_mm ?? 0, 1))}</li>` +
-    (u.top.length ? `<li class="h">${tt.upHeavy(nf(u.top.length))}</li>` + u.top.map((b, i) => `<li><span class="n">${nf(i + 1)}</span>${tt.upItem(nf(b.km), tt.dirs[b.dir], nf(b.mm))}</li>`).join("")
-      : `<li>${tt.upNone}</li>`);
+  const days = km => { const d = km * 1.3; return [Math.max(1, Math.round(d / 200)), Math.max(1, Math.round(d / 100))]; };
+  const [fa, fb] = days(u.far), pr = R.current ? Math.round(R.current.flood_prob * 100) : null;
+  $("up-list").innerHTML = (pr != null ? `<li class="avg model">${tt.upModel(nf(pr))}</li>` : "") +
+    `<li class="avg">${tt.upAvg(nf(u.info.rain_72h_mm ?? 0, 1))}</li>` +
+    (u.far >= 80 ? `<li class="avg">${tt.upTravel(nf(fa), nf(fb))}</li>` : "") +
+    (u.top.length ? `<li class="h">${tt.upHeavy(nf(u.top.length))}</li>` + u.top.map((b, i) => { const [a, c] = days(b.km);
+      return `<li><span class="n">${nf(i + 1)}</span>${tt.upItem(nf(b.km), tt.dirs[b.dir], nf(b.mm))}${b.km >= 80 ? tt.upItemT(nf(a), nf(c)) : ""}</li>`; }).join("")
+      : `<li>${tt.upNone}</li>`) + (u.far >= 80 ? `<li class="tn">${tt.upTravelNote}</li>` : "");
   $("up-src").innerHTML = `${tt.upSrc} <a href="https://www.ffwc.gov.bd/" target="_blank" rel="noopener">ffwc.gov.bd ↗</a>`;
   if (u.here) u.here.textContent = tt.upHere;
 }
@@ -113,7 +130,8 @@ async function upstreamMap() {
     const dx = (q.cx - hx) * k * 111.32, dy = (q.cy - hy) * 110.57;
     return { lon: q.cx, lat: q.cy, mm: Math.round(q.f.properties.rain_72h_mm), km: Math.round(Math.hypot(dx, dy) / 10) * 10, dir: Math.round(((Math.atan2(dx, dy) * 180 / Math.PI + 360) % 360) / 45) % 8 };
   });
-  X.up = { info, top, pctOut: info.catchment_km2 ? Math.round(100 * info.outside_bd_km2 / info.catchment_km2) : 0 };
+  const far = Math.max(0, ...boxes.map(q => Math.hypot((q.cx - hx) * k * 111.32, (q.cy - hy) * 110.57)));
+  X.up = { info, top, far, pctOut: info.catchment_km2 ? Math.round(100 * info.outside_bd_km2 / info.catchment_km2) : 0 };
   sec.hidden = false;
   const step = ["step", ["coalesce", ["get", "rain_72h_mm"], 0], RAIN_STEPS[0][1], ...RAIN_STEPS.slice(1).flatMap(([b, c]) => [b, c])];
   const map = new maplibregl.Map({ container: "up-map", bounds: [[x0, y0], [x1, y1]], fitBoundsOptions: { padding: 30 }, interactive: false,
@@ -214,13 +232,28 @@ function highButton() {
   };
 }
 
+/* ---------- active storm banner, and a shelter search on Google Maps ---------- */
+function extraBits() {
+  const tt = xt();
+  const s = X.storm, b = $("storm-ban");
+  if (s) { b.hidden = false; b.innerHTML = `${tt.stormBan(s.name, nf(s.now_km_from_bd))} <a href="/" >${tt.stormMore}</a>`; }
+  if (X.shape && R) {
+    let sx = 0, sy = 0, sn = 0; ringsOf(X.shape.geometry).forEach(r => r.forEach(([x, y]) => { sx += x; sy += y; sn++; }));
+    const q = encodeURIComponent(`shelter ${R.node.name} ${R.node.district || ""}`);
+    $("shelter").href = `https://www.google.com/maps/search/${q}/@${(sy / sn).toFixed(4)},${(sx / sn).toFixed(4)},12z`;
+    $("shelter-t").textContent = tt.shelter; $("shelter").title = tt.shelterNote; $("shelter").hidden = false;
+  }
+}
+
 /* ---------- start, and follow the language switch ---------- */
 (async () => {
   for (let i = 0; i < 120 && !(nodeId && R); i++) await new Promise(r => setTimeout(r, 250));
   if (!nodeId || !R) return;
   const base = render;
-  render = function () { base(); drawRose(); upText(); highText(); };
+  render = function () { base(); drawRose(); upText(); highText(); extraBits(); };
   X.shape = await fetch(`/api/v1/nodes/${nodeId}/shape`).then(r => r.ok ? r.json() : null).catch(() => null);
+  fetch("/api/v1/cyclones/active").then(r => r.ok ? r.json() : null).then(j => { X.storm = j && j.storms && j.storms[0]; extraBits(); }).catch(() => {});
+  extraBits();
   fetch(`/api/v1/nodes/${nodeId}/cyclone-directions`).then(r => r.ok ? r.json() : null).then(j => { X.rose = j; drawRose(); }).catch(() => {});
   if (!X.shape) return;
   upstreamMap().catch(e => console.warn("upstream map", e));
