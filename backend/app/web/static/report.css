@@ -532,3 +532,41 @@ body.page::after { content: ""; position: absolute; left: 0; right: 0; top: 300p
 .shelter-cta { border-color: #2e9e5b; color: #1f7a45; }
 .up-list li.model { background: var(--brand-50); }
 .up-list li.tn { font-size: 12.5px; color: var(--muted); }
+
+/* ---------- upstream card, for everyone ---------- */
+.up-verdict { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 14px; margin: 8px 0 12px;
+  background: #e6f4ec; border: 1px solid #b9e0c8; }
+.up-verdict.l1 { background: #fff3d6; border-color: #f1d488; } .up-verdict.l2 { background: #fde7e4; border-color: #f3b3aa; }
+.up-verdict .ico { width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 800 18px Inter, sans-serif; background: #2e9e5b; }
+.up-verdict.l1 .ico { background: #d98a00; } .up-verdict.l2 .ico { background: #d4382a; animation: upAlarm 1.6s ease-in-out infinite; }
+@keyframes upAlarm { 50% { box-shadow: 0 0 0 8px rgba(212,56,42,0); } 0% { box-shadow: 0 0 0 0 rgba(212,56,42,.5); } }
+.up-verdict b { display: block; font-size: 17px; line-height: 1.35; color: var(--text); }
+.up-verdict p { margin: 4px 0 0; font-size: 14.5px; line-height: 1.5; color: var(--text); }
+.up-verdict small { display: block; margin-top: 8px; font-size: 13px; color: var(--muted); }
+.up-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.up-fact { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.up-fact small { display: block; font-size: 12.5px; color: var(--muted); }
+.up-fact b { display: block; font-size: 26px; line-height: 1.2; margin: 2px 0; color: var(--text); }
+.up-fact b em { font-style: normal; font-size: 13px; font-weight: 600; color: var(--muted); }
+.up-fact span { font-size: 12.5px; color: var(--muted); }
+.up-fact.out b { color: #c47b00; } .up-fact.time b { color: var(--brand); }
+.up-fact.rain.r0 b, .up-fact.rain.r1 b { color: #2e9e5b; } .up-fact.rain.r2 b { color: #d98a00; } .up-fact.rain.r3 b { color: #d4382a; }
+.up-wrap { height: 460px; }
+.up-here { gap: 8px; font-size: 14px; }
+.up-here i { width: 18px; height: 18px; border: 3px solid #fff; }
+.up-here span { background: rgba(10,23,34,.82); padding: 3px 9px; border-radius: 999px; }
+.up-rname { color: #dff3ff; font: italic 700 13px Inter, "Hind Siliguri", sans-serif; letter-spacing: .03em; white-space: nowrap;
+  text-shadow: 0 0 4px #04121e, 0 0 8px #04121e, 0 1px 2px #000; pointer-events: none; }
+body.bn .up-rname { font-style: normal; letter-spacing: 0; }
+.up-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin: 10px 2px 6px; font-size: 12.5px; color: var(--muted); }
+.up-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.up-legend i { display: inline-block; width: 18px; height: 11px; border-radius: 3px; }
+.up-legend i.catch { background: rgba(95,208,255,.45); border: 1px solid #5fd0ff; }
+.up-legend i.riv { height: 4px; background: repeating-linear-gradient(90deg, #2f9df0 0 6px, #fff 6px 9px); }
+.up-legend i.here { width: 13px; height: 13px; border-radius: 50%; background: #ffd34d; }
+.up-legend .scale i { width: 14px; height: 9px; } .up-legend .scale em { font-style: normal; margin-right: 2px; }
+.up-more { margin-top: 8px; } .up-more summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--brand); }
+.up-more .src { margin-top: 6px; }
+@media (max-width: 640px) { .up-wrap { height: 340px; } .up-fact b { font-size: 22px; } }
+@media (prefers-reduced-motion: reduce) { .up-verdict.l2 .ico { animation: none; } }
+.up-legend { color: var(--text); font-size: 13px; } .up-legend .scale > span { font-weight: 600; } .up-legend .scale em { color: var(--muted); }

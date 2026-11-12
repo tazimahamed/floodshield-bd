@@ -760,6 +760,8 @@ function flowLayer(map, rivers, bounds) {
       const tail = Math.min(p.d, 12 * mpp * zf * p.ln);
       const a = map.project(at(l, p.d)), b = map.project(at(l, p.d - tail));
       if (a.x < -20 || a.y < -20 || a.x > W + 20 || a.y > H + 20) continue;
+      // a glint whose head and tail land on different heights (the raised block's edge) would draw as a tall line
+      if (Math.hypot(a.x - b.x, a.y - b.y) > 40 * zf) continue;
       const dx = a.x - b.x, dy = a.y - b.y, n = Math.hypot(dx, dy) || 1, o = p.off * Math.max(HALF[l.kind] * zf, l.half / mpp);
       const ox = -dy / n * o, oy = dx / n * o;
       const alpha = (0.3 + 0.6 * (0.5 + 0.5 * Math.sin(t * 2.2 + p.tw))) * (1 - Math.abs(p.off) * 0.5);
@@ -778,6 +780,7 @@ function flowLayer(map, rivers, bounds) {
       const tl = 6 * mpp * zf * p.ln;
       const a = map.project([p.x, p.y]), b = map.project([p.x - p.ux * tl / mLon(p.y), p.y - p.uy * tl / M_LAT]);
       if (a.x < -20 || a.y < -20 || a.x > W + 20 || a.y > H + 20) continue;
+      if (Math.hypot(a.x - b.x, a.y - b.y) > 30 * zf) continue;
       const alpha = Math.sin(p.life * Math.PI) * (0.22 + 0.38 * (0.5 + 0.5 * Math.sin(t * 2.6 + p.tw)));
       ctx.strokeStyle = `rgba(235,250,255,${alpha.toFixed(2)})`;
       ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(a.x, a.y); ctx.stroke();

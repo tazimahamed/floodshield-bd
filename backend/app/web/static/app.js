@@ -32,7 +32,7 @@ const T = {
     past72: "Last 72h", next24: "Next 24h", next72: "Next 72h",
     allDivisions: "All Bangladesh", rivers: "Rivers", upstream: "Upstream basins (India, Nepal…)", coastLayer: "Coast, ports & live sea",
     layersTitle: "Map layers", loading: "Loading…", runningModel: "Running the model for this date…",
-    tHome: "Show all Bangladesh", tSearch: "Search", tLayers: "Layers", tTheme: "Dark / light map", tPanel: "Details panel",
+    tMin: "Hide or show this panel", tHome: "Show all Bangladesh", tSearch: "Search", tLayers: "Layers", tTheme: "Dark / light map", tPanel: "Details panel",
     overviewTitle: "National overview", detailTitle: "Upazila details",
     statusEyebrow: "National flood outlook", statusEyebrowPast: "Past date test · not today's situation",
     headlineNone: "No elevated flood risk", headlineSome: (h, m) => h ? `${h} upazilas at high risk` : `${m} upazilas at medium risk`,
@@ -121,7 +121,7 @@ const T = {
     past72: "গত ৭২ ঘণ্টা", next24: "আগামী ২৪ ঘণ্টা", next72: "আগামী ৭২ ঘণ্টা",
     allDivisions: "সমগ্র বাংলাদেশ", rivers: "নদী", upstream: "উজানের অববাহিকা (ভারত, নেপাল…)", coastLayer: "উপকূল, বন্দর ও সাগরের এখনকার অবস্থা",
     layersTitle: "ম্যাপের স্তর", loading: "লোড হচ্ছে…", runningModel: "এই তারিখের জন্য মডেল চলছে…",
-    tHome: "পুরো বাংলাদেশ", tSearch: "খুঁজুন", tLayers: "স্তর", tTheme: "গাঢ় / হালকা ম্যাপ", tPanel: "বিস্তারিত প্যানেল",
+    tMin: "এই প্যানেল লুকান বা দেখান", tHome: "পুরো বাংলাদেশ", tSearch: "খুঁজুন", tLayers: "স্তর", tTheme: "গাঢ় / হালকা ম্যাপ", tPanel: "বিস্তারিত প্যানেল",
     overviewTitle: "জাতীয় পরিস্থিতি", detailTitle: "উপজেলার বিস্তারিত",
     statusEyebrow: "জাতীয় বন্যা পরিস্থিতি", statusEyebrowPast: "পুরনো তারিখের পরীক্ষা · আজকের অবস্থা নয়",
     headlineNone: "বন্যার বাড়তি ঝুঁকি নেই", headlineSome: (h, m) => h ? `${nf(h)}টি উপজেলায় উচ্চ ঝুঁকি` : `${nf(m)}টি উপজেলায় মাঝারি ঝুঁকি`,
@@ -1058,6 +1058,11 @@ $("strip-close").onclick = closeDetail;
 $("drawer-close").onclick = closeDrawer;
 $("r-panel").onclick = () => document.body.classList.contains("drawer-open") ? closeDrawer() : openDrawer();
 $("r-home").onclick = fitBangladesh;
+// the search and view panel folds down to the brand row, and remembers the choice
+const setMin = v => { document.querySelector(".hud.top-left").classList.toggle("min", v); $("hud-min").textContent = v ? "▾" : "▴";
+  $("hud-min").setAttribute("aria-expanded", String(!v)); try { localStorage.setItem("fs-hud-min", v ? "1" : "0"); } catch (e) {} };
+$("hud-min").onclick = () => setMin(!document.querySelector(".hud.top-left").classList.contains("min"));
+try { if (localStorage.getItem("fs-hud-min") === "1") setMin(true); } catch (e) {}
 $("r-search").onclick = () => $("search").focus();
 $("r-layers").onclick = () => { $("layers").hidden = !$("layers").hidden; $("r-layers").classList.toggle("on", !$("layers").hidden); };
 $("r-theme").onclick = () => {

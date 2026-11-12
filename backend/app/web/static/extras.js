@@ -79,26 +79,90 @@ function drawRose() {
   $("cyc-rose-say").innerHTML = `${tt.roseSay(nf(d.storms), tt.dirs[top], nf(v[top]))}<small>${tt.roseNote} <a href="https://www.bmd.gov.bd" target="_blank" rel="noopener">bmd.gov.bd</a></small>`;
 }
 
-/* ---------- rain upstream and the rivers that bring it here ---------- */
+/* ---------- can water come from upstream? (rain on the land that drains here, and the big rivers that bring it) ---------- */
 const ringsOf = g => g.type === "Polygon" ? [g.coordinates[0]] : g.coordinates.map(p => p[0]);
 function pip(x, y, r) { let ins = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const [xi, yi] = r[i], [xj, yj] = r[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) ins = !ins; } return ins; }
+const UPT = {
+  en: {
+    t: "🌊 Can water come from upstream?",
+    sub: n => `Most river water here comes from rain that falls far away. The map shows all the land whose rain flows to ${n}, and how much rain is expected there.`,
+    v: [["No heavy rain expected upstream in the next 3 days", "For now there is no sign of a rush of river water coming from upstream. This can change, so check again tomorrow."],
+        ["Heavy rain expected in parts of the upstream land", "Rivers that flow here may rise in the coming days. Keep an eye on FFWC river levels and Met Department news."],
+        ["Very heavy rain expected upstream", "Rivers that flow here may rise. Follow FFWC, the Met Department and your upazila office."]],
+    model: (p, w) => `Our flood model for this upazila, next 15 days: <b>${p}% chance</b> (${w})`,
+    riskW: { low: "low", medium: "medium", high: "high" },
+    f1: "Water from outside Bangladesh", f1s: "of the land draining here", f1in: "All of it", f1ins: "the land draining here is inside Bangladesh",
+    f2: "Rain upstream, next 3 days", f2s: ["almost none", "a little", "moderate", "a lot"], f2u: "mm on average",
+    f3: "River water takes about", f3s: "from the farthest land to here", f3u: "days",
+    lgCatch: "Land whose rain flows here", lgRain: "Rain expected in 3 days", lgRiv: "Big rivers, flowing this way", lgHere: n => n,
+    heavy: n => `Where the heaviest rain is expected (numbered on the map):`,
+    item: (km, dir, mm, a, b) => `<b>${mm} mm</b> about <b>${km} km to the ${dir}</b>${a ? ` · its water could take roughly ${a}–${b} days to reach here` : ""}`,
+    more: "How this is worked out",
+    src: "Rain: NOAA GFS forecast for each river basin (HydroBASINS). Rivers: HydroRIVERS. Travel times are rough: distance along the rivers at a typical 100–200 km a day. This map does not predict floods by itself; the flood chance above comes from our model, which already uses this rain. For the real river levels, see FFWC:",
+    dirs: ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"],
+    rivers: { ganga: "Ganges", padma: "Padma", brahmaputra: "Brahmaputra", tsangpo: "Yarlung Tsangpo", jamuna: "Jamuna", teesta: "Teesta", barak: "Barak", meghna: "Meghna", kosi: "Kosi", gandak: "Gandak", yamuna: "Yamuna" },
+  },
+  bn: {
+    t: "🌊 উজান থেকে কি পানি আসতে পারে?",
+    sub: n => `এখানকার নদীর বেশিরভাগ পানি আসে দূরে পড়া বৃষ্টি থেকে। ম্যাপে দেখানো পুরো এলাকার বৃষ্টির পানি ${n}-এ এসে পৌঁছায়, আর সেখানে কতটা বৃষ্টির পূর্বাভাস আছে।`,
+    v: [["আগামী ৩ দিনে উজানে ভারী বৃষ্টির পূর্বাভাস নেই", "এখন উজান থেকে নদীতে হঠাৎ বেশি পানি আসার লক্ষণ নেই। অবস্থা বদলাতে পারে, তাই কাল আবার দেখুন।"],
+        ["উজানের কিছু এলাকায় ভারী বৃষ্টির পূর্বাভাস", "এখানে আসা নদীগুলোর পানি সামনের দিনগুলোতে বাড়তে পারে। FFWC-র নদীর পানির স্তর আর আবহাওয়া অধিদপ্তরের খবর খেয়াল রাখুন।"],
+        ["উজানে অনেক ভারী বৃষ্টির পূর্বাভাস", "এখানে আসা নদীগুলোর পানি বাড়তে পারে। FFWC, আবহাওয়া অধিদপ্তর ও উপজেলা প্রশাসনের নির্দেশনা মেনে চলুন।"]],
+    model: (p, w) => `এই উপজেলার জন্য আমাদের বন্যা মডেল, আগামী ১৫ দিন: <b>${p}% সম্ভাবনা</b> (${w})`,
+    riskW: { low: "নিম্ন", medium: "মাঝারি", high: "উচ্চ" },
+    f1: "পানি আসে বাংলাদেশের বাইরে থেকে", f1s: "এখানে আসা পানির এলাকার", f1in: "পুরোটাই", f1ins: "পানির এলাকা বাংলাদেশের ভেতরে",
+    f2: "উজানে বৃষ্টি, আগামী ৩ দিন", f2s: ["প্রায় নেই", "অল্প", "মাঝারি", "অনেক"], f2u: "মিমি গড়ে",
+    f3: "নদীর পানি আসতে লাগে প্রায়", f3s: "সবচেয়ে দূরের এলাকা থেকে এখানে", f3u: "দিন",
+    lgCatch: "যে এলাকার বৃষ্টির পানি এখানে আসে", lgRain: "৩ দিনে বৃষ্টির পূর্বাভাস", lgRiv: "বড় নদী, এদিকে বয়ে আসছে", lgHere: n => n,
+    heavy: n => `যেখানে সবচেয়ে বেশি বৃষ্টির পূর্বাভাস (ম্যাপে নম্বর দেওয়া):`,
+    item: (km, dir, mm, a, b) => `প্রায় <b>${km} কিমি ${dir} দিকে</b> <b>${mm} মিমি</b>${a ? ` · সেখানকার পানি এখানে আসতে মোটামুটি ${a}–${b} দিন লাগতে পারে` : ""}`,
+    more: "এটা কীভাবে হিসাব করা",
+    src: "বৃষ্টি: প্রতিটি নদী অববাহিকার জন্য NOAA GFS পূর্বাভাস (HydroBASINS)। নদী: HydroRIVERS। সময়ের হিসাব মোটা দাগের: নদীপথের দূরত্ব, দিনে সাধারণত ১০০–২০০ কিমি গতিতে। এই ম্যাপ নিজে বন্যার পূর্বাভাস দেয় না; উপরের বন্যার সম্ভাবনা আসে আমাদের মডেল থেকে, যেটা এই বৃষ্টিও হিসাবে ধরে। নদীর আসল পানির স্তর দেখতে FFWC:",
+    dirs: ["উত্তর", "উত্তর-পূর্ব", "পূর্ব", "দক্ষিণ-পূর্ব", "দক্ষিণ", "দক্ষিণ-পশ্চিম", "পশ্চিম", "উত্তর-পশ্চিম"],
+    rivers: { ganga: "গঙ্গা", padma: "পদ্মা", brahmaputra: "ব্রহ্মপুত্র", tsangpo: "ইয়ারলুং সাংপো", jamuna: "যমুনা", teesta: "তিস্তা", barak: "বরাক", meghna: "মেঘনা", kosi: "কোসি", gandak: "গণ্ডক", yamuna: "যমুনা (ভারত)" },
+  },
+};
+const upt = () => UPT[lang];
+// big rivers by name: each label snaps onto the nearest real river line big enough, or is left out
+const BIG_RIVERS = [
+  { k: "ganga", at: [25.55, 85.3], up: 500000 }, { k: "padma", at: [23.9, 89.4], up: 900000 },
+  { k: "brahmaputra", at: [26.2, 91.3], up: 300000 }, { k: "tsangpo", at: [29.3, 89.5], up: 100000 },
+  { k: "jamuna", at: [24.9, 89.7], up: 400000 }, { k: "teesta", at: [26.5, 88.7], up: 8000 },
+  { k: "barak", at: [24.85, 92.8], up: 15000 }, { k: "meghna", at: [23.4, 90.65], up: 60000 },
+  { k: "kosi", at: [26.2, 86.9], up: 50000 }, { k: "gandak", at: [26.3, 84.6], up: 30000 }, { k: "yamuna", at: [26.6, 79.6], up: 100000 },
+];
+const BIG_UP = 15000;  // only rivers with at least this much land upstream are drawn: the main roads of the water
+
 function upText() {
   const u = X.up; if (!u) return;
-  const tt = xt();
-  $("up-t").textContent = tt.upT;
-  $("up-sub").textContent = tt.upSub(nf(u.info.catchment_km2), nf(u.pctOut));
-  $("up-key").innerHTML = `<span>${tt.upKey}</span>` + RAIN_STEPS.slice(1).map(([b, c]) => `<i style="background:${c}"></i><em>${nf(b)}+</em>`).join("");
+  const tt = upt(), name = R.node.name;
+  $("up-t").textContent = tt.t;
+  $("up-sub").textContent = tt.sub(name);
+  const maxR = Math.max(0, ...u.rains), lvl = maxR >= 50 ? 2 : maxR >= 20 ? 1 : 0;
+  const c = R.current, pr = c ? Math.round(c.flood_prob * 100) : null;
+  $("up-verdict").className = `up-verdict l${lvl}`;
+  $("up-verdict").innerHTML = `<span class="ico">${["✓", "!", "!!"][lvl]}</span><div><b>${tt.v[lvl][0]}</b><p>${tt.v[lvl][1]}</p>
+    ${pr != null ? `<small>${tt.model(nf(pr), tt.riskW[c.risk] || "")}</small>` : ""}</div>`;
+  const avg = u.info.rain_72h_mm ?? 0, aw = avg < 1 ? 0 : avg < 5 ? 1 : avg < 20 ? 2 : 3;
   const days = km => { const d = km * 1.3; return [Math.max(1, Math.round(d / 200)), Math.max(1, Math.round(d / 100))]; };
-  const [fa, fb] = days(u.far), pr = R.current ? Math.round(R.current.flood_prob * 100) : null;
-  $("up-list").innerHTML = (pr != null ? `<li class="avg model">${tt.upModel(nf(pr))}</li>` : "") +
-    `<li class="avg">${tt.upAvg(nf(u.info.rain_72h_mm ?? 0, 1))}</li>` +
-    (u.far >= 80 ? `<li class="avg">${tt.upTravel(nf(fa), nf(fb))}</li>` : "") +
-    (u.top.length ? `<li class="h">${tt.upHeavy(nf(u.top.length))}</li>` + u.top.map((b, i) => { const [a, c] = days(b.km);
-      return `<li><span class="n">${nf(i + 1)}</span>${tt.upItem(nf(b.km), tt.dirs[b.dir], nf(b.mm))}${b.km >= 80 ? tt.upItemT(nf(a), nf(c)) : ""}</li>`; }).join("")
-      : `<li>${tt.upNone}</li>`) + (u.far >= 80 ? `<li class="tn">${tt.upTravelNote}</li>` : "");
-  $("up-src").innerHTML = `${tt.upSrc} <a href="https://www.ffwc.gov.bd/" target="_blank" rel="noopener">ffwc.gov.bd ↗</a>`;
-  if (u.here) u.here.textContent = tt.upHere;
+  const [fa, fb] = days(u.far);
+  const fact = (k, v, s, cls = "") => `<div class="up-fact ${cls}"><small>${k}</small><b>${v}</b><span>${s}</span></div>`;
+  $("up-facts").innerHTML =
+    (u.pctOut > 0 ? fact(tt.f1, `${nf(u.pctOut)}%`, tt.f1s, "out") : fact(tt.f1, tt.f1in, tt.f1ins, "out")) +
+    fact(tt.f2, `${nf(avg, avg < 10 ? 1 : 0)} <em>${tt.f2u}</em>`, tt.f2s[aw], `rain r${aw}`) +
+    (u.far >= 80 ? fact(tt.f3, `${nf(fa)}–${nf(fb)} <em>${tt.f3u}</em>`, tt.f3s, "time") : "");
+  $("up-legend").innerHTML = `<span><i class="catch"></i>${tt.lgCatch}</span>
+    <span class="scale"><span>${tt.lgRain}:</span>${RAIN_STEPS.slice(1).map(([b, col]) => `<i style="background:${col}"></i><em>${nf(b)}+</em>`).join("")}</span>
+    <span><i class="riv"></i>${tt.lgRiv}</span><span><i class="here"></i>${tt.lgHere(name)}</span>`;
+  $("up-list").hidden = !u.top.length;
+  $("up-list").innerHTML = u.top.length ? `<li class="h">${tt.heavy(u.top.length)}</li>` + u.top.map((b, i) => {
+    const [a, d] = days(b.km); return `<li><span class="n">${nf(i + 1)}</span>${tt.item(nf(b.km), tt.dirs[b.dir], nf(b.mm), b.km >= 80 ? nf(a) : null, nf(d))}</li>`; }).join("") : "";
+  $("up-more-t").textContent = tt.more;
+  $("up-src").innerHTML = `${tt.src} <a href="https://www.ffwc.gov.bd/" target="_blank" rel="noopener">ffwc.gov.bd ↗</a>`;
+  if (u.here) u.here.textContent = name;
+  (u.labels || []).forEach(([el, key]) => { el.textContent = tt.rivers[key]; });
 }
+
 async function upstreamMap() {
   const sec = $("upstream");
   const [info, basins, rivers] = await Promise.all([
@@ -119,9 +183,10 @@ async function upstreamMap() {
   const sh = X.shape, sr = ringsOf(sh.geometry);
   let hx = 0, hy = 0, hn = 0; sr[0].forEach(([x, y]) => { hx += x; hy += y; hn++; }); hx /= hn; hy /= hn;
   x0 = Math.min(x0, hx); x1 = Math.max(x1, hx); y0 = Math.min(y0, hy); y1 = Math.max(y1, hy);
-  // rivers whose middle point lies in the upstream land (or in the upazila itself)
   const inMine = (x, y) => boxes.some(q => x >= q.a && x <= q.c && y >= q.b && y <= q.d && ringsOf(q.f.geometry).some(r => pip(x, y, r))) || sr.some(r => pip(x, y, r));
+  // only the big rivers, and only where they run through the land that drains here
   const riv = { type: "FeatureCollection", features: (rivers ? rivers.features : []).filter(f => {
+    if ((f.properties.upland_km2 || 0) < BIG_UP) return false;
     const c = f.geometry.type === "LineString" ? f.geometry.coordinates : f.geometry.coordinates[0], m = c[Math.floor(c.length / 2)];
     return m[0] >= x0 && m[0] <= x1 && m[1] >= y0 && m[1] <= y1 && inMine(m[0], m[1]);
   }) };
@@ -131,36 +196,52 @@ async function upstreamMap() {
     return { lon: q.cx, lat: q.cy, mm: Math.round(q.f.properties.rain_72h_mm), km: Math.round(Math.hypot(dx, dy) / 10) * 10, dir: Math.round(((Math.atan2(dx, dy) * 180 / Math.PI + 360) % 360) / 45) % 8 };
   });
   const far = Math.max(0, ...boxes.map(q => Math.hypot((q.cx - hx) * k * 111.32, (q.cy - hy) * 110.57)));
-  X.up = { info, top, far, pctOut: info.catchment_km2 ? Math.round(100 * info.outside_bd_km2 / info.catchment_km2) : 0 };
+  X.up = { info, top, far, rains: mine.map(f => f.properties.rain_72h_mm || 0), pctOut: info.catchment_km2 ? Math.round(100 * info.outside_bd_km2 / info.catchment_km2) : 0, labels: [] };
   sec.hidden = false;
+  upText();
   const step = ["step", ["coalesce", ["get", "rain_72h_mm"], 0], RAIN_STEPS[0][1], ...RAIN_STEPS.slice(1).flatMap(([b, c]) => [b, c])];
-  const map = new maplibregl.Map({ container: "up-map", bounds: [[x0, y0], [x1, y1]], fitBoundsOptions: { padding: 30 }, interactive: false,
+  const map = new maplibregl.Map({ container: "up-map", bounds: [[x0, y0], [x1, y1]], fitBoundsOptions: { padding: 34 }, interactive: false,
     attributionControl: { compact: true },
     style: { version: 8, sources: { sat: esri("World_Imagery", "Esri, Maxar, Earthstar Geographics · HydroSHEDS · NOAA GFS"), places: esri("Reference/World_Boundaries_and_Places", "Esri") },
-      layers: [{ id: "sat", type: "raster", source: "sat", paint: { "raster-brightness-max": 0.55, "raster-saturation": -0.4 } }] } });
+      layers: [{ id: "sat", type: "raster", source: "sat", paint: { "raster-brightness-max": 0.5, "raster-saturation": -0.5 } }] } });
   map.on("load", () => {
     map.addSource("b", { type: "geojson", data: { type: "FeatureCollection", features: mine } });
-    map.addLayer({ id: "b-fill", type: "fill", source: "b", paint: { "fill-color": step, "fill-opacity": 0.72 } });
-    map.addLayer({ id: "b-line", type: "line", source: "b", paint: { "line-color": "#ffffff", "line-opacity": 0.14, "line-width": 0.6 } });
+    // the whole catchment as one light area; rain on top of it; no inner basin lines, so it reads as one region
+    map.addLayer({ id: "b-catch", type: "fill", source: "b", paint: { "fill-color": "#5fd0ff", "fill-opacity": 0.2, "fill-antialias": false } });
+    map.addLayer({ id: "b-rain", type: "fill", source: "b", filter: [">=", ["coalesce", ["get", "rain_72h_mm"], 0], 1],
+      paint: { "fill-color": step, "fill-opacity": 0.7, "fill-antialias": false } });
+    map.addLayer({ id: "places", type: "raster", source: "places", paint: { "raster-opacity": 0.6 } });
     map.addSource("r", { type: "geojson", data: riv });
-    const w = ["interpolate", ["linear"], ["log10", ["max", ["get", "upland_km2"], 1]], 3.7, 0.8, 6.2, 4.5];
-    map.addLayer({ id: "r", type: "line", source: "r", layout: { "line-cap": "round" }, paint: { "line-color": "#1d6fd1", "line-width": w, "line-opacity": 0.9 } });
-    map.addLayer({ id: "r-flow", type: "line", source: "r", paint: { "line-color": "#e8f7ff", "line-width": w, "line-dasharray": [0, 4, 3] } });
-    map.addLayer({ id: "places", type: "raster", source: "places", paint: { "raster-opacity": 0.85 } });
+    const w = ["interpolate", ["linear"], ["log10", ["max", ["get", "upland_km2"], 1]], 4.2, 1.6, 6.2, 6];
+    map.addLayer({ id: "r-glow", type: "line", source: "r", layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": "#7fd3ff", "line-width": ["*", w, 2.6], "line-blur": 3, "line-opacity": 0.35 } });
+    map.addLayer({ id: "r", type: "line", source: "r", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#2f9df0", "line-width": w } });
+    map.addLayer({ id: "r-flow", type: "line", source: "r", paint: { "line-color": "#ffffff", "line-width": ["*", w, 0.55], "line-dasharray": [0, 4, 3] } });
     map.addSource("u", { type: "geojson", data: sh });
-    map.addLayer({ id: "u", type: "line", source: "u", paint: { "line-color": "#ffd34d", "line-width": 2.5 } });
+    map.addLayer({ id: "u", type: "fill", source: "u", paint: { "fill-color": "#ffd34d", "fill-opacity": 0.55 } });
     const el = document.createElement("div"); el.className = "up-here"; el.innerHTML = "<i></i><span></span>";
     X.up.here = el.querySelector("span");
-    new maplibregl.Marker({ element: el, anchor: "left", offset: [-9, 0] }).setLngLat([hx, hy]).addTo(map);
+    new maplibregl.Marker({ element: el, anchor: "left", offset: [-11, 0] }).setLngLat([hx, hy]).addTo(map);
     top.forEach((b, i) => { const m = document.createElement("div"); m.className = "up-pin"; m.textContent = nf(i + 1); new maplibregl.Marker({ element: m }).setLngLat([b.lon, b.lat]).addTo(map); });
+    // river names on the real lines
+    BIG_RIVERS.forEach(n => {
+      let best = 0.45 * 0.45, pt = null;
+      riv.features.forEach(f => {
+        if ((f.properties.upland_km2 || 0) < n.up) return;
+        (f.geometry.type === "MultiLineString" ? f.geometry.coordinates : [f.geometry.coordinates]).forEach(c => c.forEach(([x, y]) => {
+          const d = (x - n.at[1]) ** 2 + (y - n.at[0]) ** 2; if (d < best) { best = d; pt = [x, y]; } }));
+      });
+      if (!pt) return;
+      const lab = document.createElement("div"); lab.className = "up-rname";
+      new maplibregl.Marker({ element: lab }).setLngLat(pt).addTo(map);
+      X.up.labels.push([lab, n.k]);
+    });
     upText();
-    // water moving downstream: HydroRIVERS lines are drawn from upstream to downstream
     const seq = [[0, 4, 3], [0.5, 4, 2.5], [1, 4, 2], [1.5, 4, 1.5], [2, 4, 1], [2.5, 4, 0.5], [3, 4, 0], [0, 0.5, 3, 3.5], [0, 1, 3, 3], [0, 1.5, 3, 2.5], [0, 2, 3, 2], [0, 2.5, 3, 1.5], [0, 3, 3, 1], [0, 3.5, 3, 0.5]];
     let i = 0, seen = true;
     new IntersectionObserver(es => { seen = es[0].isIntersecting; }).observe(sec);
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(() => { if (seen && !document.hidden) { i = (i + 1) % seq.length; map.setPaintProperty("r-flow", "line-dasharray", seq[i]); } }, 90);
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(() => { if (seen && !document.hidden) { i = (i + 1) % seq.length; map.setPaintProperty("r-flow", "line-dasharray", seq[i]); } }, 80);
   });
-  upText();
 }
 
 /* ---------- relatively higher land inside the upazila (terrain tiles read in the browser) ---------- */
