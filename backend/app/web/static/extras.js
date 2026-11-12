@@ -28,6 +28,17 @@ const XT = {
     roseSay: (n, dir, k) => `Of <b>${n}</b> storms that passed within 150 km since 1960, most (<b>${k}</b>) came from the <b>${dir}</b>.`,
     roseNote: "This is history, not a forecast. For a storm that is active now, follow the Met Department's bulletins:",
     short: ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
+    whyTitle: "🧠 Why this risk?",
+    whyIntro: "The 3 things that moved our model's estimate for this upazila the most, compared with its average estimate:",
+    whyUp: "↑ raises the risk", whyDown: "↓ lowers the risk",
+    whyNote: "This shows how the model weighed its inputs (SHAP values computed by the model itself, for the latest forecast). It is not proof of what causes a flood.",
+    whyG: { rain_here: "Rain here over the past weeks", rain_up: "Rain on the land upstream that drains here",
+      rain_abroad: "Rain upstream across the border (India, Nepal, Bhutan)", rain_next: "Rain forecast for the next 3 days",
+      wet_ground: "How wet the ground already is", place: "Where the upazila is and how big its river catchment is",
+      season: "The time of year" },
+    whyF: { rain_here: v => `${v} mm in the last 15 days`, rain_up: v => `${v} mm on average upstream, last 15 days`,
+      rain_abroad: v => `${v} mm on average across the border, last 15 days`, rain_next: v => `${v} mm on average upstream, next 3 days`,
+      wet_ground: v => `top soil holds ${v}% water` },
   },
   bn: {
     upT: "🌧️ উজানের বৃষ্টি, আর যে নদীপথে পানি এখানে আসে",
@@ -55,11 +66,22 @@ const XT = {
     roseSay: (n, dir, k) => `১৯৬০ থেকে ১৫০ কিমির মধ্যে দিয়ে যাওয়া <b>${n}</b>টি ঝড়ের বেশিরভাগ (<b>${k}</b>টি) এসেছিল <b>${dir}</b> দিক থেকে।`,
     roseNote: "এটি ইতিহাস, পূর্বাভাস নয়। এখন চলমান কোনো ঝড়ের জন্য আবহাওয়া অধিদপ্তরের বুলেটিন দেখুন:",
     short: ["উ", "উ-পূ", "পূ", "দ-পূ", "দ", "দ-প", "প", "উ-প"],
+    whyTitle: "🧠 ঝুঁকি কেন এমন?",
+    whyIntro: "এই উপজেলার জন্য মডেলের হিসাবে যে ৩টি জিনিস সবচেয়ে বেশি প্রভাব ফেলেছে (মডেলের গড় হিসাবের তুলনায়):",
+    whyUp: "↑ ঝুঁকি বাড়াচ্ছে", whyDown: "↓ ঝুঁকি কমাচ্ছে",
+    whyNote: "মডেল কোন তথ্যকে কতটা গুরুত্ব দিয়েছে, এটা তার ব্যাখ্যা (সর্বশেষ পূর্বাভাসের জন্য মডেলের নিজের SHAP হিসাব)। বন্যার নিশ্চিত কারণ নয়।",
+    whyG: { rain_here: "এই উপজেলায় গত কয়েক সপ্তাহের বৃষ্টি", rain_up: "উজানের যে এলাকার পানি এখানে নামে, সেখানে বৃষ্টি",
+      rain_abroad: "সীমানার ওপারে উজানে বৃষ্টি (ভারত, নেপাল, ভুটান)", rain_next: "আগামী ৩ দিনের পূর্বাভাসের বৃষ্টি",
+      wet_ground: "মাটি আগে থেকেই কতটা ভেজা", place: "উপজেলার অবস্থান আর নদী-অববাহিকার আকার",
+      season: "বছরের এই সময় (ঋতু)" },
+    whyF: { rain_here: v => `গত ১৫ দিনে ${v} মিমি`, rain_up: v => `উজানে গত ১৫ দিনে গড়ে ${v} মিমি`,
+      rain_abroad: v => `ওপারে গত ১৫ দিনে গড়ে ${v} মিমি`, rain_next: v => `উজানে আগামী ৩ দিনে গড়ে ${v} মিমি`,
+      wet_ground: v => `উপরের মাটিতে ${v}% পানি` },
   },
 };
 const xt = () => XT[lang];
 const RAIN_STEPS = [[0, "rgba(0,0,0,0)"], [1, "#3a6ea5"], [5, "#2f8fd8"], [10, "#33b3a6"], [20, "#7dcf3c"], [50, "#f2d43a"], [100, "#f07c2a"], [200, "#d42e5a"]];
-const X = { up: null, rose: null, high: null, shape: null };
+const X = { up: null, rose: null, high: null, shape: null, why: null };
 
 /* ---------- which way past storms came from ---------- */
 function drawRose() {
@@ -313,6 +335,20 @@ function highButton() {
   };
 }
 
+/* ---------- why this risk: the model's own TreeSHAP reasons for the latest forecast ---------- */
+function whyText() {
+  const box = $("why"), w = X.why, tt = xt();
+  if (!w || !w.reasons.length) { box.hidden = true; return; }
+  const fact = (g, v) => g === "wet_ground" ? tt.whyF[g](nf(v * 100)) : tt.whyF[g](nf(v, v < 10 ? 1 : 0));
+  box.hidden = false;
+  box.innerHTML = `<h2>${tt.whyTitle}</h2><p class="sub">${tt.whyIntro}</p><ol class="why-list">` + w.reasons.map(r => {
+    const up = r.v > 0, pct = Math.max(8, Math.min(100, Math.abs(r.v) / 1.5 * 100));
+    const f = w.facts[r.g] != null && tt.whyF[r.g] ? `<small>${fact(r.g, w.facts[r.g])}</small>` : "";
+    return `<li class="${up ? "up" : "down"}"><div class="why-row"><span>${tt.whyG[r.g] || r.g}</span><b>${up ? tt.whyUp : tt.whyDown}</b></div>
+      <span class="why-bar"><i style="width:${pct}%"></i></span>${f}</li>`;
+  }).join("") + `</ol><p class="src">${tt.whyNote}</p>`;
+}
+
 /* ---------- active storm banner, and a shelter search on Google Maps ---------- */
 function extraBits() {
   const tt = xt();
@@ -331,7 +367,8 @@ function extraBits() {
   for (let i = 0; i < 120 && !(nodeId && R); i++) await new Promise(r => setTimeout(r, 250));
   if (!nodeId || !R) return;
   const base = render;
-  render = function () { base(); drawRose(); upText(); highText(); extraBits(); };
+  render = function () { base(); drawRose(); upText(); highText(); extraBits(); whyText(); };
+  fetch(`/api/v1/nodes/${nodeId}/why`).then(r => r.ok ? r.json() : null).then(j => { X.why = j; whyText(); }).catch(() => {});
   X.shape = await fetch(`/api/v1/nodes/${nodeId}/shape`).then(r => r.ok ? r.json() : null).catch(() => null);
   fetch("/api/v1/cyclones/active").then(r => r.ok ? r.json() : null).then(j => { X.storm = j && j.storms && j.storms[0]; extraBits(); }).catch(() => {});
   extraBits();

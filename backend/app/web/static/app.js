@@ -37,6 +37,11 @@ const T = {
     statusEyebrow: "National flood outlook", statusEyebrowPast: "Past date test · not today's situation",
     headlineNone: "No elevated flood risk", headlineSome: (h, m) => h ? `${h} upazilas at high risk` : `${m} upazilas at medium risk`,
     period: (a, b) => `Next 15 days · ${a} – ${b}`,
+    staleT: "⚠️ The forecast has not updated",
+    staleSay: d => `The last forecast was made on <b>${d}</b>, more than 24 hours ago. To avoid an old risk being read as today's, no risk level is shown until it updates. Check FFWC for river levels.`,
+    rainStale: d => `⚠️ The rain numbers are from a weather forecast made on ${d}, more than 24 hours ago.`,
+    wnMade: d => `Worked out from the pictures on ${d}.`,
+    wnOld: "⚠️ This satellite map has not updated for more than 2 days.",
     high: "High", medium: "Medium", low: "Low",
     whatMeans: "Each upazila is grouped by its chance of abnormal water over at least 5% of its area in the next 15 days: low is under 25%, medium 25–50%, high 50% or more.",
     skill: (m, b) => `Tested on 9 past monsoons the model had not seen: given one flooded and one dry upazila, it gave the flooded one the higher risk <b>${nf(m * 100)} times out of 100</b>. Going by past flood history alone: ${nf(b * 100)} times.`,
@@ -85,6 +90,17 @@ const T = {
     wnDetail: (d, p) => `Satellite picture of <b>${d}</b>: more water than usual over <b>${p}%</b> of this upazila.`,
     wnWord: ["Almost none: like a normal year.", "A little more water than usual.", "A lot more water than usual: the level counted as a flood in the flood history."],
     wnMissing: "No satellite picture of this upazila in the last 12 days.",
+    whyTitle: "Why this risk?",
+    whyIntro: "The 3 things that moved the model's estimate the most, compared with its average estimate:",
+    whyUp: "↑ raises the risk", whyDown: "↓ lowers the risk",
+    whyNote: "This shows how the model weighed its inputs (SHAP values from the model itself). It is not proof of what causes a flood.",
+    whyG: { rain_here: "Rain here over the past weeks", rain_up: "Rain on the land upstream that drains here",
+      rain_abroad: "Rain upstream across the border (India, Nepal, Bhutan)", rain_next: "Rain forecast for the next 3 days",
+      wet_ground: "How wet the ground already is", place: "Where the upazila is and how big its river catchment is",
+      season: "The time of year" },
+    whyF: { rain_here: v => `${v} mm in the last 15 days`, rain_up: v => `${v} mm on average upstream, last 15 days`,
+      rain_abroad: v => `${v} mm on average across the border, last 15 days`, rain_next: v => `${v} mm on average upstream, next 3 days`,
+      wet_ground: v => `top soil holds ${v}% water` },
     tgBtn: "Get alerts for this upazila on Telegram", tgNote: "Opens Telegram and adds this upazila to Durjog Barta. Free; stop any time with /unsubscribe.",
     tgTitle: "🔔 Alerts on your phone", tgAll: "Open Durjog Barta on Telegram",
     tgAllNote: "Free alerts in Bangla and English, with a voice message. Send your upazila name to the bot.",
@@ -126,6 +142,11 @@ const T = {
     statusEyebrow: "জাতীয় বন্যা পরিস্থিতি", statusEyebrowPast: "পুরনো তারিখের পরীক্ষা · আজকের অবস্থা নয়",
     headlineNone: "বন্যার বাড়তি ঝুঁকি নেই", headlineSome: (h, m) => h ? `${nf(h)}টি উপজেলায় উচ্চ ঝুঁকি` : `${nf(m)}টি উপজেলায় মাঝারি ঝুঁকি`,
     period: (a, b) => `আগামী ১৫ দিন · ${a} – ${b}`,
+    staleT: "⚠️ পূর্বাভাস আপডেট হয়নি",
+    staleSay: d => `শেষ পূর্বাভাস তৈরি হয়েছিল <b>${d}</b>-এ, ২৪ ঘণ্টারও আগে। পুরনো ঝুঁকিকে যেন আজকের বলে ভুল না হয়, তাই আপডেট না হওয়া পর্যন্ত কোনো ঝুঁকির মাত্রা দেখানো হচ্ছে না। নদীর পানির স্তরের জন্য FFWC দেখুন।`,
+    rainStale: d => `⚠️ বৃষ্টির সংখ্যাগুলো ${d}-এর আবহাওয়া পূর্বাভাস থেকে, যা ২৪ ঘণ্টারও আগের।`,
+    wnMade: d => `ছবিগুলো থেকে হিসাব করা হয়েছে ${d}-এ।`,
+    wnOld: "⚠️ এই স্যাটেলাইট ম্যাপ ২ দিনের বেশি আপডেট হয়নি।",
     high: "উচ্চ", medium: "মাঝারি", low: "নিম্ন",
     whatMeans: "আগামী ১৫ দিনে উপজেলার অন্তত ৫% এলাকায় অস্বাভাবিক পানি জমার সম্ভাবনা ধরে ভাগ করা হয়েছে: নিম্ন ২৫%-এর কম, মাঝারি ২৫–৫০%, উচ্চ ৫০% বা তার বেশি।",
     skill: (m, b) => `মডেলকে আগে না দেখানো ৯টি বর্ষায় পরীক্ষা করা হয়েছে। একটি প্লাবিত ও একটি শুকনো উপজেলার মধ্যে প্লাবিতটিকে বেশি ঝুঁকিতে রেখেছে <b>১০০ বারে ${nf(m * 100)} বার</b>। শুধু আগের বন্যার ইতিহাস দেখে অনুমান করলে ${nf(b * 100)} বার।`,
@@ -174,6 +195,17 @@ const T = {
     wnDetail: (d, p) => `<b>${d}</b>-এর স্যাটেলাইট ছবি: এই উপজেলার <b>${p}%</b> এলাকায় স্বাভাবিকের চেয়ে বেশি পানি।`,
     wnWord: ["প্রায় নেই: স্বাভাবিক বছরের মতো।", "স্বাভাবিকের চেয়ে কিছুটা বেশি পানি।", "স্বাভাবিকের চেয়ে অনেক বেশি পানি: বন্যার ইতিহাসে এই মাত্রাকে বন্যা ধরা হয়।"],
     wnMissing: "গত ১২ দিনে এই উপজেলার স্যাটেলাইট ছবি নেই।",
+    whyTitle: "ঝুঁকি কেন এমন?",
+    whyIntro: "মডেলের হিসাবে যে ৩টি জিনিস সবচেয়ে বেশি প্রভাব ফেলেছে (মডেলের গড় হিসাবের তুলনায়):",
+    whyUp: "↑ ঝুঁকি বাড়াচ্ছে", whyDown: "↓ ঝুঁকি কমাচ্ছে",
+    whyNote: "মডেল কোন তথ্যকে কতটা গুরুত্ব দিয়েছে, এটা তার ব্যাখ্যা (মডেলের নিজের SHAP হিসাব)। বন্যার নিশ্চিত কারণ নয়।",
+    whyG: { rain_here: "এই উপজেলায় গত কয়েক সপ্তাহের বৃষ্টি", rain_up: "উজানের যে এলাকার পানি এখানে নামে, সেখানে বৃষ্টি",
+      rain_abroad: "সীমানার ওপারে উজানে বৃষ্টি (ভারত, নেপাল, ভুটান)", rain_next: "আগামী ৩ দিনের পূর্বাভাসের বৃষ্টি",
+      wet_ground: "মাটি আগে থেকেই কতটা ভেজা", place: "উপজেলার অবস্থান আর নদী-অববাহিকার আকার",
+      season: "বছরের এই সময় (ঋতু)" },
+    whyF: { rain_here: v => `গত ১৫ দিনে ${v} মিমি`, rain_up: v => `উজানে গত ১৫ দিনে গড়ে ${v} মিমি`,
+      rain_abroad: v => `ওপারে গত ১৫ দিনে গড়ে ${v} মিমি`, rain_next: v => `উজানে আগামী ৩ দিনে গড়ে ${v} মিমি`,
+      wet_ground: v => `উপরের মাটিতে ${v}% পানি` },
     tgBtn: "এই উপজেলার সতর্কবার্তা Telegram-এ পান", tgNote: "Telegram খুলে এই উপজেলাটি দুর্যোগ বার্তায় যোগ হবে। বিনামূল্যে; বন্ধ করতে /unsubscribe লিখুন।",
     tgTitle: "🔔 ফোনে সতর্কবার্তা", tgAll: "Telegram-এ দুর্যোগ বার্তা খুলুন",
     tgAllNote: "বাংলা ও ইংরেজিতে বিনামূল্যে সতর্কবার্তা, সাথে ভয়েস বার্তা। বটকে আপনার উপজেলার নাম পাঠান।",
@@ -580,7 +612,17 @@ function renderStatus() {
   const el = $("status"), tt = t(), r = data.flood_forecast_run, c = counts();
   if (view === "cyc") { renderCycStatus(el, tt); return; }
   el.className = `panel status ${c.high ? "high" : c.medium ? "medium" : "low"}`;
-  if (!r && !hind) { el.innerHTML = `<div class="eyebrow">${tt.statusEyebrow}</div><p class="note">${tt.noForecast}</p>`; return; }
+  // the rain forecast is shown even when old, so say so when it is more than a day old
+  const rr = data.rain_run, rainOld = !hind && rr && Date.now() - Date.parse(rr.issued_at) > 864e5
+    ? `<p class="note stale">${tt.rainStale(whenFmt(rr.issued_at))}</p>` : "";
+  if (!r && !hind) {
+    el.className = "panel status stale";
+    el.innerHTML = data.forecast_stale_since
+      ? `<div class="eyebrow">${tt.statusEyebrow}</div><div class="headline">${tt.staleT}</div><p class="note">${tt.staleSay(whenFmt(data.forecast_stale_since))}</p>${rainOld}
+         <p><a class="ffwc" href="https://www.ffwc.gov.bd/" target="_blank" rel="noopener">${tt.ffwcLink}</a></p>`
+      : `<div class="eyebrow">${tt.statusEyebrow}</div><p class="note">${tt.noForecast}</p>${rainOld}`;
+    return;
+  }
   let extra;
   if (hind) {
     const obs = Object.values(hind.upazilas).filter(v => v.observed_frac != null && v.observed_frac >= 0.05);
@@ -597,7 +639,7 @@ function renderStatus() {
     <div class="period">${hind ? dateFmt(hind.day) : tt.period(dateLong(r.reference_day), dateLong(r.valid_until, true))}</div>
     <div class="counts"><div class="h"><b>${nf(c.high)}</b><small>${tt.high}</small></div>
       <div class="m"><b>${nf(c.medium)}</b><small>${tt.medium}</small></div>
-      <div class="l"><b>${nf(c.low)}</b><small>${tt.low}</small></div></div>${extra}`;
+      <div class="l"><b>${nf(c.low)}</b><small>${tt.low}</small></div></div>${rainOld}${extra}`;
 }
 
 function renderTop() {
@@ -690,6 +732,15 @@ function countTo(el, to, fmt, ms = 900) {
 let waterNow = null, waterLayerGroup = null;
 map.createPane("satwater").style.zIndex = 430;
 map.getPane("satwater").style.pointerEvents = "none";
+// date and time in Dhaka, e.g. "12 Nov, 9:10 am"
+const whenFmt = iso => {
+  const d = new Date(iso), o = { timeZone: "Asia/Dhaka" };
+  const day = d.toLocaleDateString(loc(), { ...o, day: "numeric", month: "short" });
+  if (lang !== "bn") return `${day}, ${d.toLocaleTimeString("en-GB", { ...o, hour: "numeric", minute: "2-digit", hour12: true })}`;
+  const h = +d.toLocaleString("en-GB", { ...o, hour: "numeric", hour12: false }) % 24;
+  const part = h < 5 ? "রাত" : h < 12 ? "সকাল" : h < 16 ? "দুপুর" : h < 18 ? "বিকাল" : h < 20 ? "সন্ধ্যা" : "রাত";
+  return `${day}, ${part} ${d.toLocaleTimeString(loc(), { ...o, hour: "numeric", minute: "2-digit", hour12: true }).replace(/\s?(AM|PM|am|pm|পূর্বাহ্ণ|অপরাহ্ণ)/, "")}`;
+};
 const dShort = iso => new Date(iso + "T00:00:00Z").toLocaleDateString(loc(), { day: "numeric", month: "short", timeZone: "UTC" });
 async function loadWaterNow() {
   try {
@@ -716,7 +767,8 @@ function renderWaterNow() {
   $("wn-top").innerHTML = top.map(r => `<li data-id="${r.id}"><span class="nm">${r.name}<small>${r.district}</small></span>
     <span class="bar"><i style="width:${Math.min(100, r.pct * 3)}%"></i></span><b>${nf(r.pct, 1)}%</b></li>`).join("");
   $("wn-top").querySelectorAll("li").forEach(li => li.onclick = () => select(li.dataset.id, true));
-  $("wn-note").textContent = tt.wnNote;
+  const old = Date.now() - Date.parse(waterNow.computed_at) > 2 * 864e5;
+  $("wn-note").innerHTML = `${old ? `<b class="stale">${tt.wnOld}</b> ` : ""}${tt.wnMade(whenFmt(waterNow.computed_at))} ${tt.wnNote}`;
 }
 function renderWaterDetail() {
   const box = $("d-water"), tt = t();
@@ -728,6 +780,29 @@ function renderWaterDetail() {
   box.className = `wn-card l${lvl}`;
   box.innerHTML = `<span class="ico">🛰️</span><div><p>${tt.wnDetail(dShort(w.last_day), nf(pct, pct < 10 ? 1 : 0))}</p>
     <div class="wn-meter"><i style="width:${Math.min(100, pct * 4)}%"></i><b style="left:20%"></b></div><small>${tt.wnWord[lvl]}</small></div>`;
+}
+
+// "Why this risk?": the model's own TreeSHAP reasons for the live forecast (not shown for past dates)
+let why = null;
+async function loadWhy(id) {
+  why = null; $("d-why").hidden = true;
+  if (hind) return;
+  const res = await fetch(`/api/v1/nodes/${id}/why`);
+  if (!res.ok || selected?.id !== id || hind) return;
+  why = { id, ...(await res.json()) };
+  renderWhy();
+}
+function renderWhy() {
+  const box = $("d-why"), tt = t();
+  if (!why || !selected || why.id !== selected.id || hind || !why.reasons.length) { box.hidden = true; return; }
+  const fact = (g, v) => g === "wet_ground" ? tt.whyF[g](nf(v * 100)) : tt.whyF[g](nf(v, v < 10 ? 1 : 0));
+  box.hidden = false;
+  box.innerHTML = `<h3>${tt.whyTitle}</h3><p class="muted small">${tt.whyIntro}</p><ol>` + why.reasons.map(r => {
+    const up = r.v > 0, w = Math.max(8, Math.min(100, Math.abs(r.v) / 1.5 * 100));
+    const f = why.facts[r.g] != null && tt.whyF[r.g] ? `<small>${fact(r.g, why.facts[r.g])}</small>` : "";
+    return `<li class="${up ? "up" : "down"}"><div class="why-row"><span>${tt.whyG[r.g] || r.g}</span><b>${up ? tt.whyUp : tt.whyDown}</b></div>
+      <span class="why-bar"><i style="width:${w}%"></i></span>${f}</li>`;
+  }).join("") + `</ol><p class="note">${tt.whyNote}</p>`;
 }
 
 function renderDetail() {
@@ -759,6 +834,8 @@ function renderDetail() {
   rc.title = tt.rainClsNote;
   rc.innerHTML = p.rain_24h_mm == null ? "" :
     `<span class="drops">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= k ? "on" : ""}"></i>`).join("")}</span><b>${tt.rainClasses[k]}</b><small>${tt.nextDays}</small>`;
+  // the reasons explain the live forecast only, so they hide while a past date is shown
+  if (hind) $("d-why").hidden = true; else if (why && why.id === p.id) renderWhy(); else loadWhy(p.id);
 }
 
 async function loadOutlook(id) {
@@ -1032,7 +1109,7 @@ function applyLang() {
   if (cyc && cycTrack.length) setStormTime(pbIdx);
   if (data) { renderSide(); if (selected) renderStrip(); }
   if (riverNames && $("show-rivers").checked) placeRiverNames();
-  renderWaterNow(); if (selected) renderWaterDetail();
+  renderWaterNow(); if (selected) { renderWaterDetail(); renderWhy(); }
 }
 
 /* ---------- wiring ---------- */

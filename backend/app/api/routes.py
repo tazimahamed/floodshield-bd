@@ -95,6 +95,8 @@ def _upazilas(division: str | None):
                 "issued_at": run.model_run_time.isoformat(), "sha256": run.sha256,
             },
             "flood_forecast_run": _flood_run_info(frun) if frun else None,
+            # when the newest forecast is too old to show, say when it was made instead of "no forecast"
+            "forecast_stale_since": _stale_since(db) if not frun else None,
         }
 
 
@@ -526,6 +528,23 @@ def water_now_tile(name: str):
     return FileResponse(TILES / name, media_type="image/png", headers={"Cache-Control": "public, max-age=3600"})
 
 
+@router.get("/nodes/{node_id}/why")
+def why(node_id: str):
+    """The 3 biggest reasons (TreeSHAP groups) behind this upazila's risk in the latest forecast run.
+    The run id is included so the page can check it explains the same forecast it shows."""
+    from app.ml.explain import load
+
+    data = load()
+    with SessionLocal() as db:
+        run = _latest_flood_run(db)
+    if not data or not run or data.get("run_id") != run.id:
+        raise HTTPException(503, "The explanation for the latest forecast is not ready yet.")
+    hit = data["upazilas"].get(node_id)
+    if hit is None:
+        raise HTTPException(404, "No explanation for this upazila")
+    return {"run_id": data["run_id"], "model_version": data["model_version"], **hit}
+
+
 @router.get("/model/calendar")
 def model_calendar_view():
     """Last 12 months, fortnight by fortnight: floods the model caught, missed, and its false alarms."""
@@ -578,6 +597,11 @@ def ingest_status(limit: int = 20):
             "finished_at": r.finished_at.isoformat() if r.finished_at else None,
             "raw_path": r.raw_path, "sha256": r.sha256, "error": r.error,
         } for r in runs]
+
+
+def _stale_since(db) -> str | None:
+    run = db.scalars(select(FloodForecastRun).order_by(FloodForecastRun.id.desc()).limit(1)).first()
+    return run.issued_at.isoformat() if run else None
 
 
 def _latest_flood_run(db) -> FloodForecastRun | None:

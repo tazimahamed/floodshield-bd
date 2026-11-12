@@ -570,3 +570,17 @@ body.bn .up-rname { font-style: normal; letter-spacing: 0; }
 @media (max-width: 640px) { .up-wrap { height: 340px; } .up-fact b { font-size: 22px; } }
 @media (prefers-reduced-motion: reduce) { .up-verdict.l2 .ico { animation: none; } }
 .up-legend { color: var(--text); font-size: 13px; } .up-legend .scale > span { font-weight: 600; } .up-legend .scale em { color: var(--muted); }
+
+/* ---------- why this risk (SHAP) ---------- */
+.why-card { margin-top: 18px; }
+.why-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
+.why-list li { padding: 10px 12px; border-radius: 12px; background: var(--surface-2, rgba(0,0,0,.03)); border: 1px solid var(--line); }
+.why-row { display: flex; flex-direction: column; gap: 4px; }
+.why-row span { font-weight: 600; }
+.why-row b { font-size: 13px; }
+.why-list li.up .why-row b { color: var(--high); } .why-list li.down .why-row b { color: var(--low); }
+.why-bar { display: block; height: 6px; border-radius: 3px; background: rgba(0,0,0,.08); margin: 8px 0 4px; overflow: hidden; }
+.why-bar i { display: block; height: 100%; border-radius: 3px; }
+.why-list li.up .why-bar i { background: var(--high); } .why-list li.down .why-bar i { background: var(--low); }
+.why-list li small { color: var(--muted); }
+@media (max-width: 800px) { .why-list { grid-template-columns: 1fr; } }

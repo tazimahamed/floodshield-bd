@@ -280,9 +280,14 @@ def dispatch_alerts() -> int:
                                  message=text, status="sent")
                 try:
                     send(sub.chat_id, text)
-                    if sub.voice is not False:
-                        send_voice(sub.chat_id, voice_script(level, node, rain))
                     sent += 1
+                    # the text is the alert; a failed voice note must not mark it failed (that would resend the text)
+                    if sub.voice is not False:
+                        try:
+                            send_voice(sub.chat_id, voice_script(level, node, rain))
+                        except Exception as e:
+                            entry.error = f"voice: {str(e)[:900]}"
+                            log.warning("voice note failed for an alert: %s", e)
                 except Exception as e:
                     entry.status, entry.error = "failed", str(e)[:1000]
                     if "blocked" in str(e) or "chat not found" in str(e):

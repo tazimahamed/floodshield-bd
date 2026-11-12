@@ -15,6 +15,7 @@ from sqlalchemy import func, select
 
 from app.db.models import Era5Daily, FloodForecast, FloodForecastRun, IngestRun, ModelVersion, RainForecast
 from app.db.session import SessionLocal
+from app.ml import explain
 from app.ml.features import FORECAST_DAYS, features_at, graph_tables, load_daily
 from app.ml.train import MODEL_DIR
 
@@ -83,6 +84,7 @@ def run_forecast() -> int:
                    for n, r in pred.iterrows())
         db.commit()
         log.info("flood forecast %d: model %s, rain run %d", run.id, run.model_version, rain_run.id)
+        explain.save(model["model"], f, run.id, run.model_version)  # "why this risk": never stops the forecast
         return run.id
 
 
