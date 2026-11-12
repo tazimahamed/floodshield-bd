@@ -26,3 +26,4 @@ edge-tts
 cdsapi
 cfgrib
 xarray
+rasterio

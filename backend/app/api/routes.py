@@ -545,6 +545,26 @@ def why(node_id: str):
     return {"run_id": data["run_id"], "model_version": data["model_version"], **hit}
 
 
+@router.get("/landslide-now")
+def landslide_now_view():
+    """NASA LHASA landslide probability per hilly upazila (flat land has no value), plus the map picture's bounds."""
+    from app.services.landslide import load
+
+    data = load()
+    if not data:
+        raise HTTPException(503, "The landslide map is being made; try again later.")
+    return data
+
+
+@router.get("/landslide-now.png")
+def landslide_now_png():
+    from app.services.landslide import PNG
+
+    if not PNG.exists():
+        raise HTTPException(404, "No landslide map yet")
+    return FileResponse(PNG, media_type="image/png", headers={"Cache-Control": "public, max-age=3600"})
+
+
 @router.get("/model/calendar")
 def model_calendar_view():
     """Last 12 months, fortnight by fortnight: floods the model caught, missed, and its false alarms."""

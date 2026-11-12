@@ -91,6 +91,13 @@ const T = {
     wnWord: ["Almost none: like a normal year.", "A little more water than usual.", "A lot more water than usual: the level counted as a flood in the flood history."],
     wnMissing: "No satellite picture of this upazila in the last 12 days.",
     whyTitle: "Why this risk?",
+    slideLayer: "⛰️ Landslide chance (NASA)",
+    slideKey: ["under 5%", "5–12%", "12% and more"],
+    slideNote: d => `NASA LHASA, ${d}. Only hilly land has a value. 12% is the level NASA's study used to test the model, not an official warning level.`,
+    slideCard: (d, p) => `NASA's landslide model (${d}): the highest chance on this upazila's hilly land is <b>${p}%</b>.`,
+    slideOver: "That is above 12%, the level NASA's study used to test the model.",
+    slideUnder: "That is below 12%, the level NASA's study used to test the model.",
+    slideFine: "A global model, not checked against landslides in Bangladesh by us; flat land is not covered. In heavy rain in the hills, follow your upazila administration.",
     whyIntro: "The 3 things that moved the model's estimate the most, compared with its average estimate:",
     whyUp: "↑ raises the risk", whyDown: "↓ lowers the risk",
     whyNote: "This shows how the model weighed its inputs (SHAP values from the model itself). It is not proof of what causes a flood.",
@@ -196,6 +203,13 @@ const T = {
     wnWord: ["প্রায় নেই: স্বাভাবিক বছরের মতো।", "স্বাভাবিকের চেয়ে কিছুটা বেশি পানি।", "স্বাভাবিকের চেয়ে অনেক বেশি পানি: বন্যার ইতিহাসে এই মাত্রাকে বন্যা ধরা হয়।"],
     wnMissing: "গত ১২ দিনে এই উপজেলার স্যাটেলাইট ছবি নেই।",
     whyTitle: "ঝুঁকি কেন এমন?",
+    slideLayer: "⛰️ ভূমিধসের সম্ভাবনা (NASA)",
+    slideKey: ["৫%-এর কম", "৫–১২%", "১২% বা বেশি"],
+    slideNote: d => `NASA LHASA, ${d}। শুধু পাহাড়ি জমির হিসাব আছে। ১২% হলো NASA-র গবেষণায় মডেল পরীক্ষার সীমা, সরকারি সতর্কতার মাত্রা নয়।`,
+    slideCard: (d, p) => `NASA-র ভূমিধস মডেল (${d}): এই উপজেলার পাহাড়ি জমিতে সর্বোচ্চ সম্ভাবনা <b>${p}%</b>।`,
+    slideOver: "এটা ১২%-এর বেশি, যে সীমায় NASA-র গবেষণায় মডেল পরীক্ষা করা হয়েছিল।",
+    slideUnder: "এটা ১২%-এর কম, যে সীমায় NASA-র গবেষণায় মডেল পরীক্ষা করা হয়েছিল।",
+    slideFine: "এটা সারা বিশ্বের জন্য তৈরি মডেল, বাংলাদেশের ভূমিধসের সাথে আমরা যাচাই করিনি; সমতল জমির হিসাব নেই। পাহাড়ে ভারী বৃষ্টি হলে উপজেলা প্রশাসনের নির্দেশ মানুন।",
     whyIntro: "মডেলের হিসাবে যে ৩টি জিনিস সবচেয়ে বেশি প্রভাব ফেলেছে (মডেলের গড় হিসাবের তুলনায়):",
     whyUp: "↑ ঝুঁকি বাড়াচ্ছে", whyDown: "↓ ঝুঁকি কমাচ্ছে",
     whyNote: "মডেল কোন তথ্যকে কতটা গুরুত্ব দিয়েছে, এটা তার ব্যাখ্যা (মডেলের নিজের SHAP হিসাব)। বন্যার নিশ্চিত কারণ নয়।",
@@ -682,6 +696,7 @@ function select(id, zoom = false) {
   renderDetail();
   renderStrip();
   renderWaterDetail();
+  renderSlideDetail();
   // one tap: Telegram opens the bot, which subscribes this upazila from the start link
   $("tg-link").href = `https://t.me/DurjogBartaBangladesh_bot?start=${encodeURIComponent(id)}`;
   // Google Maps search around the upazila (a link only: Google's places are not copied onto this site)
@@ -742,6 +757,39 @@ const whenFmt = iso => {
   return `${day}, ${part} ${d.toLocaleTimeString(loc(), { ...o, hour: "numeric", minute: "2-digit", hour12: true }).replace(/\s?(AM|PM|am|pm|পূর্বাহ্ণ|অপরাহ্ণ)/, "")}`;
 };
 const dShort = iso => new Date(iso + "T00:00:00Z").toLocaleDateString(loc(), { day: "numeric", month: "short", timeZone: "UTC" });
+// NASA LHASA landslide chance: a map picture (off by default) and a card for upazilas with hilly land
+let slide = null, slideLayer = null;
+map.createPane("slide").style.zIndex = 435;
+map.getPane("slide").style.pointerEvents = "none";
+async function loadSlide() {
+  try {
+    const r = await fetch("/api/v1/landslide-now");
+    if (!r.ok) return;
+    slide = await r.json();
+  } catch (e) { return; }
+  slideLayer = L.imageOverlay(`/api/v1/landslide-now.png?d=${slide.file}`, slide.bounds, { pane: "slide", opacity: 0.9, interactive: false, className: "slide-img" });
+  $("slide-row").hidden = false;
+  toggleSlide();
+  if (selected) renderSlideDetail();
+}
+function toggleSlide() {
+  if (!slideLayer) return;
+  const on = $("show-slide").checked;
+  if (on) slideLayer.addTo(map); else slideLayer.remove();
+  const tt = t(), k = $("slide-key");
+  k.hidden = !on;
+  k.innerHTML = `<span class="sk"><i style="background:rgba(250,220,90,.6)"></i>${tt.slideKey[0]}</span><span class="sk"><i style="background:#f58c1e"></i>${tt.slideKey[1]}</span><span class="sk"><i style="background:#d7281e"></i>${tt.slideKey[2]}</span><small>${tt.slideNote(dShort(slide.day))}</small>`;
+}
+function renderSlideDetail() {
+  const box = $("d-slide"), tt = t(), s = slide && selected && slide.upazilas[selected.id];
+  if (!s) { box.hidden = true; return; }
+  const pct = s.max * 100;
+  box.hidden = false;
+  box.className = `wn-card slide-card${s.max >= slide.ref ? " over" : ""}`;
+  box.innerHTML = `<span class="ico">⛰️</span><div><p>${tt.slideCard(dShort(slide.day), nf(pct, pct < 10 ? 1 : 0))}</p>
+    <p class="small">${s.max >= slide.ref ? tt.slideOver : tt.slideUnder}</p><small>${tt.slideFine}</small></div>`;
+}
+
 async function loadWaterNow() {
   try {
     const r = await fetch("/api/v1/water-now");
@@ -1109,7 +1157,8 @@ function applyLang() {
   if (cyc && cycTrack.length) setStormTime(pbIdx);
   if (data) { renderSide(); if (selected) renderStrip(); }
   if (riverNames && $("show-rivers").checked) placeRiverNames();
-  renderWaterNow(); if (selected) { renderWaterDetail(); renderWhy(); }
+  renderWaterNow(); if (selected) { renderWaterDetail(); renderWhy(); renderSlideDetail(); }
+  if (slideLayer) toggleSlide();
 }
 
 /* ---------- wiring ---------- */
@@ -1130,6 +1179,7 @@ $("division").onchange = () => load(true);
 $("show-rivers").onchange = toggleRivers;
 $("show-basins").onchange = toggleBasins;
 $("show-water").onchange = toggleWaterNow;
+$("show-slide").onchange = toggleSlide;
 $("detail-close").onclick = closeDetail;
 $("strip-close").onclick = closeDetail;
 $("drawer-close").onclick = closeDrawer;
@@ -1177,5 +1227,6 @@ document.addEventListener("keydown", e => {
   $("map-loading").hidden = true;
   toggleRivers();
   loadWaterNow();
+  loadSlide();
   if (innerWidth > 1100) openDrawer();
 })();

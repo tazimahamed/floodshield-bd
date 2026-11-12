@@ -23,7 +23,7 @@ from app.services.era5 import refresh_recent
 from app.db.models import DailyOutlook, IngestRun
 from app.db.session import SessionLocal
 from app.services.ingest import SOURCE as INGEST_SOURCE, run_gfs_ingest
-from app.services import model_calendar, water_now
+from app.services import landslide, model_calendar, water_now
 from app.services.ops import notify_admin, ping
 from app.services.outlook import refresh_outlook
 
@@ -141,6 +141,9 @@ async def lifespan(app: FastAPI):
     # unusual water on the latest satellite pictures: daily at 07:30 Dhaka time, and soon after startup if missing or old
     wn = {"next_run_time": datetime.now(timezone.utc) + timedelta(minutes=6)} if water_now.needs_build() else {}
     scheduler.add_job(water_now.refresh, "cron", hour=1, minute=30, id="water_now", max_instances=1, coalesce=True, **wn)
+    # NASA LHASA landslide nowcast: the day's file usually appears around 05:00 UTC; NASA serves it best-effort
+    ls = {"next_run_time": datetime.now(timezone.utc) + timedelta(minutes=9)} if landslide.needs_build() else {}
+    scheduler.add_job(landslide.refresh, "cron", hour=6, minute=15, id="landslide", max_instances=1, coalesce=True, **ls)
     # also at startup: a machine that was off at 03:00 would otherwise fall behind until forecasts fail
     scheduler.add_job(era5_refresh, "cron", hour=3, id="era5_refresh", max_instances=1, coalesce=True,
                       next_run_time=datetime.now(timezone.utc))

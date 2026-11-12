@@ -449,6 +449,14 @@ body.bn .mini-h { text-transform: none; letter-spacing: 0; }
 .note.stale, b.stale { color: var(--med); }
 .panel.status.stale .headline { color: var(--med); }
 
+/* ---------- landslide chance (NASA LHASA) ---------- */
+.slide-key { display: grid; gap: 4px; margin: 4px 0 2px 26px; font-size: 12px; }
+.slide-key .sk { display: flex; align-items: center; gap: 6px; }
+.slide-key .sk i { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+.slide-key small { color: var(--muted); line-height: 1.35; }
+.slide-card { border-color: #e9b46b; } .slide-card.over { border-color: var(--high); background: var(--high-bg); }
+.slide-card p.small { font-size: 12.5px; margin: 0 0 4px; }
+
 /* ---------- why this risk (SHAP) ---------- */
 .why-card { margin-top: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--surface-2); border: 1px solid var(--line); font-size: 13.5px; line-height: 1.45; }
 .why-card h3 { margin: 0 0 2px; font-size: 14.5px; }
