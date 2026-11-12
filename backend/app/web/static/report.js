@@ -239,7 +239,7 @@ async function cycMap() {
   S.forEach(s => s && s.pts.forEach(p => { if (p.lon >= 80 && p.lon <= 97.5 && p.lat >= 5 && p.lat <= 28) { xs.push(p.lon); ys.push(p.lat); } }));
   if (shape) outerRings(shape.geometry).forEach(r => r.forEach(([x, y]) => { xs.push(x); ys.push(y); }));
   const bounds = [[Math.min(...xs), Math.min(...ys)], [Math.max(...xs), Math.max(...ys)]];
-  const map = new maplibregl.Map({ container: "cyc-map", bounds, fitBoundsOptions: { padding: 40 }, interactive: false,
+  const map = new maplibregl.Map({ container: "cyc-map", pixelRatio: Math.min(devicePixelRatio || 1, 1.5), bounds, fitBoundsOptions: { padding: 40 }, interactive: false,
     attributionControl: { compact: true }, preserveDrawingBuffer: true,
     style: { version: 8, sources: { sat: esri("World_Imagery", "Esri, Maxar, Earthstar Geographics · NOAA IBTrACS"),
       places: esri("Reference/World_Boundaries_and_Places", "Esri") },
@@ -477,7 +477,7 @@ async function map3d() {
   // lift the upazila by about 1.2% of its width (before the height exaggeration), so it stands up as a block
   const widthM = Math.hypot((bounds[1][0] - bounds[0][0]) * 111320 * Math.cos(bounds[0][1] * Math.PI / 180), (bounds[1][1] - bounds[0][1]) * 110540);
   const dem = raisedDem(shape, Math.max(90, Math.min(380, widthM * 0.012)));
-  const map = MAP = new maplibregl.Map({
+  const map = MAP = new maplibregl.Map({ pixelRatio: Math.min(devicePixelRatio || 1, 1.5),
     container: "map3d", bounds, fitBoundsOptions: { padding: 36 }, pitch: 25, bearing: -50, maxPitch: 75, maxZoom: 18,
     scrollZoom: false, preserveDrawingBuffer: true, attributionControl: { compact: true },
     style: { version: 8, sources: {
@@ -717,7 +717,7 @@ function flowLayer(map, rivers, bounds) {
       for (let k = 0; k < n; k++) parts.push({ li, d: Math.random() * l.len, off: (Math.random() + Math.random() - 1), tw: Math.random() * 6.3,
         sp: 0.7 + Math.random() * 0.6, ln: 0.5 + Math.random() * 0.9 });
     });
-    if (parts.length > 2600) parts = parts.filter(() => Math.random() < 2600 / parts.length);
+    if (parts.length > 1100) parts = parts.filter(() => Math.random() < 1100 / parts.length);
     // glints across the real water surface (OpenStreetMap water areas), drifting the way the nearest river runs
     segs = []; lines.forEach(l => { for (let i = 1; i < l.c.length; i++) segs.push([l.c[i - 1], l.c[i]]); });
     water = []; wTotal = 0;
@@ -737,7 +737,7 @@ function flowLayer(map, rivers, bounds) {
         });
       });
     } catch (e) { /* tiles not ready */ }
-    const nw = segs.length ? Math.min(1600, Math.round(wTotal / 140)) : 0;
+    const nw = segs.length ? Math.min(700, Math.round(wTotal / 220)) : 0;
     wparts = []; for (let i = 0; i < nw; i++) { const q = spawnW(); if (q) wparts.push(q); }
   }
   function at(l, d) {
@@ -748,7 +748,8 @@ function flowLayer(map, rivers, bounds) {
   const SPEED = { big: 34, river: 30, canal: 20, stream: 15 }, HALF = { big: 4, river: 2.5, canal: 1.2, stream: 0.6 };
   function frame(ts) {
     requestAnimationFrame(frame);
-    const dt = Math.min(0.05, (ts - last) / 1000 || 0); last = ts;
+    if (ts - last < 32) return;  // 30 frames a second is smooth for drifting light and halves the work
+    const dt = Math.min(0.08, (ts - last) / 1000 || 0); last = ts;
     if (!seen || document.hidden || (!parts.length && !wparts.length)) return;
     ctx.clearRect(0, 0, W, H);
     const zoom = map.getZoom(), mpp = 156543.03 * Math.cos(map.getCenter().lat * rad) / Math.pow(2, zoom), t = ts / 1000;
@@ -786,7 +787,7 @@ function flowLayer(map, rivers, bounds) {
       ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(a.x, a.y); ctx.stroke();
     }
   }
-  const size = () => { const d = Math.min(2, devicePixelRatio || 1); W = wrap.clientWidth; H = wrap.clientHeight; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
+  const size = () => { const d = Math.min(1.5, devicePixelRatio || 1); W = wrap.clientWidth; H = wrap.clientHeight; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
   let tm = 0; const later = () => { clearTimeout(tm); tm = setTimeout(rebuild, 400); };
   map.on("idle", later); map.on("moveend", later);
   new ResizeObserver(size).observe(wrap);
@@ -855,8 +856,14 @@ function wxLayer(map, [lon, lat]) {
     });
     return c;
   })();
+  // the cloud's shadow, made once (a canvas filter on every frame was the slowest part of the animation)
+  const shade = (() => {
+    const c = document.createElement("canvas"); c.width = puff.width; c.height = puff.height;
+    const x = c.getContext("2d"); x.drawImage(puff, 0, 0); x.globalCompositeOperation = "source-in"; x.fillStyle = "#000"; x.fillRect(0, 0, c.width, c.height);
+    return c;
+  })();
   const size = () => {
-    const d = Math.min(2, devicePixelRatio || 1); W = wrap.clientWidth; H = wrap.clientHeight;
+    const d = Math.min(1.5, devicePixelRatio || 1); W = wrap.clientWidth; H = wrap.clientHeight;
     cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); seed();
   };
   // direction on screen: wind blows toward (from + 180), turned by the map bearing and squashed by the tilt
@@ -883,7 +890,8 @@ function wxLayer(map, [lon, lat]) {
   let last = 0;
   function frame(ts) {
     requestAnimationFrame(frame);
-    const dt = Math.min(0.05, (ts - last) / 1000 || 0); last = ts;
+    if (ts - last < 32) return;
+    const dt = Math.min(0.08, (ts - last) / 1000 || 0); last = ts;
     if (!on || !seen || document.hidden) return;
     ctx.clearRect(0, 0, W, H);
     const v = dirVec(), k = kmh(), s = k < 3 ? 0 : 8 + k * 3.2, t = ts / 1000, r = rate();
@@ -924,9 +932,9 @@ function wxLayer(map, [lon, lat]) {
       const w = 260 * c.s, h = 170 * c.s;
       if (c.x < -w) c.x = W + 10; else if (c.x > W + 10) c.x = -w;
       if (c.y < -h) c.y = H * 0.85; else if (c.y > H * 0.9) c.y = -h;
-      ctx.globalAlpha = c.a * 0.35; ctx.filter = "brightness(0)";
-      ctx.drawImage(puff, c.x + 26, c.y + 60, w, h * 0.8);
-      ctx.filter = "none"; ctx.globalAlpha = c.a * (r >= 0.05 ? 0.8 : 1);
+      ctx.globalAlpha = c.a * 0.35;
+      ctx.drawImage(shade, c.x + 26, c.y + 60, w, h * 0.8);
+      ctx.globalAlpha = c.a * (r >= 0.05 ? 0.8 : 1);
       ctx.drawImage(puff, c.x, c.y, w, h);
     }
     ctx.globalAlpha = 1;
@@ -1062,6 +1070,12 @@ async function miniMap(shapeIn) {
   }).catch(() => {});
   CY =await (await fetch(`/api/v1/nodes/${nodeId}/cyclones`)).json();
   renderCyclones();
-  cycMap().catch(e => console.warn("cyclone map", e));
+  // the cyclone replay map is built only when its section comes near the screen
+  const cycSec = $("cyclones");
+  const cycGo = () => cycMap().catch(e => console.warn("cyclone map", e));
+  if (!cycSec.hidden && "IntersectionObserver" in window) {
+    const ob = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { ob.disconnect(); cycGo(); } }, { rootMargin: "500px 0px" });
+    ob.observe(cycSec);
+  } else if (!cycSec.hidden) cycGo();
   watchReveal();
 })();

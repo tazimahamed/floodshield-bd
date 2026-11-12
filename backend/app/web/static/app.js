@@ -957,7 +957,7 @@ async function toggleRivers() {
   if (!$("show-rivers").checked) { [waterLayer, riverNames].forEach(l => l && l.remove()); return; }
   if (!window.maplibregl || !L.maplibreGL) return;  // no WebGL library: the satellite still shows the rivers
   if (!waterLayer) {
-    waterLayer = L.maplibreGL({ style: waterStyle(), pane: "water", interactive: false,
+    waterLayer = L.maplibreGL({ style: waterStyle(), pane: "water", interactive: false, pixelRatio: Math.min(devicePixelRatio || 1, 1.5),
       attribution: "Rivers © OpenStreetMap contributors (OpenFreeMap)" });
   }
   waterLayer.addTo(map);

@@ -223,9 +223,14 @@ async function loadSea() {
    travelling the way the real waves travel (Open-Meteo marine), with longer waves moving faster as on real water.
    The real wave height sets how bright and choppy it looks; the wave period sets the pace. */
 const swell = (() => {
-  const N = 192, im = new ImageData(N, N), d = im.data;
+  const N = 160, im = new ImageData(N, N), d = im.data;
+  // sine from a table: the wave picture needs ~150,000 sines a frame, and a table lookup is many times faster
+  const LUT_N = 4096, LUT = new Float32Array(LUT_N), TWO_PI = 6.283185307;
+  for (let i = 0; i < LUT_N; i++) LUT[i] = Math.sin(i / LUT_N * TWO_PI);
+  const fsin = v => { let q = (v % TWO_PI) / TWO_PI; if (q < 0) q += 1; return LUT[(q * LUT_N) | 0]; };
+  let moving = false;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const fps = matchMedia("(pointer: coarse)").matches ? 8 : 14;
+  const fps = matchMedia("(pointer: coarse)").matches ? 6 : 10;
   let dir = 180, height = 0.8, period = 8, on = true, gl = null, comps = [], last = 0, t = 0;
   function build() {
     const toward = (dir + 180) * Math.PI / 180, ux = Math.sin(toward), uy = -Math.cos(toward);  // image y grows down
@@ -245,7 +250,7 @@ const swell = (() => {
     for (let y = 0; y < N; y++) {
       for (let x = 0; x < N; x++) {
         let h = 0;
-        for (let k = 0; k < comps.length; k++) { const c = comps[k]; h += c.a * Math.sin(c.kx * x + c.ky * y - ph[k]); }
+        for (let k = 0; k < comps.length; k++) { const c = comps[k]; h += c.a * fsin(c.kx * x + c.ky * y - ph[k]); }
         h /= A;
         const i = (y * N + x) * 4;
         if (h > crest) {             // light catching the thin tops of the crests
@@ -272,13 +277,16 @@ const swell = (() => {
   }
   function frame(ts) {
     requestAnimationFrame(frame);
-    if (!on || document.hidden || !attach()) return;
+    if (!on || moving || document.hidden || !attach()) return;
     if (ts - last < 1000 / fps) return;
     const dt = Math.min(0.2, (ts - last) / 1000 || 0); last = ts;
     if (reduce) return;
     t += dt; paint();
     gl.updateImage("sea-waves", im); gl.triggerRepaint();
   }
+  // waves rest while the map is dragged or zoomed, so moving the map stays smooth
+  map.on("movestart zoomstart", () => { moving = true; });
+  map.on("moveend zoomend", () => { moving = false; });
   build(); requestAnimationFrame(frame);
   return {
     update() {

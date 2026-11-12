@@ -200,7 +200,7 @@ async function upstreamMap() {
   sec.hidden = false;
   upText();
   const step = ["step", ["coalesce", ["get", "rain_72h_mm"], 0], RAIN_STEPS[0][1], ...RAIN_STEPS.slice(1).flatMap(([b, c]) => [b, c])];
-  const map = new maplibregl.Map({ container: "up-map", bounds: [[x0, y0], [x1, y1]], fitBoundsOptions: { padding: 34 }, interactive: false,
+  const map = new maplibregl.Map({ container: "up-map", pixelRatio: Math.min(devicePixelRatio || 1, 1.5), bounds: [[x0, y0], [x1, y1]], fitBoundsOptions: { padding: 34 }, interactive: false,
     attributionControl: { compact: true },
     style: { version: 8, sources: { sat: esri("World_Imagery", "Esri, Maxar, Earthstar Geographics · HydroSHEDS · NOAA GFS"), places: esri("Reference/World_Boundaries_and_Places", "Esri") },
       layers: [{ id: "sat", type: "raster", source: "sat", paint: { "raster-brightness-max": 0.5, "raster-saturation": -0.5 } }] } });
@@ -337,7 +337,13 @@ function extraBits() {
   extraBits();
   fetch(`/api/v1/nodes/${nodeId}/cyclone-directions`).then(r => r.ok ? r.json() : null).then(j => { X.rose = j; drawRose(); }).catch(() => {});
   if (!X.shape) return;
-  upstreamMap().catch(e => console.warn("upstream map", e));
+  // the upstream map and its ~1 MB of basin shapes load only when the reader scrolls near it (just above the calendar)
+  const upGo = () => upstreamMap().catch(e => console.warn("upstream map", e));
+  const near = $("calendar");
+  if (near && "IntersectionObserver" in window) {
+    const ob = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { ob.disconnect(); upGo(); } }, { rootMargin: "700px 0px" });
+    ob.observe(near);
+  } else upGo();
   for (let i = 0; i < 120 && !(MAP && MAP.loaded()); i++) await new Promise(r => setTimeout(r, 250));
   if (MAP) highButton();
 })();
