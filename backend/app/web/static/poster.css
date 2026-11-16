@@ -1,0 +1,72 @@
+/* FloodShield BD — one upazila as a printable map poster. Sizes are in cqw (1% of the poster's width), so the
+   poster looks the same on a phone, a laptop and in the downloaded picture. */
+:root { --bg: #0a0f14; --ink: #f2f6f8; --muted: #a9b5bd; --card: rgba(16, 22, 28, .86); --line: rgba(255,255,255,.14);
+  --water: #3ab3ff; --river: #38bdf8; --low: #3fbf74; --med: #f0ad2b; --high: #f06454; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Hind Siliguri", Inter, system-ui, sans-serif; }
+.pbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 16px; max-width: 980px; margin: 0 auto; }
+.pback { color: var(--muted); text-decoration: none; font-size: 15px; }
+.pbar-r { display: flex; gap: 8px; }
+.pbtn { font: inherit; font-size: 14px; font-weight: 600; border: 0; border-radius: 10px; padding: 8px 14px; cursor: pointer;
+  background: #1d8cf8; color: #fff; }
+.pbtn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.pbtn:disabled { opacity: .6; cursor: progress; }
+.pwrap { padding: 0 16px 32px; }
+.poster { position: relative; width: min(100%, 900px); aspect-ratio: 3 / 4; margin: 0 auto; overflow: hidden; border-radius: 14px;
+  background: var(--bg); container-type: inline-size; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+#pmap { position: absolute; inset: 0; }
+.pshade { position: absolute; left: 0; right: 0; pointer-events: none; }
+.pshade.top { top: 0; height: 30%; background: linear-gradient(#0a0f14 0%, rgba(10,15,20,.82) 40%, rgba(10,15,20,0)); }
+.pshade.bottom { bottom: 0; height: 40%; background: linear-gradient(rgba(10,15,20,0), rgba(10,15,20,.9) 42%, #0a0f14 78%); }
+.ptitle { position: absolute; left: 5.5cqw; top: 4.5cqw; right: 26cqw; pointer-events: none; }
+.ptitle h1 { margin: 0; font-size: 11cqw; line-height: 1.05; font-weight: 700; letter-spacing: -.01em; text-shadow: 0 .4cqw 2cqw rgba(0,0,0,.6); }
+.ptitle p { margin: 1.2cqw 0 0; font-size: 2.6cqw; color: #dfe7ec; font-weight: 500; }
+.prisk { margin-top: 1.8cqw; display: inline-flex; align-items: center; gap: 1.4cqw; padding: 1cqw 1.8cqw; border-radius: 2cqw;
+  background: var(--card); border: 1px solid var(--line); font-size: 2.2cqw; }
+.prisk b { font-size: 3.4cqw; font-family: Inter, "Hind Siliguri", sans-serif; }
+.prisk i { width: 1.6cqw; height: 1.6cqw; border-radius: 50%; display: inline-block; }
+.pbrand { position: absolute; right: 4.5cqw; top: 4.5cqw; display: flex; align-items: center; gap: 1.2cqw; padding: 1cqw 1.6cqw;
+  border-radius: 2cqw; background: var(--card); border: 1px solid var(--line); font-family: Inter, sans-serif; font-size: 1.9cqw; line-height: 1.1; }
+.pmark svg { width: 5cqw; height: 5cqw; display: block; }
+
+/* labels on the map: HTML, so Bangla letters join correctly */
+#plabels { position: absolute; inset: 0; pointer-events: none; }
+.lb { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; text-shadow: 0 0 .5cqw #000, 0 0 1.2cqw #000; }
+.lb.nb { font-size: 1.75cqw; color: rgba(225,232,236,.72); font-weight: 500; }
+.lb.riv { font-size: 1.7cqw; color: #8fd8ff; font-style: italic; font-weight: 500; }
+.lb.here { font-size: 2.2cqw; color: #fff; font-weight: 700; letter-spacing: .02em; }
+.co { position: absolute; display: flex; align-items: center; gap: 1cqw; transform: translate(-50%, -50%); }
+.co .dot { width: 4.4cqw; height: 4.4cqw; border-radius: 50%; display: grid; place-items: center; font-size: 2.4cqw; font-weight: 800;
+  border: .35cqw solid rgba(255,255,255,.85); box-shadow: 0 .3cqw 1.4cqw rgba(0,0,0,.55); flex: none; }
+.co .box { background: var(--card); border: 1px solid var(--line); border-radius: 1.4cqw; padding: .7cqw 1.3cqw; line-height: 1.25; }
+.co .box b { display: block; font-size: 1.95cqw; } .co .box small { display: block; font-size: 1.5cqw; color: var(--muted); }
+.co.left { flex-direction: row-reverse; }
+.pin { position: absolute; width: .9cqw; height: .9cqw; border-radius: 50%; background: #fff; transform: translate(-50%, -50%); }
+.leader { position: absolute; height: 1px; background: rgba(255,255,255,.7); transform-origin: 0 0; }
+
+/* the legend band */
+.plegend { position: absolute; left: 5.5cqw; right: 5.5cqw; bottom: 9cqw; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3cqw; }
+.lg h3 { margin: 0; font-size: 2.6cqw; display: flex; align-items: center; gap: 1cqw; }
+.lg h3::before { content: ""; width: .6cqw; height: 2.4cqw; border-radius: .3cqw; background: var(--c, var(--water)); }
+.lg > p { margin: .3cqw 0 1.2cqw; font-size: 1.65cqw; color: var(--muted); line-height: 1.35; }
+.lg ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .9cqw; }
+.lg li { display: flex; align-items: center; gap: 1.2cqw; font-size: 1.75cqw; line-height: 1.3; }
+.sw { flex: none; width: 3.6cqw; height: 2.2cqw; border-radius: .6cqw; }
+.sw.line { height: .7cqw; border-radius: .4cqw; }
+.sw.dot { width: 3cqw; height: 3cqw; border-radius: 50%; display: grid; place-items: center; font-size: 1.7cqw; font-weight: 800; border: .25cqw solid rgba(255,255,255,.85); }
+.bars { display: flex; align-items: flex-end; gap: .7cqw; height: 9cqw; margin-top: .6cqw; position: relative; }
+.bars .b { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+.bars .b i { width: 100%; border-radius: .4cqw .4cqw 0 0; background: #2f8fd6; min-height: .3cqw; }
+.bars .b.fl i { background: var(--water); box-shadow: 0 0 1cqw rgba(58,179,255,.5); }
+.yrs { display: flex; gap: .7cqw; margin-top: .5cqw; } .yrs small { flex: 1; text-align: center; font-size: 1.25cqw; color: var(--muted); }
+.hdot { position: absolute; width: 2.4cqw; height: 2.4cqw; border-radius: 50%; background: #e5486b; color: #fff; font-weight: 800; font-size: 1.6cqw; display: grid; place-items: center; transform: translate(-50%, -50%); border: .25cqw solid rgba(255,255,255,.85); box-shadow: 0 .2cqw 1cqw rgba(0,0,0,.5); }
+.bars .rule { position: absolute; left: 0; right: 0; border-top: 1px dashed rgba(255,255,255,.55); }
+.bars .rule span { position: absolute; right: 0; top: -2.2cqw; font-size: 1.25cqw; color: #dfe7ec; }
+.pscale { position: absolute; left: 5.5cqw; bottom: 4.6cqw; font-size: 1.5cqw; color: #dfe7ec; font-family: Inter, "Hind Siliguri", sans-serif; }
+.pscale .bar { height: .9cqw; border: 1px solid #fff; border-top: 0; margin-bottom: .4cqw; }
+.pnorth { position: absolute; right: 5.5cqw; bottom: 4.2cqw; display: flex; flex-direction: column; align-items: center; font-size: 1.8cqw; font-weight: 700; }
+.pnorth svg { width: 2.2cqw; margin-top: .3cqw; }
+.pfoot { position: absolute; left: 22cqw; right: 12cqw; bottom: 2.2cqw; margin: 0; font-size: 1.3cqw; color: #8d989f; line-height: 1.4; }
+.pnote { max-width: 900px; margin: 14px auto 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.maplibregl-ctrl-attrib, .maplibregl-ctrl-logo { display: none !important; }
+@media (max-width: 520px) { .pbtn { font-size: 13px; padding: 7px 10px; } }

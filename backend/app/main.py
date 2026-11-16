@@ -204,6 +204,11 @@ def model_page():
     return FileResponse(WEB_DIR / "model.html")
 
 
+@app.get("/map/{node_id}", include_in_schema=False)
+def poster_page(node_id: str):
+    return FileResponse(WEB_DIR / "poster.html")
+
+
 @app.get("/upazila/{node_id}", include_in_schema=False)
 def upazila_page(node_id: str):
     return FileResponse(WEB_DIR / "report.html")

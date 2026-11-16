@@ -54,7 +54,7 @@ const T = {
     how1: "Search or tap an upazila to see its flood risk, rainfall and hospitals.",
     how2: "Use the buttons at the top for rainfall, past floods and cyclones.",
     how3: "Open an upazila's full report for its flood history since 2017.",
-    backOverview: "← National overview", reportBtn: "Open flood history report",
+    backOverview: "← National overview", reportBtn: "Open flood history report", posterBtn: "🗺️ Map poster of this area (download as a picture)",
     riskOf: { low: "Low risk", medium: "Medium risk", high: "High risk" },
     chance: "estimated chance of flooding", riskLimit: "River levels and local waterlogging are not included in this estimate.",
     likelyRange: (f, a, b) => `Expected flooded share ${f}% · likely range ${a}–${b}%`,
@@ -175,7 +175,7 @@ const T = {
     how1: "উপজেলা খুঁজুন বা ম্যাপে চাপুন। বন্যার ঝুঁকি, বৃষ্টি আর হাসপাতালের তথ্য পাবেন।",
     how2: "ওপরের বোতাম থেকে বৃষ্টি, অতীতের বন্যা আর ঘূর্ণিঝড় দেখুন।",
     how3: "উপজেলার পুরো রিপোর্টে ২০১৭ থেকে বন্যার ইতিহাস দেখুন।",
-    backOverview: "← জাতীয় পরিস্থিতি", reportBtn: "বন্যার ইতিহাসের রিপোর্ট দেখুন",
+    backOverview: "← জাতীয় পরিস্থিতি", reportBtn: "বন্যার ইতিহাসের রিপোর্ট দেখুন", posterBtn: "🗺️ এই এলাকার মানচিত্র (ছবি হিসেবে নামানো যায়)",
     riskOf: { low: "নিম্ন ঝুঁকি", medium: "মাঝারি ঝুঁকি", high: "উচ্চ ঝুঁকি" },
     chance: "বন্যার আনুমানিক সম্ভাবনা", riskLimit: "নদীর পানির স্তর ও স্থানীয় জলাবদ্ধতা এই হিসাবে নেই।",
     likelyRange: (f, a, b) => `প্রত্যাশিত প্লাবিত অংশ ${f}% · সম্ভাব্য পরিসর ${a}–${b}%`,
@@ -708,6 +708,7 @@ function select(id, zoom = false) {
   $("overview").hidden = true;
   $("detail").hidden = false;
   $("report-link").href = `/upazila/${slugify(selected.district)}/${slugify(selected.name)}`;
+  $("poster-link").href = `/map/${encodeURIComponent(selected.id)}`;
   $("drawer-title").textContent = t().detailTitle;
   openDrawer();
   $("side").querySelector(".drawer-body").scrollTop = 0;
