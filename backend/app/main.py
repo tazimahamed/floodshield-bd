@@ -23,7 +23,7 @@ from app.services.era5 import refresh_recent
 from app.db.models import DailyOutlook, IngestRun
 from app.db.session import SessionLocal
 from app.services.ingest import SOURCE as INGEST_SOURCE, run_gfs_ingest
-from app.services import landslide, model_calendar, water_now
+from app.services import hazard_alerts, landslide, model_calendar, water_now
 from app.services.ops import notify_admin, ping
 from app.services.outlook import refresh_outlook
 
@@ -54,6 +54,13 @@ def gfs_then_flood_forecast() -> None:
         _forecast_cycle()
     finally:
         _CYCLE.release()
+
+
+def outlook_then_heat() -> None:
+    """The daily heat/sea outlook, then heatwave alerts from it (BMD classes, moderate and up)."""
+    refresh_outlook()
+    if settings.telegram_bot_token:
+        hazard_alerts.safe(hazard_alerts.dispatch_heat)()
 
 
 def _forecast_cycle() -> None:
@@ -132,8 +139,11 @@ async def lifespan(app: FastAPI):
     scheduler.add_job(graph_tables, id="warm_graph")  # build the upstream graph cache in the background
     if settings.telegram_bot_token:
         scheduler.add_job(poll_updates, "interval", seconds=5, id="telegram_poll", max_instances=1, coalesce=True)
+        # cyclone alerts: GDACS is checked every 30 minutes (its answer is cached for 30 minutes anyway)
+        scheduler.add_job(hazard_alerts.safe(hazard_alerts.dispatch_storms), "interval", minutes=30, id="storm_alerts",
+                          max_instances=1, coalesce=True)
         scheduler.add_job(warm_voice, id="warm_voice")  # load the Bangla voice model before the first message
-    scheduler.add_job(refresh_outlook, "interval", hours=OUTLOOK_HOURS, id="outlook", max_instances=1,
+    scheduler.add_job(outlook_then_heat, "interval", hours=OUTLOOK_HOURS, id="outlook", max_instances=1,
                       coalesce=True, next_run_time=outlook_at)
     # how the model did over the last 12 months: daily after the ERA5 refresh, and at startup if the file is missing or old
     first = {"next_run_time": datetime.now(timezone.utc) + timedelta(minutes=3)} if model_calendar.needs_build() else {}

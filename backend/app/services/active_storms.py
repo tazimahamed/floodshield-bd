@@ -66,8 +66,11 @@ def active(event: int | None = None, episode: int | None = None) -> dict:
                 out["storms"].append({**_storm(c, ev), "test": True})
             else:
                 today = date.today()
-                lst = c.get(LIST, params={"eventlist": "TC", "fromdate": (today - timedelta(days=10)).isoformat(),
-                                          "todate": today.isoformat()}).json()
+                r = c.get(LIST, params={"eventlist": "TC", "fromdate": (today - timedelta(days=10)).isoformat(),
+                                        "todate": today.isoformat()})
+                r.raise_for_status()
+                # GDACS answers 204 with an empty body when there has been no storm anywhere: that is "none", not an error
+                lst = r.json() if r.status_code != 204 and r.content.strip() else {}
                 for f in lst.get("features", []):
                     x, y = f["geometry"]["coordinates"][:2]
                     current = str(f["properties"].get("iscurrent")).lower() == "true"
