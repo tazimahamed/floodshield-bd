@@ -30,6 +30,7 @@ GRID = (3, 4)                               # columns, rows
 TRIM_M = 2000                               # Sentinel-1 scenes are noisy at their edges: cut this much off each one
 
 
+POP = None  # WorldPop 2020 for Bangladesh, set once Earth Engine is ready
 _S1_PLAIN = s1_floods._s1  # kept before flood_mask below swaps it, so the trimmed version can call it
 
 
@@ -55,9 +56,11 @@ def _window(today: date) -> dict:
 
 
 def build(today: date | None = None) -> dict:
+    global POP
     today = today or date.today()
     ev = _window(today)
     init_ee()
+    POP = ee.ImageCollection("WorldPop/GP/100m/pop").filter(ee.Filter.eq("country", "BGD")).filter(ee.Filter.eq("year", 2020)).first()
     out = {}
     with SessionLocal() as db:
         names = {i: (n, d) for i, n, d in db.execute(select(Node.id, Node.name, Node.district).where(Node.node_type == "upazila"))}
@@ -77,6 +80,13 @@ def build(today: date | None = None) -> dict:
             res = area.addBands(last).reduceRegions(
                 collection=fc, reducer=ee.Reducer.sum().combine(ee.Reducer.max(), sharedInputs=True), scale=SCALE_M, tileScale=16)
             res = res.map(lambda f: f.set("area_m2", f.geometry().area(100)).setGeometry(None))
+            # people: WorldPop 2020 (people per ~100 m square) times the share of each square with unusual water,
+            # summed on WorldPop's own grid so nobody is counted twice
+            wet = (mask.select("abnormal").unmask(0).reproject(crs="EPSG:4326", scale=SCALE_M)
+                   .reduceResolution(ee.Reducer.mean(), maxPixels=64).reproject(POP.projection()))
+            ppl = POP.multiply(wet).rename("people").addBands(POP.rename("pop")).reduceRegions(
+                collection=fc, reducer=ee.Reducer.sum(), crs=POP.projection(), tileScale=16)
+            people = {f["properties"]["node_id"]: f["properties"] for f in ppl.map(lambda f: f.setGeometry(None)).getInfo()["features"]}
             for f in res.getInfo()["features"]:
                 p = f["properties"]
                 a = p["area_m2"] or 0
@@ -84,8 +94,10 @@ def build(today: date | None = None) -> dict:
                 day = p.get("day_max")
                 if day is None:  # no picture over this upazila in the window
                     continue
+                pp = people.get(p["node_id"], {})
                 out[p["node_id"]] = {"frac": round(ab / a, 4) if a else 0.0, "km2": round(ab / 1e6, 2),
-                                     "last_day": (EPOCH + timedelta(days=int(day))).isoformat()}
+                                     "last_day": (EPOCH + timedelta(days=int(day))).isoformat(),
+                                     "people": round(pp.get("people") or 0), "pop": round(pp.get("pop") or 0)}
             log.info("water now %s: %d upazilas", division, len(out))
     # a picture of the unusual water for the map, tile by tile; patches narrower than about 200 m (speckle) are left out
     TILES.mkdir(parents=True, exist_ok=True)
@@ -108,8 +120,11 @@ def build(today: date | None = None) -> dict:
         "method": METHOD, "flood_rule": 0.05, "mapped": len(out),
         "latest_picture": max((v["last_day"] for v in out.values()), default=None),
         "upazilas_flooded": len(flooded),
+        # people living on land with unusual water (estimate), all mapped upazilas together
+        "people_total": sum(v.get("people", 0) for v in out.values()),
+        "people_source": "WorldPop 2020, 100 m (WorldPop/GP/100m/pop), times the share of each square with unusual water",
         "top": [{"id": i, "name": names.get(i, ("?", ""))[0], "district": names.get(i, ("?", ""))[1],
-                 "pct": round(out[i]["frac"] * 100, 1), "last_day": out[i]["last_day"]}
+                 "pct": round(out[i]["frac"] * 100, 1), "last_day": out[i]["last_day"], "people": out[i]["people"]}
                 for i in sorted(out, key=lambda i: -out[i]["frac"])[:10]],
         "tiles": tiles,
         "upazilas": out,

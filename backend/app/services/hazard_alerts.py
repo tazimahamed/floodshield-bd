@@ -24,7 +24,7 @@ from sqlalchemy import select
 
 from app.db.models import AlertLog, Node, Subscriber
 from app.db.session import SessionLocal
-from app.services import active_storms
+from app.services import active_storms, admin_names
 from app.services.alerts import _bn, _bn_date, send, send_voice
 from app.services.outlook import HEAT_LEVELS, heat_level, node_outlook
 
@@ -90,7 +90,7 @@ def heat_message(node: Node, rows) -> tuple[str, str, int] | None:
     t = round(top.tmax_c)
     days_bn = ", ".join(f"{_bn_date(r.day)} ({_bn(round(r.tmax_c))}°)" for r in hot)
     days_en = ", ".join(f"{r.day:%d %b} ({round(r.tmax_c)}°)" for r in hot)
-    name = html.escape(f"{node.name}, {node.district}")
+    name = html.escape(admin_names.place(node))
     text = "\n".join([
         f"<b>🌡️ তাপপ্রবাহের আশঙ্কা: {bn_word}</b>", f"📍 {name}",
         f"আবহাওয়া মডেলের (NOAA GFS) পূর্বাভাসে সর্বোচ্চ তাপমাত্রা প্রায় <b>{_bn(t)}°C</b>, যা আবহাওয়া অধিদপ্তরের "
@@ -100,7 +100,7 @@ def heat_message(node: Node, rows) -> tuple[str, str, int] | None:
         f"The weather model (NOAA GFS) forecasts a high of about <b>{t}°C</b>, which is a <b>{en_word}</b> in the Met "
         f"Department's classes. Days: {days_en}", "", f"<b>✅ What to do</b>: {HEAT_ADVICE[1]}", "", f"<i>{FOOT[1]}</i>",
         f'<a href="{BMD}">BMD</a>'])
-    voice = (f"দুর্যোগ বার্তা। {node.name} উপজেলায় আগামী কয়েক দিনে তাপমাত্রা প্রায় {t} ডিগ্রি হতে পারে, যা {bn_word}। "
+    voice = (f"দুর্যোগ বার্তা। {admin_names.bn_name(node)} এলাকায় আগামী কয়েক দিনে তাপমাত্রা প্রায় {t} ডিগ্রি হতে পারে, যা {bn_word}। "
              "দুপুরে রোদে কম থাকুন, বারবার পানি পান করুন, শিশু আর বয়স্কদের খেয়াল রাখুন।")
     return text, voice, low
 
@@ -145,7 +145,7 @@ def storm_stage(now_km: float, track_km: float | None) -> str | None:
 
 def storm_message(storm: dict, node: Node, stage: str, now_km: float, track_km: float | None) -> tuple[str, str]:
     name = html.escape(storm.get("name") or "")
-    place = html.escape(f"{node.name}, {node.district}")
+    place = html.escape(admin_names.place(node))
     near = stage == "storm2"
     head_bn = "🌀 ঘূর্ণিঝড় কাছে চলে এসেছে" if near else "🌀 ঘূর্ণিঝড়ের সতর্কতা"
     head_en = "🌀 Cyclone close by" if near else "🌀 Cyclone watch"
@@ -162,7 +162,7 @@ def storm_message(storm: dict, node: Node, stage: str, now_km: float, track_km: 
         "Storm tracks can change. The Met Department announces the official signal.", "",
         f"<b>✅ What to do</b>: {STORM_ADVICE[1]}", "", f"<i>{FOOT[1]} Source: GDACS, track forecast by JTWC.</i>",
         f'<a href="{BMD}">BMD</a>'])
-    voice = (f"দুর্যোগ বার্তা। ঘূর্ণিঝড় {storm.get('name') or ''} এখন {node.name} উপজেলা থেকে প্রায় {round(now_km, -1):.0f} কিলোমিটার দূরে। "
+    voice = (f"দুর্যোগ বার্তা। ঘূর্ণিঝড় {storm.get('name') or ''} এখন {admin_names.bn_name(node)} থেকে প্রায় {round(now_km, -1):.0f} কিলোমিটার দূরে। "
              "রেডিও আর টিভিতে আবহাওয়া অধিদপ্তরের সংকেত শুনুন। প্রশাসন বললে দেরি না করে আশ্রয়কেন্দ্রে যান।")
     return text, voice
 

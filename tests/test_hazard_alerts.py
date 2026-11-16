@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
 
 from app.services import hazard_alerts as ha  # noqa: E402
 
-NODE = NS(name="Patuakhali Sadar", district="Patuakhali", point_lon=90.35, point_lat=22.35)
+NODE = NS(id="upz_test", name="Patuakhali Sadar", district="Patuakhali", point_lon=90.35, point_lat=22.35)
 
 
 def _day(d, t):
@@ -50,3 +50,13 @@ def test_storm_message_is_honest():
     for banned in ("নিরাপদ", "safe", "ফুট", "feet", "সংকেত নম্বর"):
         assert banned not in text
     assert "আবহাওয়া অধিদপ্তর" in text and "GDACS" in text and "পথ পরে বদলে যেতে পারে" in text
+
+
+def test_official_names_table_matches_government_counts():
+    from app.services import admin_names
+    c = admin_names.counts()
+    assert c["official_upazilas"] == 502 and c["areas"] == 544
+    assert c["upazilas_on_map"] + len(c["new_upazilas"]) == 502
+    assert c["upazilas_on_map"] + c["metro_thanas"] == 544
+    sites = [v["gov_site"] for v in admin_names.table()["areas"].values() if v["kind"] == "upazila"]
+    assert len(sites) == len(set(sites))  # no official upazila used twice

@@ -1,0 +1,3850 @@
+{
+"source": "bangladesh.gov.bd/views/upazila-list (502 upazilas, read 16 Nov 2026); metropolitan thana names: Wikidata, checked by hand",
+"official_upazilas": 502,
+"areas": {
+"upz_5055444B52925985874339": {
+"bn": "অভয়নগর",
+"kind": "upazila",
+"district_bn": "যশোর",
+"division_bn": "খুলনা",
+"gov_site": "abhaynagar.jashore.gov.bd"
+},
+"upz_5055444B49102485932636": {
+"bn": "আদাবর",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B32465848615946": {
+"bn": "আদিতমারী",
+"kind": "upazila",
+"district_bn": "লালমনিরহাট",
+"division_bn": "রংপুর",
+"gov_site": "aditmari.lalmonirhat.gov.bd"
+},
+"upz_5055444B95524802719487": {
+"bn": "আগৈলঝাড়া",
+"kind": "upazila",
+"district_bn": "বরিশাল",
+"division_bn": "বরিশাল",
+"gov_site": "agailjhara.barisal.gov.bd"
+},
+"upz_5055444B99945132628682": {
+"bn": "আজমিরীগঞ্জ",
+"kind": "upazila",
+"district_bn": "হবিগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "ajmiriganj.habiganj.gov.bd"
+},
+"upz_5055444B62959054248390": {
+"bn": "আখাউড়া",
+"kind": "upazila",
+"district_bn": "ব্রাহ্মণবাড়িয়া",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "akhaura.brahmanbaria.gov.bd"
+},
+"upz_5055444B84155048182974": {
+"bn": "আলমডাঙ্গা",
+"kind": "upazila",
+"district_bn": "চুয়াডাঙ্গা",
+"division_bn": "খুলনা",
+"gov_site": "alamdanga.chuadanga.gov.bd"
+},
+"upz_5055444B55670429127605": {
+"bn": "আলফাডাঙ্গা",
+"kind": "upazila",
+"district_bn": "ফরিদপুর",
+"division_bn": "ঢাকা",
+"gov_site": "alfadanga.faridpur.gov.bd"
+},
+"upz_5055444B70145349624714": {
+"bn": "আলীকদম",
+"kind": "upazila",
+"district_bn": "বান্দরবান",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "alikadam.bandarban.gov.bd"
+},
+"upz_5055444B37995463425931": {
+"bn": "বিজয়নগর",
+"kind": "upazila",
+"district_bn": "ব্রাহ্মণবাড়িয়া",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "bijoynagar.brahmanbaria.gov.bd"
+},
+"upz_5055444B15057296288923": {
+"bn": "আমতলী",
+"kind": "upazila",
+"district_bn": "বরগুনা",
+"division_bn": "বরিশাল",
+"gov_site": "amtali.barguna.gov.bd"
+},
+"upz_5055444B96018438653421": {
+"bn": "বাঞ্ছারামপুর",
+"kind": "upazila",
+"district_bn": "ব্রাহ্মণবাড়িয়া",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "bancharampur.brahmanbaria.gov.bd"
+},
+"upz_5055444B66497559634365": {
+"bn": "আনোয়ারা",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "anwara.chattogram.gov.bd"
+},
+"upz_5055444B57714745100095": {
+"bn": "বিমানবন্দর",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B13859636437629": {
+"bn": "আড়াইহাজার",
+"kind": "upazila",
+"district_bn": "নারায়ণগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "araihazar.narayanganj.gov.bd"
+},
+"upz_5055444B32932838704208": {
+"bn": "আশুগঞ্জ",
+"kind": "upazila",
+"district_bn": "ব্রাহ্মণবাড়িয়া",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "ashuganj.brahmanbaria.gov.bd"
+},
+"upz_5055444B32271374417544": {
+"bn": "বন্দর",
+"kind": "upazila",
+"district_bn": "নারায়ণগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "bandar.narayanganj.gov.bd"
+},
+"upz_5055444B75161647827572": {
+"bn": "আশাশুনি",
+"kind": "upazila",
+"district_bn": "সাতক্ষীরা",
+"division_bn": "খুলনা",
+"gov_site": "assasuni.satkhira.gov.bd"
+},
+"upz_5055444B67892409347150": {
+"bn": "নলছিটি",
+"kind": "upazila",
+"district_bn": "ঝালকাঠি",
+"division_bn": "বরিশাল",
+"gov_site": "nalchity.jhalakathi.gov.bd"
+},
+"upz_5055444B38720066295886": {
+"bn": "আটপাড়া",
+"kind": "upazila",
+"district_bn": "নেত্রকোণা",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "atpara.netrokona.gov.bd"
+},
+"upz_5055444B1204952470090": {
+"bn": "নানিয়ারচর",
+"kind": "upazila",
+"district_bn": "রাঙ্গামাটি পার্বত্য",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "naniarchar.rangamati.gov.bd"
+},
+"upz_5055444B16111921801": {
+"bn": "শিবপুর",
+"kind": "upazila",
+"district_bn": "নরসিংদী",
+"division_bn": "ঢাকা",
+"gov_site": "shibpur.narsingdi.gov.bd"
+},
+"upz_5055444B91970115546789": {
+"bn": "শ্যামনগর",
+"kind": "upazila",
+"district_bn": "সাতক্ষীরা",
+"division_bn": "খুলনা",
+"gov_site": "shyamnagar.satkhira.gov.bd"
+},
+"upz_5055444B48705627763179": {
+"bn": "আটোয়ারী",
+"kind": "upazila",
+"district_bn": "পঞ্চগড়",
+"division_bn": "রংপুর",
+"gov_site": "atwari.panchagarh.gov.bd"
+},
+"upz_5055444B71886622986948": {
+"bn": "অষ্টগ্রাম",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "austagram.kishoreganj.gov.bd"
+},
+"upz_5055444B11753174954303": {
+"bn": "বাবুগঞ্জ",
+"kind": "upazila",
+"district_bn": "বরিশাল",
+"division_bn": "বরিশাল",
+"gov_site": "babuganj.barisal.gov.bd"
+},
+"upz_5055444B71688043167729": {
+"bn": "বদরগঞ্জ",
+"kind": "upazila",
+"district_bn": "রংপুর",
+"division_bn": "রংপুর",
+"gov_site": "badargonj.rangpur.gov.bd"
+},
+"upz_5055444B32230680322744": {
+"bn": "বাড্ডা",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B68778321552411": {
+"bn": "বাগেরহাট সদর",
+"kind": "upazila",
+"district_bn": "বাগেরহাট",
+"division_bn": "খুলনা",
+"gov_site": "sadar.bagerhat.gov.bd"
+},
+"upz_5055444B82614645252879": {
+"bn": "শ্যামপুর",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B27929495018112": {
+"bn": "বাঘাইছড়ি",
+"kind": "upazila",
+"district_bn": "রাঙ্গামাটি পার্বত্য",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "baghaichari.rangamati.gov.bd"
+},
+"upz_5055444B47603984491155": {
+"bn": "মোল্লাহাট",
+"kind": "upazila",
+"district_bn": "বাগেরহাট",
+"division_bn": "খুলনা",
+"gov_site": "mollahat.bagerhat.gov.bd"
+},
+"upz_5055444B50671922094556": {
+"bn": "বাঘারপাড়া",
+"kind": "upazila",
+"district_bn": "যশোর",
+"division_bn": "খুলনা",
+"gov_site": "bagherpara.jashore.gov.bd"
+},
+"upz_5055444B32061612470944": {
+"bn": "মোংলা",
+"kind": "upazila",
+"district_bn": "বাগেরহাট",
+"division_bn": "খুলনা",
+"gov_site": "mongla.bagerhat.gov.bd"
+},
+"upz_5055444B50852908884979": {
+"bn": "বাহুবল",
+"kind": "upazila",
+"district_bn": "হবিগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "bahubal.habiganj.gov.bd"
+},
+"upz_5055444B13058474946517": {
+"bn": "বাজিতপুর",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "bajitpur.kishoreganj.gov.bd"
+},
+"upz_5055444B62979600608461": {
+"bn": "বাকলিয়া",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B55847146222236": {
+"bn": "ভান্ডারিয়া",
+"kind": "upazila",
+"district_bn": "পিরোজপুর",
+"division_bn": "বরিশাল",
+"gov_site": "bhandaria.pirojpur.gov.bd"
+},
+"upz_5055444B31571719417761": {
+"bn": "কেন্দুয়া",
+"kind": "upazila",
+"district_bn": "নেত্রকোণা",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "kendua.netrokona.gov.bd"
+},
+"upz_5055444B60675040208225": {
+"bn": "বাকেরগঞ্জ",
+"kind": "upazila",
+"district_bn": "বরিশাল",
+"division_bn": "বরিশাল",
+"gov_site": "bakerganj.barisal.gov.bd"
+},
+"upz_5055444B53302442828": {
+"bn": "বকশীগঞ্জ",
+"kind": "upazila",
+"district_bn": "জামালপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "bokshiganj.jamalpur.gov.bd"
+},
+"upz_5055444B78219247274360": {
+"bn": "লাকসাম",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "laksam.comilla.gov.bd"
+},
+"upz_5055444B42219902295699": {
+"bn": "বালাগঞ্জ",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "balaganj.sylhet.gov.bd"
+},
+"upz_5055444B27992117808883": {
+"bn": "বালিয়াকান্দি",
+"kind": "upazila",
+"district_bn": "রাজবাড়ী",
+"division_bn": "ঢাকা",
+"gov_site": "baliakandi.rajbari.gov.bd"
+},
+"upz_5055444B76771399523865": {
+"bn": "লক্ষীছড়ি",
+"kind": "upazila",
+"district_bn": "খাগড়াছড়ি",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "laxmichhari.khagrachhari.gov.bd"
+},
+"upz_5055444B48916414184469": {
+"bn": "বালিয়াডাঙ্গী",
+"kind": "upazila",
+"district_bn": "ঠাকুরগাঁও",
+"division_bn": "রংপুর",
+"gov_site": "baliadangi.thakurgaon.gov.bd"
+},
+"upz_5055444B77373604613442": {
+"bn": "বামনা",
+"kind": "upazila",
+"district_bn": "বরগুনা",
+"division_bn": "বরিশাল",
+"gov_site": "bamna.barguna.gov.bd"
+},
+"upz_5055444B41993390999306": {
+"bn": "বানারীপাড়া",
+"kind": "upazila",
+"district_bn": "বরিশাল",
+"division_bn": "বরিশাল",
+"gov_site": "banaripara.barisal.gov.bd"
+},
+"upz_5055444B74490098108798": {
+"bn": "বান্দরবান সদর",
+"kind": "upazila",
+"district_bn": "বান্দরবান",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sadar.bandarban.gov.bd"
+},
+"upz_5055444B3033227423351": {
+"bn": "বংশাল",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B49096359165052": {
+"bn": "বাঁশখালী",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "banshkhali.chattogram.gov.bd"
+},
+"upz_5055444B40412060728075": {
+"bn": "বানিয়াচং",
+"kind": "upazila",
+"district_bn": "হবিগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "baniachong.habiganj.gov.bd"
+},
+"upz_5055444B21927885992688": {
+"bn": "বেগমগঞ্জ",
+"kind": "upazila",
+"district_bn": "নোয়াখালী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "begumganj.noakhali.gov.bd"
+},
+"upz_5055444B33820531733438": {
+"bn": "বরগুনা সদর",
+"kind": "upazila",
+"district_bn": "বরগুনা",
+"division_bn": "বরিশাল",
+"gov_site": "sadar.barguna.gov.bd"
+},
+"upz_5055444B42611772267022": {
+"bn": "বারহাট্টা",
+"kind": "upazila",
+"district_bn": "নেত্রকোণা",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "barhatta.netrokona.gov.bd"
+},
+"upz_5055444B73276272307545": {
+"bn": "বরিশাল সদর",
+"kind": "upazila",
+"district_bn": "বরিশাল",
+"division_bn": "বরিশাল",
+"gov_site": "barisalsadar.barisal.gov.bd"
+},
+"upz_5055444B37824837156541": {
+"bn": "বরকল",
+"kind": "upazila",
+"district_bn": "রাঙ্গামাটি পার্বত্য",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "barkal.rangamati.gov.bd"
+},
+"upz_5055444B82968761851300": {
+"bn": "লংগদু",
+"kind": "upazila",
+"district_bn": "রাঙ্গামাটি পার্বত্য",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "langadu.rangamati.gov.bd"
+},
+"upz_5055444B53912976326946": {
+"bn": "দৌলতপুর",
+"kind": "upazila",
+"district_bn": "কুষ্টিয়া",
+"division_bn": "খুলনা",
+"gov_site": "daulatpur.kushtia.gov.bd"
+},
+"upz_5055444B82170766050132": {
+"bn": "বড়লেখা",
+"kind": "upazila",
+"district_bn": "মৌলভীবাজার",
+"division_bn": "সিলেট",
+"gov_site": "barlekha.moulvibazar.gov.bd"
+},
+"upz_5055444B91077345667431": {
+"bn": "বরুড়া",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "barura.comilla.gov.bd"
+},
+"upz_5055444B13645595955380": {
+"bn": "কেরাণীগঞ্জ",
+"kind": "upazila",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা",
+"gov_site": "keraniganj.dhaka.gov.bd"
+},
+"upz_5055444B21032011714269": {
+"bn": "বাসাইল",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "basail.tangail.gov.bd"
+},
+"upz_5055444B76424346984523": {
+"bn": "বটিয়াঘাটা",
+"kind": "upazila",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা",
+"gov_site": "botiaghata.khulna.gov.bd"
+},
+"upz_5055444B29598599915126": {
+"bn": "বেলাবো",
+"kind": "upazila",
+"district_bn": "নরসিংদী",
+"division_bn": "ঢাকা",
+"gov_site": "belabo.narsingdi.gov.bd"
+},
+"upz_5055444B39294686315052": {
+"bn": "বাউফল",
+"kind": "upazila",
+"district_bn": "পটুয়াখালী",
+"division_bn": "বরিশাল",
+"gov_site": "bauphal.patuakhali.gov.bd"
+},
+"upz_5055444B75251324769772": {
+"bn": "বায়েজীদ বোস্তামী",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B74522241895423": {
+"bn": "বিয়ানীবাজার",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "beanibazar.sylhet.gov.bd"
+},
+"upz_5055444B29897435624834": {
+"bn": "বিলাইছড়ি",
+"kind": "upazila",
+"district_bn": "রাঙ্গামাটি পার্বত্য",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "belaichari.rangamati.gov.bd"
+},
+"upz_5055444B49366988279383": {
+"bn": "বেতাগী",
+"kind": "upazila",
+"district_bn": "বরগুনা",
+"division_bn": "বরিশাল",
+"gov_site": "betagi.barguna.gov.bd"
+},
+"upz_5055444B14711722116105": {
+"bn": "ভৈরব",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "bhairab.kishoreganj.gov.bd"
+},
+"upz_5055444B10360406555635": {
+"bn": "ভালুকা",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "bhaluka.mymensingh.gov.bd"
+},
+"upz_5055444B5119414311829": {
+"bn": "ভাঙ্গা",
+"kind": "upazila",
+"district_bn": "ফরিদপুর",
+"division_bn": "ঢাকা",
+"gov_site": "bhanga.faridpur.gov.bd"
+},
+"upz_5055444B7317208084306": {
+"bn": "দেবহাটা",
+"kind": "upazila",
+"district_bn": "সাতক্ষীরা",
+"division_bn": "খুলনা",
+"gov_site": "debhata.satkhira.gov.bd"
+},
+"upz_5055444B16297383305925": {
+"bn": "ভূঞাপুর",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "bhuapur.tangail.gov.bd"
+},
+"upz_5055444B15524173324977": {
+"bn": "ভেদরগঞ্জ",
+"kind": "upazila",
+"district_bn": "শরীয়তপুর",
+"division_bn": "ঢাকা",
+"gov_site": "bhedarganj.shariatpur.gov.bd"
+},
+"upz_5055444B14686967042049": {
+"bn": "ভেড়ামারা",
+"kind": "upazila",
+"district_bn": "কুষ্টিয়া",
+"division_bn": "খুলনা",
+"gov_site": "bheramara.kushtia.gov.bd"
+},
+"upz_5055444B7097225858324": {
+"bn": "ভোলা সদর",
+"kind": "upazila",
+"district_bn": "ভোলা",
+"division_bn": "বরিশাল",
+"gov_site": "sadar.bhola.gov.bd"
+},
+"upz_5055444B86934116157766": {
+"bn": "দেবিদ্বার",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "debidwar.comilla.gov.bd"
+},
+"upz_5055444B87531326935884": {
+"bn": "ভূরুঙ্গামারী",
+"kind": "upazila",
+"district_bn": "কুড়িগ্রাম",
+"division_bn": "রংপুর",
+"gov_site": "bhurungamari.kurigram.gov.bd"
+},
+"upz_5055444B78948578275311": {
+"bn": "বিরল",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "birol.dinajpur.gov.bd"
+},
+"upz_5055444B79507658875525": {
+"bn": "বিরামপুর",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "birampur.dinajpur.gov.bd"
+},
+"upz_5055444B22722799866654": {
+"bn": "বীরগঞ্জ",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "birganj.dinajpur.gov.bd"
+},
+"upz_5055444B29430612429174": {
+"bn": "বিশ্বম্ভরপুর",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "bishwambarpur.sunamganj.gov.bd"
+},
+"upz_5055444B7917442502790": {
+"bn": "বিশ্বনাথ",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "bishwanath.sylhet.gov.bd"
+},
+"upz_5055444B39554160616851": {
+"bn": "বোয়ালখালী",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "boalkhali.chattogram.gov.bd"
+},
+"upz_5055444B84943606791974": {
+"bn": "বোয়ালিয়া",
+"kind": "metro",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী"
+},
+"upz_5055444B63302256730709": {
+"bn": "বোয়ালমারী",
+"kind": "upazila",
+"district_bn": "ফরিদপুর",
+"division_bn": "ঢাকা",
+"gov_site": "boalmari.faridpur.gov.bd"
+},
+"upz_5055444B39806235806178": {
+"bn": "বোচাগঞ্জ",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "bochaganj.dinajpur.gov.bd"
+},
+"upz_5055444B728279832924": {
+"bn": "বোদা",
+"kind": "upazila",
+"district_bn": "পঞ্চগড়",
+"division_bn": "রংপুর",
+"gov_site": "boda.panchagarh.gov.bd"
+},
+"upz_5055444B14183911871917": {
+"bn": "ব্রাহ্মণবাড়িয়া সদর",
+"kind": "upazila",
+"district_bn": "ব্রাহ্মণবাড়িয়া",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sadar.brahmanbaria.gov.bd"
+},
+"upz_5055444B87015491124884": {
+"bn": "ব্রাহ্মণপাড়া",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "brahmanpara.comilla.gov.bd"
+},
+"upz_5055444B26511265806420": {
+"bn": "ছাগলনাইয়া",
+"kind": "upazila",
+"district_bn": "ফেনী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "chhagalnaiya.feni.gov.bd"
+},
+"upz_5055444B893784701157": {
+"bn": "বোরহানউদ্দিন",
+"kind": "upazila",
+"district_bn": "ভোলা",
+"division_bn": "বরিশাল",
+"gov_site": "borhanuddin.bhola.gov.bd"
+},
+"upz_5055444B51169249412494": {
+"bn": "বুড়িচং",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "burichang.comilla.gov.bd"
+},
+"upz_5055444B56407900252664": {
+"bn": "ক্যান্টনমেন্ট",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B82655553221044": {
+"bn": "চকবাজার",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B68978005941657": {
+"bn": "দেবীগঞ্জ",
+"kind": "upazila",
+"district_bn": "পঞ্চগড়",
+"division_bn": "রংপুর",
+"gov_site": "debiganj.panchagarh.gov.bd"
+},
+"upz_5055444B84996258897066": {
+"bn": "চকরিয়া",
+"kind": "upazila",
+"district_bn": "কক্সবাজার",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "chakaria.coxsbazar.gov.bd"
+},
+"upz_5055444B40910797955149": {
+"bn": "মুলাদী",
+"kind": "upazila",
+"district_bn": "বরিশাল",
+"division_bn": "বরিশাল",
+"gov_site": "muladi.barisal.gov.bd"
+},
+"upz_5055444B97657491175799": {
+"bn": "চন্দনাইশ",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "chandanaish.chattogram.gov.bd"
+},
+"upz_5055444B37030351476694": {
+"bn": "চান্দগাঁও",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B69698146690678": {
+"bn": "চান্দিনা",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "chandina.comilla.gov.bd"
+},
+"upz_5055444B71946296416416": {
+"bn": "মুন্সীগঞ্জ সদর",
+"kind": "upazila",
+"district_bn": "মুন্সীগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "sadar.munshiganj.gov.bd"
+},
+"upz_5055444B35741244965074": {
+"bn": "চাঁদপুর সদর",
+"kind": "upazila",
+"district_bn": "চাঁদপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sadar.chandpur.gov.bd"
+},
+"upz_5055444B75331922255178": {
+"bn": "চরভদ্রাসন",
+"kind": "upazila",
+"district_bn": "ফরিদপুর",
+"division_bn": "ঢাকা",
+"gov_site": "charbhadrasan.faridpur.gov.bd"
+},
+"upz_5055444B66059160751289": {
+"bn": "চরফ্যাশন",
+"kind": "upazila",
+"district_bn": "ভোলা",
+"division_bn": "বরিশাল",
+"gov_site": "charfesson.bhola.gov.bd"
+},
+"upz_5055444B63634660661381": {
+"bn": "চর রাজিবপুর",
+"kind": "upazila",
+"district_bn": "কুড়িগ্রাম",
+"division_bn": "রংপুর",
+"gov_site": "charrajibpur.kurigram.gov.bd"
+},
+"upz_5055444B29892543857449": {
+"bn": "চাটখিল",
+"kind": "upazila",
+"district_bn": "নোয়াখালী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "chatkhil.noakhali.gov.bd"
+},
+"upz_5055444B51943841593923": {
+"bn": "চিরিরবন্দর",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "chirirbandar.dinajpur.gov.bd"
+},
+"upz_5055444B64235181700103": {
+"bn": "সীতাকুন্ড",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sitakunda.chattogram.gov.bd"
+},
+"upz_5055444B9070330767349": {
+"bn": "চৌদ্দগ্রাম",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "chauddagram.comilla.gov.bd"
+},
+"upz_5055444B52558284836839": {
+"bn": "চৌগাছা",
+"kind": "upazila",
+"district_bn": "যশোর",
+"division_bn": "খুলনা",
+"gov_site": "chougachha.jashore.gov.bd"
+},
+"upz_5055444B25330959395307": {
+"bn": "সোনাডাঙ্গা",
+"kind": "metro",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা"
+},
+"upz_5055444B77604595910958": {
+"bn": "চিতলমারী",
+"kind": "upazila",
+"district_bn": "বাগেরহাট",
+"division_bn": "খুলনা",
+"gov_site": "chitalmari.bagerhat.gov.bd"
+},
+"upz_5055444B94988032496724": {
+"bn": "ছাতক",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "chhatak.sunamganj.gov.bd"
+},
+"upz_5055444B31518469261205": {
+"bn": "চিলমারী",
+"kind": "upazila",
+"district_bn": "কুড়িগ্রাম",
+"division_bn": "রংপুর",
+"gov_site": "chilmari.kurigram.gov.bd"
+},
+"upz_5055444B96751245569599": {
+"bn": "বন্দর",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B67851108717142": {
+"bn": "চুয়াডাঙ্গা সদর",
+"kind": "upazila",
+"district_bn": "চুয়াডাঙ্গা",
+"division_bn": "খুলনা",
+"gov_site": "chuadangasadar.chuadanga.gov.bd"
+},
+"upz_5055444B46183445583986": {
+"bn": "চুনারুঘাট",
+"kind": "upazila",
+"district_bn": "হবিগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "chunarughat.habiganj.gov.bd"
+},
+"upz_5055444B48258460974709": {
+"bn": "আদর্শ সদর",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "comillasadar.comilla.gov.bd"
+},
+"upz_5055444B83041215814881": {
+"bn": "সদর দক্ষিণ",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sadarsouth.comilla.gov.bd"
+},
+"upz_5055444B99414305730014": {
+"bn": "দাগনভূঞা",
+"kind": "upazila",
+"district_bn": "ফেনী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "daganbhuiyan.feni.gov.bd"
+},
+"upz_5055444B15353027914244": {
+"bn": "দেলদুয়ার",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "delduar.tangail.gov.bd"
+},
+"upz_5055444B56228986539746": {
+"bn": "কোম্পানীগঞ্জ",
+"kind": "upazila",
+"district_bn": "নোয়াখালী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "companiganj.noakhali.gov.bd"
+},
+"upz_5055444B34344695185666": {
+"bn": "কোম্পানীগঞ্জ",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "companiganj.sylhet.gov.bd"
+},
+"upz_5055444B78904096490349": {
+"bn": "ডামুড্যা",
+"kind": "upazila",
+"district_bn": "শরীয়তপুর",
+"division_bn": "ঢাকা",
+"gov_site": "damudya.shariatpur.gov.bd"
+},
+"upz_5055444B44088891115489": {
+"bn": "কক্সবাজার সদর",
+"kind": "upazila",
+"district_bn": "কক্সবাজার",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sadar.coxsbazar.gov.bd"
+},
+"upz_5055444B27282750635430": {
+"bn": "দাকোপ",
+"kind": "upazila",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা",
+"gov_site": "dacope.khulna.gov.bd"
+},
+"upz_5055444B18079460407879": {
+"bn": "শান্তিগঞ্জ",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "shantiganj.sunamganj.gov.bd"
+},
+"upz_5055444B91315333896705": {
+"bn": "দক্ষিণ সুরমা",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "dakshinsurma.sylhet.gov.bd"
+},
+"upz_5055444B54932712585204": {
+"bn": "দক্ষিণখান",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B42162342633446": {
+"bn": "দামুড়হুদা",
+"kind": "upazila",
+"district_bn": "চুয়াডাঙ্গা",
+"division_bn": "খুলনা",
+"gov_site": "damurhuda.chuadanga.gov.bd"
+},
+"upz_5055444B58026692506241": {
+"bn": "দার-উস-সালাম",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B84377812112263": {
+"bn": "দশমিনা",
+"kind": "upazila",
+"district_bn": "পটুয়াখালী",
+"division_bn": "বরিশাল",
+"gov_site": "dashmina.patuakhali.gov.bd"
+},
+"upz_5055444B14528909504793": {
+"bn": "ডেমরা",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B33374130329407": {
+"bn": "দাউদকান্দি",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "daudkandi.comilla.gov.bd"
+},
+"upz_5055444B15230519967712": {
+"bn": "দৌলতখান",
+"kind": "upazila",
+"district_bn": "ভোলা",
+"division_bn": "বরিশাল",
+"gov_site": "doulatkhan.bhola.gov.bd"
+},
+"upz_5055444B23473824839920": {
+"bn": "দৌলতপুর",
+"kind": "upazila",
+"district_bn": "মানিকগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "daulatpur.manikganj.gov.bd"
+},
+"upz_5055444B46757628050002": {
+"bn": "দৌলতপুর",
+"kind": "metro",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা"
+},
+"upz_5055444B19243019661723": {
+"bn": "দিরাই",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "derai.sunamganj.gov.bd"
+},
+"upz_5055444B37852279213101": {
+"bn": "দেওয়ানগঞ্জ",
+"kind": "upazila",
+"district_bn": "জামালপুর",
+"division_bn": "রংপুর",
+"gov_site": "dewangonj.jamalpur.gov.bd"
+},
+"upz_5055444B39396107660312": {
+"bn": "ধামরাই",
+"kind": "upazila",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা",
+"gov_site": "dhamrai.dhaka.gov.bd"
+},
+"upz_5055444B25808786190602": {
+"bn": "ধনবাড়ী",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "dhanbari.tangail.gov.bd"
+},
+"upz_5055444B44526348177341": {
+"bn": "ধানমন্ডি",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B99906709627914": {
+"bn": "ধর্মপাশা",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "dharmapasha.sunamganj.gov.bd"
+},
+"upz_5055444B86250199527476": {
+"bn": "ধোবাউড়া",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "dhobaura.mymensingh.gov.bd"
+},
+"upz_5055444B20721684317964": {
+"bn": "দিঘলিয়া",
+"kind": "upazila",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা",
+"gov_site": "digholia.khulna.gov.bd"
+},
+"upz_5055444B92856865175572": {
+"bn": "দীঘিনালা",
+"kind": "upazila",
+"district_bn": "খাগড়াছড়ি",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "dighinala.khagrachhari.gov.bd"
+},
+"upz_5055444B48556909875029": {
+"bn": "ডিমলা",
+"kind": "upazila",
+"district_bn": "নীলফামারী",
+"division_bn": "রংপুর",
+"gov_site": "dimla.nilphamari.gov.bd"
+},
+"upz_5055444B62353958062010": {
+"bn": "দিনাজপুর সদর",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "dinajpursadar.dinajpur.gov.bd"
+},
+"upz_5055444B89474781080787": {
+"bn": "দোহার",
+"kind": "upazila",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা",
+"gov_site": "dohar.dhaka.gov.bd"
+},
+"upz_5055444B45421324298866": {
+"bn": "ডোমার",
+"kind": "upazila",
+"district_bn": "নীলফামারী",
+"division_bn": "রংপুর",
+"gov_site": "domar.nilphamari.gov.bd"
+},
+"upz_5055444B66556337069640": {
+"bn": "ডবলমুরিং",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B64610175900905": {
+"bn": "দোয়ারাবাজার",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "dowarabazar.sunamganj.gov.bd"
+},
+"upz_5055444B35753624845680": {
+"bn": "দুমকী",
+"kind": "upazila",
+"district_bn": "পটুয়াখালী",
+"division_bn": "বরিশাল",
+"gov_site": "dumki.patuakhali.gov.bd"
+},
+"upz_5055444B35284050445786": {
+"bn": "কেশবপুর",
+"kind": "upazila",
+"district_bn": "যশোর",
+"division_bn": "খুলনা",
+"gov_site": "keshabpur.jashore.gov.bd"
+},
+"upz_5055444B11044248230769": {
+"bn": "ডুমুরিয়া",
+"kind": "upazila",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা",
+"gov_site": "dumuria.khulna.gov.bd"
+},
+"upz_5055444B76788625169588": {
+"bn": "দুর্গাপুর",
+"kind": "upazila",
+"district_bn": "নেত্রকোণা",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "durgapur.netrokona.gov.bd"
+},
+"upz_5055444B92688731308594": {
+"bn": "খাগড়াছড়ি সদর",
+"kind": "upazila",
+"district_bn": "খাগড়াছড়ি",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sadar.khagrachhari.gov.bd"
+},
+"upz_5055444B5933683148381": {
+"bn": "ফকিরহাট",
+"kind": "upazila",
+"district_bn": "বাগেরহাট",
+"division_bn": "খুলনা",
+"gov_site": "fakirhat.bagerhat.gov.bd"
+},
+"upz_5055444B21946407329202": {
+"bn": "ফরিদপুর সদর",
+"kind": "upazila",
+"district_bn": "ফরিদপুর",
+"division_bn": "ঢাকা",
+"gov_site": "sadar.faridpur.gov.bd"
+},
+"upz_5055444B71558155368166": {
+"bn": "ফরিদগঞ্জ",
+"kind": "upazila",
+"district_bn": "চাঁদপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "faridgonj.chandpur.gov.bd"
+},
+"upz_5055444B33879349571627": {
+"bn": "ফুলগাজী",
+"kind": "upazila",
+"district_bn": "ফেনী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "fulgazi.feni.gov.bd"
+},
+"upz_5055444B95801532899797": {
+"bn": "ফটিকছড়ি",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "fatikchhari.chattogram.gov.bd"
+},
+"upz_5055444B87277518835017": {
+"bn": "ফেঞ্চুগঞ্জ",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "fenchuganj.sylhet.gov.bd"
+},
+"upz_5055444B40138424940148": {
+"bn": "ফেনী সদর",
+"kind": "upazila",
+"district_bn": "ফেনী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sadar.feni.gov.bd"
+},
+"upz_5055444B44901139304438": {
+"bn": "ফুলবাড়ী",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "fulbari.dinajpur.gov.bd"
+},
+"upz_5055444B57247897751497": {
+"bn": "লাখাই",
+"kind": "upazila",
+"district_bn": "হবিগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "lakhai.habiganj.gov.bd"
+},
+"upz_5055444B78175035306518": {
+"bn": "ফুলবাড়ীয়া",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "fulbaria.mymensingh.gov.bd"
+},
+"upz_5055444B23049188583489": {
+"bn": "ফুলছড়ি",
+"kind": "upazila",
+"district_bn": "গাইবান্ধা",
+"division_bn": "রংপুর",
+"gov_site": "phulchari.gaibandha.gov.bd"
+},
+"upz_5055444B28348959120095": {
+"bn": "গফরগাঁও",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "gafargaon.mymensingh.gov.bd"
+},
+"upz_5055444B3189341921764": {
+"bn": "গাইবান্ধা সদর",
+"kind": "upazila",
+"district_bn": "গাইবান্ধা",
+"division_bn": "রংপুর",
+"gov_site": "gaibandhasadar.gaibandha.gov.bd"
+},
+"upz_5055444B92476324318819": {
+"bn": "গলাচিপা",
+"kind": "upazila",
+"district_bn": "পটুয়াখালী",
+"division_bn": "বরিশাল",
+"gov_site": "galachipa.patuakhali.gov.bd"
+},
+"upz_5055444B67168337318866": {
+"bn": "ঘিওর",
+"kind": "upazila",
+"district_bn": "মানিকগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "gior.manikganj.gov.bd"
+},
+"upz_5055444B51911213656614": {
+"bn": "গংগাচড়া",
+"kind": "upazila",
+"district_bn": "রংপুর",
+"division_bn": "রংপুর",
+"gov_site": "gangachara.rangpur.gov.bd"
+},
+"upz_5055444B93126942536388": {
+"bn": "গাংনী",
+"kind": "upazila",
+"district_bn": "মেহেরপুর",
+"division_bn": "খুলনা",
+"gov_site": "gangni.meherpur.gov.bd"
+},
+"upz_5055444B70908799520391": {
+"bn": "গৌরীপুর",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "gouripur.mymensingh.gov.bd"
+},
+"upz_5055444B66414754271755": {
+"bn": "গৌরনদী",
+"kind": "upazila",
+"district_bn": "বরিশাল",
+"division_bn": "বরিশাল",
+"gov_site": "gournadi.barisal.gov.bd"
+},
+"upz_5055444B82094787312382": {
+"bn": "গজারিয়া",
+"kind": "upazila",
+"district_bn": "মুন্সীগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "gajaria.munshiganj.gov.bd"
+},
+"upz_5055444B30367199884921": {
+"bn": "গাজীপুর সদর",
+"kind": "upazila",
+"district_bn": "গাজীপুর",
+"division_bn": "ঢাকা",
+"gov_site": "sadar.gazipur.gov.bd"
+},
+"upz_5055444B38357461991586": {
+"bn": "গেন্ডারিয়া",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B57482053594042": {
+"bn": "ঘাটাইল",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "ghatail.tangail.gov.bd"
+},
+"upz_5055444B96277257106353": {
+"bn": "ঘোড়াঘাট",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "ghoraghat.dinajpur.gov.bd"
+},
+"upz_5055444B47253162871751": {
+"bn": "গোয়ালন্দ",
+"kind": "upazila",
+"district_bn": "রাজবাড়ী",
+"division_bn": "ঢাকা",
+"gov_site": "goalanda.rajbari.gov.bd"
+},
+"upz_5055444B19619959781410": {
+"bn": "খালিয়াজুরী",
+"kind": "upazila",
+"district_bn": "নেত্রকোণা",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "khaliajuri.netrokona.gov.bd"
+},
+"upz_5055444B10956713741536": {
+"bn": "গোবিন্দগঞ্জ",
+"kind": "upazila",
+"district_bn": "গাইবান্ধা",
+"division_bn": "রংপুর",
+"gov_site": "gobindaganj.gaibandha.gov.bd"
+},
+"upz_5055444B67671348239307": {
+"bn": "হালিশহর",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B34358039659895": {
+"bn": "খালিশপুর",
+"kind": "metro",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা"
+},
+"upz_5055444B61701169401467": {
+"bn": "খিলগাঁও",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B69213858716566": {
+"bn": "গোলাপগঞ্জ",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "golapganj.sylhet.gov.bd"
+},
+"upz_5055444B13443177435533": {
+"bn": "গোপালগঞ্জ সদর",
+"kind": "upazila",
+"district_bn": "গোপালগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "sadar.gopalganj.gov.bd"
+},
+"upz_5055444B65231246155988": {
+"bn": "খিলক্ষেত",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B71793030218448": {
+"bn": "গোপালপুর",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "gopalpur.tangail.gov.bd"
+},
+"upz_5055444B58039681953949": {
+"bn": "হোসেনপুর",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "hossainpur.kishoreganj.gov.bd"
+},
+"upz_5055444B67450707106328": {
+"bn": "খোকসা",
+"kind": "upazila",
+"district_bn": "কুষ্টিয়া",
+"division_bn": "খুলনা",
+"gov_site": "khoksa.kushtia.gov.bd"
+},
+"upz_5055444B15799752378337": {
+"bn": "খুলনা সদর",
+"kind": "metro",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা"
+},
+"upz_5055444B74969054630595": {
+"bn": "গোসাইরহাট",
+"kind": "upazila",
+"district_bn": "শরীয়তপুর",
+"division_bn": "ঢাকা",
+"gov_site": "gosairhat.shariatpur.gov.bd"
+},
+"upz_5055444B62684954860182": {
+"bn": "গোয়াইনঘাট",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "gowainghat.sylhet.gov.bd"
+},
+"upz_5055444B56461784969328": {
+"bn": "গুলশান",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B97703922589889": {
+"bn": "খুলশী",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B24382626124582": {
+"bn": "হবিগঞ্জ সদর",
+"kind": "upazila",
+"district_bn": "হবিগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "habiganjsadar.habiganj.gov.bd"
+},
+"upz_5055444B97119696275156": {
+"bn": "হাইমচর",
+"kind": "upazila",
+"district_bn": "চাঁদপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "haimchar.chandpur.gov.bd"
+},
+"upz_5055444B37219354955474": {
+"bn": "হাজীগঞ্জ",
+"kind": "upazila",
+"district_bn": "চাঁদপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "hajiganj.chandpur.gov.bd"
+},
+"upz_5055444B56333063181641": {
+"bn": "হাকিমপুর",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "hakimpur.dinajpur.gov.bd"
+},
+"upz_5055444B66377868060311": {
+"bn": "হালুয়াঘাট",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "haluaghat.mymensingh.gov.bd"
+},
+"upz_5055444B20021225888412": {
+"bn": "হরিণাকুন্ডু",
+"kind": "upazila",
+"district_bn": "ঝিনাইদহ",
+"division_bn": "খুলনা",
+"gov_site": "harinakundu.jhenaidah.gov.bd"
+},
+"upz_5055444B33565614058430": {
+"bn": "হরিপুর",
+"kind": "upazila",
+"district_bn": "ঠাকুরগাঁও",
+"division_bn": "রংপুর",
+"gov_site": "haripur.thakurgaon.gov.bd"
+},
+"upz_5055444B53451019672150": {
+"bn": "হরিরামপুর",
+"kind": "upazila",
+"district_bn": "মানিকগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "harirampur.manikganj.gov.bd"
+},
+"upz_5055444B3881119476901": {
+"bn": "ঈশ্বরগঞ্জ",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "iswarganj.mymensingh.gov.bd"
+},
+"upz_5055444B98016911778597": {
+"bn": "হাটহাজারী",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "hathazari.chattogram.gov.bd"
+},
+"upz_5055444B8648993873034": {
+"bn": "ইসলামপুর",
+"kind": "upazila",
+"district_bn": "জামালপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "islampur.jamalpur.gov.bd"
+},
+"upz_5055444B78670664180744": {
+"bn": "হাতীবান্ধা",
+"kind": "upazila",
+"district_bn": "লালমনিরহাট",
+"division_bn": "রংপুর",
+"gov_site": "hatibandha.lalmonirhat.gov.bd"
+},
+"upz_5055444B52552217694509": {
+"bn": "ইটনা",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "itna.kishoreganj.gov.bd"
+},
+"upz_5055444B26590135153615": {
+"bn": "হাতিয়া",
+"kind": "upazila",
+"district_bn": "নোয়াখালী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "hatia.noakhali.gov.bd"
+},
+"upz_5055444B79082430711641": {
+"bn": "হাজারীবাগ",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B36389182328145": {
+"bn": "হিজলা",
+"kind": "upazila",
+"district_bn": "বরিশাল",
+"division_bn": "বরিশাল",
+"gov_site": "hizla.barisal.gov.bd"
+},
+"upz_5055444B68305043582994": {
+"bn": "হোমনা",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "homna.comilla.gov.bd"
+},
+"upz_5055444B57165749218775": {
+"bn": "জগন্নাথপুর",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "jagannathpur.sunamganj.gov.bd"
+},
+"upz_5055444B19736672664555": {
+"bn": "জৈন্তাপুর",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "jaintiapur.sylhet.gov.bd"
+},
+"upz_5055444B28351243268521": {
+"bn": "জলঢাকা",
+"kind": "upazila",
+"district_bn": "নীলফামারী",
+"division_bn": "রংপুর",
+"gov_site": "jaldhaka.nilphamari.gov.bd"
+},
+"upz_5055444B62205139742422": {
+"bn": "জামালগঞ্জ",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "jamalganj.sunamganj.gov.bd"
+},
+"upz_5055444B25875561692739": {
+"bn": "কামরাঙ্গীরচর",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B56108573685352": {
+"bn": "জামালপুর সদর",
+"kind": "upazila",
+"district_bn": "জামালপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "jamalpursadar.jamalpur.gov.bd"
+},
+"upz_5055444B25595964672870": {
+"bn": "যাত্রাবাড়ী",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B65755720973040": {
+"bn": "ঝালকাঠি সদর",
+"kind": "upazila",
+"district_bn": "ঝালকাঠি",
+"division_bn": "বরিশাল",
+"gov_site": "sadar.jhalakathi.gov.bd"
+},
+"upz_5055444B98244501145639": {
+"bn": "কাপ্তাই",
+"kind": "upazila",
+"district_bn": "রাঙ্গামাটি পার্বত্য",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "kaptai.rangamati.gov.bd"
+},
+"upz_5055444B13115177631970": {
+"bn": "কিশোরগঞ্জ",
+"kind": "upazila",
+"district_bn": "নীলফামারী",
+"division_bn": "রংপুর",
+"gov_site": "kishorganj.nilphamari.gov.bd"
+},
+"upz_5055444B48976868209107": {
+"bn": "ঝিনাইদহ সদর",
+"kind": "upazila",
+"district_bn": "ঝিনাইদহ",
+"division_bn": "খুলনা",
+"gov_site": "sadar.jhenaidah.gov.bd"
+},
+"upz_5055444B69691307586178": {
+"bn": "ঝিনাইগাতী",
+"kind": "upazila",
+"district_bn": "শেরপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "jhenaigati.sherpur.gov.bd"
+},
+"upz_5055444B7582936934927": {
+"bn": "কাউখালী",
+"kind": "upazila",
+"district_bn": "পিরোজপুর",
+"division_bn": "বরিশাল",
+"gov_site": "kawkhali.pirojpur.gov.bd"
+},
+"upz_5055444B85710752222432": {
+"bn": "ঝিকরগাছা",
+"kind": "upazila",
+"district_bn": "যশোর",
+"division_bn": "খুলনা",
+"gov_site": "jhikargacha.jashore.gov.bd"
+},
+"upz_5055444B6466456665233": {
+"bn": "জীবননগর",
+"kind": "upazila",
+"district_bn": "চুয়াডাঙ্গা",
+"division_bn": "খুলনা",
+"gov_site": "jibannagar.chuadanga.gov.bd"
+},
+"upz_5055444B74589798981468": {
+"bn": "জুরাছড়ি",
+"kind": "upazila",
+"district_bn": "রাঙ্গামাটি পার্বত্য",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "juraichari.rangamati.gov.bd"
+},
+"upz_5055444B19367082920466": {
+"bn": "কাউখালী",
+"kind": "upazila",
+"district_bn": "রাঙ্গামাটি পার্বত্য",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "kawkhali.rangamati.gov.bd"
+},
+"upz_5055444B23116047472537": {
+"bn": "কিশোরগঞ্জ সদর",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "kishoreganjsadar.kishoreganj.gov.bd"
+},
+"upz_5055444B59468636811398": {
+"bn": "জুড়ী",
+"kind": "upazila",
+"district_bn": "মৌলভীবাজার",
+"division_bn": "সিলেট",
+"gov_site": "juri.moulvibazar.gov.bd"
+},
+"upz_5055444B43660249750517": {
+"bn": "কবিরহাট",
+"kind": "upazila",
+"district_bn": "নোয়াখালী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "kabirhat.noakhali.gov.bd"
+},
+"upz_5055444B24865476374111": {
+"bn": "খানজাহান আলী",
+"kind": "metro",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা"
+},
+"upz_5055444B26000063371605": {
+"bn": "কচুয়া",
+"kind": "upazila",
+"district_bn": "চাঁদপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "kachua.chandpur.gov.bd"
+},
+"upz_5055444B45763883342001": {
+"bn": "কচুয়া",
+"kind": "upazila",
+"district_bn": "বাগেরহাট",
+"division_bn": "খুলনা",
+"gov_site": "kachua.bagerhat.gov.bd"
+},
+"upz_5055444B98895982185439": {
+"bn": "কদমতলী",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B63983691041165": {
+"bn": "কাফরুল",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B76754438754784": {
+"bn": "কাহারোল",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "kaharol.dinajpur.gov.bd"
+},
+"upz_5055444B41131729628640": {
+"bn": "কোটালীপাড়া",
+"kind": "upazila",
+"district_bn": "গোপালগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "kotalipara.gopalganj.gov.bd"
+},
+"upz_5055444B33791215686777": {
+"bn": "কলাপাড়া",
+"kind": "upazila",
+"district_bn": "পটুয়াখালী",
+"division_bn": "বরিশাল",
+"gov_site": "kalapara.patuakhali.gov.bd"
+},
+"upz_5055444B44586905762707": {
+"bn": "কলাবাগান",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B76251255413943": {
+"bn": "কলারোয়া",
+"kind": "upazila",
+"district_bn": "সাতক্ষীরা",
+"division_bn": "খুলনা",
+"gov_site": "kalaroa.satkhira.gov.bd"
+},
+"upz_5055444B27555215453497": {
+"bn": "কালিয়া",
+"kind": "upazila",
+"district_bn": "নড়াইল",
+"division_bn": "খুলনা",
+"gov_site": "kalia.narail.gov.bd"
+},
+"upz_5055444B43604682805019": {
+"bn": "খানসামা",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "khansama.dinajpur.gov.bd"
+},
+"upz_5055444B52699552656375": {
+"bn": "কালিয়াকৈর",
+"kind": "upazila",
+"district_bn": "গাজীপুর",
+"division_bn": "ঢাকা",
+"gov_site": "kaliakair.gazipur.gov.bd"
+},
+"upz_5055444B61428192086039": {
+"bn": "কালীগঞ্জ",
+"kind": "upazila",
+"district_bn": "গাজীপুর",
+"division_bn": "ঢাকা",
+"gov_site": "kaliganj.gazipur.gov.bd"
+},
+"upz_5055444B95278477608214": {
+"bn": "কোটচাঁদপুর",
+"kind": "upazila",
+"district_bn": "ঝিনাইদহ",
+"division_bn": "খুলনা",
+"gov_site": "kotchandpur.jhenaidah.gov.bd"
+},
+"upz_5055444B90064357882675": {
+"bn": "কালীগঞ্জ",
+"kind": "upazila",
+"district_bn": "ঝিনাইদহ",
+"division_bn": "খুলনা",
+"gov_site": "kaliganj.jhenaidah.gov.bd"
+},
+"upz_5055444B41249726663470": {
+"bn": "কালিগঞ্জ",
+"kind": "upazila",
+"district_bn": "সাতক্ষীরা",
+"division_bn": "খুলনা",
+"gov_site": "kaliganj.satkhira.gov.bd"
+},
+"upz_5055444B43057747226647": {
+"bn": "কোতোয়ালী",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B96747808832933": {
+"bn": "কোতোয়ালী",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B80538323098735": {
+"bn": "কালীগঞ্জ",
+"kind": "upazila",
+"district_bn": "লালমনিরহাট",
+"division_bn": "রংপুর",
+"gov_site": "kaliganj.lalmonirhat.gov.bd"
+},
+"upz_5055444B56749671391085": {
+"bn": "কালিহাতী",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "kalihati.tangail.gov.bd"
+},
+"upz_5055444B57411868126880": {
+"bn": "কালকিনি",
+"kind": "upazila",
+"district_bn": "মাদারীপুর",
+"division_bn": "ঢাকা",
+"gov_site": "kalkini.madaripur.gov.bd"
+},
+"upz_5055444B66227675822918": {
+"bn": "কলমাকান্দা",
+"kind": "upazila",
+"district_bn": "নেত্রকোণা",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "kalmakanda.netrokona.gov.bd"
+},
+"upz_5055444B5247362700203": {
+"bn": "কালুখালী",
+"kind": "upazila",
+"district_bn": "রাজবাড়ী",
+"division_bn": "ঢাকা",
+"gov_site": "kalukhali.rajbari.gov.bd"
+},
+"upz_5055444B17952966104219": {
+"bn": "কমলগঞ্জ",
+"kind": "upazila",
+"district_bn": "মৌলভীবাজার",
+"division_bn": "সিলেট",
+"gov_site": "kamolganj.moulvibazar.gov.bd"
+},
+"upz_5055444B78094476092411": {
+"bn": "কমলনগর",
+"kind": "upazila",
+"district_bn": "লক্ষ্মীপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "kamalnagar.lakshmipur.gov.bd"
+},
+"upz_5055444B41434433148091": {
+"bn": "কানাইঘাট",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "kanaighat.sylhet.gov.bd"
+},
+"upz_5055444B40108237642327": {
+"bn": "কাঠালিয়া",
+"kind": "upazila",
+"district_bn": "ঝালকাঠি",
+"division_bn": "বরিশাল",
+"gov_site": "kathalia.jhalakathi.gov.bd"
+},
+"upz_5055444B15486218196636": {
+"bn": "কাপাসিয়া",
+"kind": "upazila",
+"district_bn": "গাজীপুর",
+"division_bn": "ঢাকা",
+"gov_site": "kapasia.gazipur.gov.bd"
+},
+"upz_5055444B80392478978834": {
+"bn": "করিমগঞ্জ",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "karimgonj.kishoreganj.gov.bd"
+},
+"upz_5055444B61264629124243": {
+"bn": "কসবা",
+"kind": "upazila",
+"district_bn": "ব্রাহ্মণবাড়িয়া",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "kasba.brahmanbaria.gov.bd"
+},
+"upz_5055444B44426403332782": {
+"bn": "কাশিয়ানী",
+"kind": "upazila",
+"district_bn": "গোপালগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "kashiani.gopalganj.gov.bd"
+},
+"upz_5055444B24455875774794": {
+"bn": "কটিয়াদী",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "katiadi.kishoreganj.gov.bd"
+},
+"upz_5055444B28911251557363": {
+"bn": "কাউনিয়া",
+"kind": "upazila",
+"district_bn": "রংপুর",
+"division_bn": "রংপুর",
+"gov_site": "kaunia.rangpur.gov.bd"
+},
+"upz_5055444B46202498291187": {
+"bn": "যশোর সদর",
+"kind": "upazila",
+"district_bn": "যশোর",
+"division_bn": "খুলনা",
+"gov_site": "sadar.jashore.gov.bd"
+},
+"upz_5055444B74268178694093": {
+"bn": "কয়রা",
+"kind": "upazila",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা",
+"gov_site": "koyra.khulna.gov.bd"
+},
+"upz_5055444B47909201503305": {
+"bn": "কুমারখালী",
+"kind": "upazila",
+"district_bn": "কুষ্টিয়া",
+"division_bn": "খুলনা",
+"gov_site": "kumarkhali.kushtia.gov.bd"
+},
+"upz_5055444B34645993170454": {
+"bn": "কুলাউড়া",
+"kind": "upazila",
+"district_bn": "মৌলভীবাজার",
+"division_bn": "সিলেট",
+"gov_site": "kulaura.moulvibazar.gov.bd"
+},
+"upz_5055444B4949777620192": {
+"bn": "কুলিয়ারচর",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "kuliarchar.kishoreganj.gov.bd"
+},
+"upz_5055444B50958574054556": {
+"bn": "কুড়িগ্রাম সদর",
+"kind": "upazila",
+"district_bn": "কুড়িগ্রাম",
+"division_bn": "রংপুর",
+"gov_site": "kurigramsadar.kurigram.gov.bd"
+},
+"upz_5055444B28612098242790": {
+"bn": "কুষ্টিয়া সদর",
+"kind": "upazila",
+"district_bn": "কুষ্টিয়া",
+"division_bn": "খুলনা",
+"gov_site": "kushtiasadar.kushtia.gov.bd"
+},
+"upz_5055444B6774293613253": {
+"bn": "কুতুবদিয়া",
+"kind": "upazila",
+"district_bn": "কক্সবাজার",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "kutubdia.coxsbazar.gov.bd"
+},
+"upz_5055444B13201052505859": {
+"bn": "লক্ষ্মীপুর সদর",
+"kind": "upazila",
+"district_bn": "লক্ষ্মীপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sadar.lakshmipur.gov.bd"
+},
+"upz_5055444B37083431015696": {
+"bn": "লালবাগ",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B16433505042831": {
+"bn": "লৌহজং",
+"kind": "upazila",
+"district_bn": "মুন্সীগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "louhajanj.munshiganj.gov.bd"
+},
+"upz_5055444B5187624990089": {
+"bn": "লালমোহন",
+"kind": "upazila",
+"district_bn": "ভোলা",
+"division_bn": "বরিশাল",
+"gov_site": "lalmohan.bhola.gov.bd"
+},
+"upz_5055444B31815132153948": {
+"bn": "লালমনিরহাট সদর",
+"kind": "upazila",
+"district_bn": "লালমনিরহাট",
+"division_bn": "রংপুর",
+"gov_site": "sadar.lalmonirhat.gov.bd"
+},
+"upz_5055444B8807227421792": {
+"bn": "লামা",
+"kind": "upazila",
+"district_bn": "বান্দরবান",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "lama.bandarban.gov.bd"
+},
+"upz_5055444B32629504836566": {
+"bn": "লোহাগাড়া",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "lohagara.chattogram.gov.bd"
+},
+"upz_5055444B42901183691580": {
+"bn": "লোহাগড়া",
+"kind": "upazila",
+"district_bn": "নড়াইল",
+"division_bn": "খুলনা",
+"gov_site": "lohagara.narail.gov.bd"
+},
+"upz_5055444B11405319731642": {
+"bn": "মদন",
+"kind": "upazila",
+"district_bn": "নেত্রকোণা",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "madan.netrokona.gov.bd"
+},
+"upz_5055444B83620057326875": {
+"bn": "মাদারগঞ্জ",
+"kind": "upazila",
+"district_bn": "জামালপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "madarganj.jamalpur.gov.bd"
+},
+"upz_5055444B75961082304780": {
+"bn": "মাদারীপুর সদর",
+"kind": "upazila",
+"district_bn": "মাদারীপুর",
+"division_bn": "ঢাকা",
+"gov_site": "sadar.madaripur.gov.bd"
+},
+"upz_5055444B26771557951521": {
+"bn": "মাধবপুর",
+"kind": "upazila",
+"district_bn": "হবিগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "madhabpur.habiganj.gov.bd"
+},
+"upz_5055444B21452508615420": {
+"bn": "মধুখালী",
+"kind": "upazila",
+"district_bn": "ফরিদপুর",
+"division_bn": "ঢাকা",
+"gov_site": "madhukhali.faridpur.gov.bd"
+},
+"upz_5055444B31553273158599": {
+"bn": "মধুপুর",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "madhupur.tangail.gov.bd"
+},
+"upz_5055444B78521168573013": {
+"bn": "মাগুরা সদর",
+"kind": "upazila",
+"district_bn": "মাগুরা",
+"division_bn": "খুলনা",
+"gov_site": "magurasadar.magura.gov.bd"
+},
+"upz_5055444B90687829441345": {
+"bn": "মহালছড়ি",
+"kind": "upazila",
+"district_bn": "খাগড়াছড়ি",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "mohalchari.khagrachhari.gov.bd"
+},
+"upz_5055444B30201395073710": {
+"bn": "মনোহরদী",
+"kind": "upazila",
+"district_bn": "নরসিংদী",
+"division_bn": "ঢাকা",
+"gov_site": "monohardi.narsingdi.gov.bd"
+},
+"upz_5055444B67374732574136": {
+"bn": "মহেশখালী",
+"kind": "upazila",
+"district_bn": "কক্সবাজার",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "moheshkhali.coxsbazar.gov.bd"
+},
+"upz_5055444B14188015816574": {
+"bn": "সোনাগাজী",
+"kind": "upazila",
+"district_bn": "ফেনী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sonagazi.feni.gov.bd"
+},
+"upz_5055444B40942545652713": {
+"bn": "মহেশপুর",
+"kind": "upazila",
+"district_bn": "ঝিনাইদহ",
+"division_bn": "খুলনা",
+"gov_site": "moheshpur.jhenaidah.gov.bd"
+},
+"upz_5055444B84634680798783": {
+"bn": "মানিকছড়ি",
+"kind": "upazila",
+"district_bn": "খাগড়াছড়ি",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "manikchari.khagrachhari.gov.bd"
+},
+"upz_5055444B22432577988520": {
+"bn": "মনোহরগঞ্জ",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "monohargonj.comilla.gov.bd"
+},
+"upz_5055444B26017737484602": {
+"bn": "মানিকগঞ্জ সদর",
+"kind": "upazila",
+"district_bn": "মানিকগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "sadar.manikganj.gov.bd"
+},
+"upz_5055444B69742529684169": {
+"bn": "মণিরামপুর",
+"kind": "upazila",
+"district_bn": "যশোর",
+"division_bn": "খুলনা",
+"gov_site": "manirampur.jashore.gov.bd"
+},
+"upz_5055444B96237484517929": {
+"bn": "মোহাম্মদপুর",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B7100787207450": {
+"bn": "মনপুরা",
+"kind": "upazila",
+"district_bn": "ভোলা",
+"division_bn": "বরিশাল",
+"gov_site": "monpura.bhola.gov.bd"
+},
+"upz_5055444B80501500491091": {
+"bn": "মঠবাড়ীয়া",
+"kind": "upazila",
+"district_bn": "পিরোজপুর",
+"division_bn": "বরিশাল",
+"gov_site": "mathbaria.pirojpur.gov.bd"
+},
+"upz_5055444B50148309792291": {
+"bn": "মহম্মদপুর",
+"kind": "upazila",
+"district_bn": "মাগুরা",
+"division_bn": "খুলনা",
+"gov_site": "mohammadpur.magura.gov.bd"
+},
+"upz_5055444B50883090324101": {
+"bn": "মাটিরাঙ্গা",
+"kind": "upazila",
+"district_bn": "খাগড়াছড়ি",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "matiranga.khagrachhari.gov.bd"
+},
+"upz_5055444B79931584238091": {
+"bn": "মতলব দক্ষিণ",
+"kind": "upazila",
+"district_bn": "চাঁদপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "matlabsouth.chandpur.gov.bd"
+},
+"upz_5055444B59303037542676": {
+"bn": "মতলব উত্তর",
+"kind": "upazila",
+"district_bn": "চাঁদপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "matlabnorth.chandpur.gov.bd"
+},
+"upz_5055444B59699637370048": {
+"bn": "মৌলভীবাজার সদর",
+"kind": "upazila",
+"district_bn": "মৌলভীবাজার",
+"division_bn": "সিলেট",
+"gov_site": "moulvibazarsadar.moulvibazar.gov.bd"
+},
+"upz_5055444B22662076450588": {
+"bn": "মেঘনা",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "meghna.comilla.gov.bd"
+},
+"upz_5055444B74768834499877": {
+"bn": "মেহেন্দিগঞ্জ",
+"kind": "upazila",
+"district_bn": "বরিশাল",
+"division_bn": "বরিশাল",
+"gov_site": "mehendiganj.barisal.gov.bd"
+},
+"upz_5055444B32742026242546": {
+"bn": "পাইকগাছা",
+"kind": "upazila",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা",
+"gov_site": "paikgasa.khulna.gov.bd"
+},
+"upz_5055444B46245287013568": {
+"bn": "মেহেরপুর সদর",
+"kind": "upazila",
+"district_bn": "মেহেরপুর",
+"division_bn": "খুলনা",
+"gov_site": "meherpursadar.meherpur.gov.bd"
+},
+"upz_5055444B58797813051725": {
+"bn": "মেলান্দহ",
+"kind": "upazila",
+"district_bn": "জামালপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "melandah.jamalpur.gov.bd"
+},
+"upz_5055444B1093476169518": {
+"bn": "মিরপুর",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B311297956594": {
+"bn": "মিরপুর",
+"kind": "upazila",
+"district_bn": "কুষ্টিয়া",
+"division_bn": "খুলনা",
+"gov_site": "mirpur.kushtia.gov.bd"
+},
+"upz_5055444B69190373788059": {
+"bn": "মীরসরাই",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "mirsharai.chattogram.gov.bd"
+},
+"upz_5055444B29956220315136": {
+"bn": "মির্জাগঞ্জ",
+"kind": "upazila",
+"district_bn": "পটুয়াখালী",
+"division_bn": "বরিশাল",
+"gov_site": "mirzaganj.patuakhali.gov.bd"
+},
+"upz_5055444B21231975915207": {
+"bn": "মির্জাপুর",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "mirzapur.tangail.gov.bd"
+},
+"upz_5055444B90444582723877": {
+"bn": "মোহনগঞ্জ",
+"kind": "upazila",
+"district_bn": "নেত্রকোণা",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "mohongonj.netrokona.gov.bd"
+},
+"upz_5055444B89790535635406": {
+"bn": "সোনাইমুড়ী",
+"kind": "upazila",
+"district_bn": "নোয়াখালী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sonaimuri.noakhali.gov.bd"
+},
+"upz_5055444B64460137576377": {
+"bn": "মিঠাপুকুর",
+"kind": "upazila",
+"district_bn": "রংপুর",
+"division_bn": "রংপুর",
+"gov_site": "mithapukur.rangpur.gov.bd"
+},
+"upz_5055444B44243630461995": {
+"bn": "মিঠামইন",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "mithamoin.kishoreganj.gov.bd"
+},
+"upz_5055444B56461064683403": {
+"bn": "মোরেলগঞ্জ",
+"kind": "upazila",
+"district_bn": "বাগেরহাট",
+"division_bn": "খুলনা",
+"gov_site": "morrelganj.bagerhat.gov.bd"
+},
+"upz_5055444B92723626214353": {
+"bn": "মতিঝিল",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B97958802920528": {
+"bn": "মুজিবনগর",
+"kind": "upazila",
+"district_bn": "মেহেরপুর",
+"division_bn": "খুলনা",
+"gov_site": "mujibnagar.meherpur.gov.bd"
+},
+"upz_5055444B2198312346565": {
+"bn": "পাকুন্দিয়া",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "pakundia.kishoreganj.gov.bd"
+},
+"upz_5055444B82620831567558": {
+"bn": "মুকসুদপুর",
+"kind": "upazila",
+"district_bn": "গোপালগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "muksudpur.gopalganj.gov.bd"
+},
+"upz_5055444B43282791113331": {
+"bn": "মুক্তাগাছা",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "muktagacha.mymensingh.gov.bd"
+},
+"upz_5055444B96134179230312": {
+"bn": "পলাশ",
+"kind": "upazila",
+"district_bn": "নরসিংদী",
+"division_bn": "ঢাকা",
+"gov_site": "palash.narsingdi.gov.bd"
+},
+"upz_5055444B46038543043233": {
+"bn": "মুরাদনগর",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "muradnagar.comilla.gov.bd"
+},
+"upz_5055444B90775494635734": {
+"bn": "ময়মনসিংহ সদর",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "mymensinghsadar.mymensingh.gov.bd"
+},
+"upz_5055444B95626234950113": {
+"bn": "নবীগঞ্জ",
+"kind": "upazila",
+"district_bn": "হবিগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "nabiganj.habiganj.gov.bd"
+},
+"upz_5055444B46982243115028": {
+"bn": "নবীনগর",
+"kind": "upazila",
+"district_bn": "ব্রাহ্মণবাড়িয়া",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "nabinagar.brahmanbaria.gov.bd"
+},
+"upz_5055444B32574655365855": {
+"bn": "নগরকান্দা",
+"kind": "upazila",
+"district_bn": "ফরিদপুর",
+"division_bn": "ঢাকা",
+"gov_site": "nagarkanda.faridpur.gov.bd"
+},
+"upz_5055444B94760569525433": {
+"bn": "নাগরপুর",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "nagarpur.tangail.gov.bd"
+},
+"upz_5055444B3274428108722": {
+"bn": "নাইক্ষ্যংছড়ি",
+"kind": "upazila",
+"district_bn": "বান্দরবান",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "naikhongchhari.bandarban.gov.bd"
+},
+"upz_5055444B64704613710909": {
+"bn": "সোনারগাঁ",
+"kind": "upazila",
+"district_bn": "নারায়ণগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "sonargaon.narayanganj.gov.bd"
+},
+"upz_5055444B88377635255294": {
+"bn": "নাগেশ্বরী",
+"kind": "upazila",
+"district_bn": "কুড়িগ্রাম",
+"division_bn": "রংপুর",
+"gov_site": "nageshwari.kurigram.gov.bd"
+},
+"upz_5055444B95271208193973": {
+"bn": "নকলা",
+"kind": "upazila",
+"district_bn": "শেরপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "nokla.sherpur.gov.bd"
+},
+"upz_5055444B16793155331867": {
+"bn": "নালিতাবাড়ী",
+"kind": "upazila",
+"district_bn": "শেরপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "nalitabari.sherpur.gov.bd"
+},
+"upz_5055444B36065227637036": {
+"bn": "নান্দাইল",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "nandail.mymensingh.gov.bd"
+},
+"upz_5055444B76725439062785": {
+"bn": "নাঙ্গলকোট",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "nangalkot.comilla.gov.bd"
+},
+"upz_5055444B86380402084799": {
+"bn": "নড়াইল সদর",
+"kind": "upazila",
+"district_bn": "নড়াইল",
+"division_bn": "খুলনা",
+"gov_site": "narailsadar.narail.gov.bd"
+},
+"upz_5055444B24324023791660": {
+"bn": "নারায়নগঞ্জ সদর",
+"kind": "upazila",
+"district_bn": "নারায়ণগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "narayanganjsadar.narayanganj.gov.bd"
+},
+"upz_5055444B74474908989262": {
+"bn": "নড়িয়া",
+"kind": "upazila",
+"district_bn": "শরীয়তপুর",
+"division_bn": "ঢাকা",
+"gov_site": "naria.shariatpur.gov.bd"
+},
+"upz_5055444B56950685480062": {
+"bn": "নরসিংদী সদর",
+"kind": "upazila",
+"district_bn": "নরসিংদী",
+"division_bn": "ঢাকা",
+"gov_site": "narsingdisadar.narsingdi.gov.bd"
+},
+"upz_5055444B59544750070179": {
+"bn": "নোয়াখালী সদর",
+"kind": "upazila",
+"district_bn": "নোয়াখালী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sadar.noakhali.gov.bd"
+},
+"upz_5055444B53942313768557": {
+"bn": "নাসিরনগর",
+"kind": "upazila",
+"district_bn": "ব্রাহ্মণবাড়িয়া",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "nasirnagar.brahmanbaria.gov.bd"
+},
+"upz_5055444B6233610222310": {
+"bn": "নবাবগঞ্জ",
+"kind": "upazila",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা",
+"gov_site": "nawabganj.dhaka.gov.bd"
+},
+"upz_5055444B29878683718336": {
+"bn": "নবাবগঞ্জ",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "nawabganj.dinajpur.gov.bd"
+},
+"upz_5055444B52021808696745": {
+"bn": "নাজিরপুর",
+"kind": "upazila",
+"district_bn": "পিরোজপুর",
+"division_bn": "বরিশাল",
+"gov_site": "nazirpur.pirojpur.gov.bd"
+},
+"upz_5055444B29300824944570": {
+"bn": "নেছারাবাদ",
+"kind": "upazila",
+"district_bn": "পিরোজপুর",
+"division_bn": "বরিশাল",
+"gov_site": "nesarabad.pirojpur.gov.bd"
+},
+"upz_5055444B11666029706524": {
+"bn": "নেত্রকোণা সদর",
+"kind": "upazila",
+"district_bn": "নেত্রকোণা",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "netrokonasadar.netrokona.gov.bd"
+},
+"upz_5055444B9752476477947": {
+"bn": "নিউ মার্কেট",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B81704367582691": {
+"bn": "নীলফামারী সদর",
+"kind": "upazila",
+"district_bn": "নীলফামারী",
+"division_bn": "রংপুর",
+"gov_site": "nilphamarisadar.nilphamari.gov.bd"
+},
+"upz_5055444B31777377596981": {
+"bn": "নিকলী",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "nikli.kishoreganj.gov.bd"
+},
+"upz_5055444B18185339389693": {
+"bn": "পাহাড়তলী",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B31221494753785": {
+"bn": "পলাশবাড়ী",
+"kind": "upazila",
+"district_bn": "গাইবান্ধা",
+"division_bn": "রংপুর",
+"gov_site": "palashbari.gaibandha.gov.bd"
+},
+"upz_5055444B7396550141885": {
+"bn": "পল্লবী",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B25185864846738": {
+"bn": "পল্টন",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B93889096596285": {
+"bn": "পাংশা",
+"kind": "upazila",
+"district_bn": "রাজবাড়ী",
+"division_bn": "ঢাকা",
+"gov_site": "pangsa.rajbari.gov.bd"
+},
+"upz_5055444B4323491857941": {
+"bn": "শ্রীবরদী",
+"kind": "upazila",
+"district_bn": "শেরপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "sreebordi.sherpur.gov.bd"
+},
+"upz_5055444B34393793043573": {
+"bn": "পঞ্চগড় সদর",
+"kind": "upazila",
+"district_bn": "পঞ্চগড়",
+"division_bn": "রংপুর",
+"gov_site": "panchagarhsadar.panchagarh.gov.bd"
+},
+"upz_5055444B74503201942965": {
+"bn": "পানছড়ি",
+"kind": "upazila",
+"district_bn": "খাগড়াছড়ি",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "panchari.khagrachhari.gov.bd"
+},
+"upz_5055444B64565543707518": {
+"bn": "পাঁচলাইশ",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B56621242326739": {
+"bn": "পাথরঘাটা",
+"kind": "upazila",
+"district_bn": "বরগুনা",
+"division_bn": "বরিশাল",
+"gov_site": "pathorghata.barguna.gov.bd"
+},
+"upz_5055444B76537033079747": {
+"bn": "পার্বতীপুর",
+"kind": "upazila",
+"district_bn": "দিনাজপুর",
+"division_bn": "রংপুর",
+"gov_site": "parbatipur.dinajpur.gov.bd"
+},
+"upz_5055444B3242961930205": {
+"bn": "পরশুরাম",
+"kind": "upazila",
+"district_bn": "ফেনী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "parshuram.feni.gov.bd"
+},
+"upz_5055444B40707250714885": {
+"bn": "পতেঙ্গা",
+"kind": "metro",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম"
+},
+"upz_5055444B98087879130234": {
+"bn": "পাটগ্রাম",
+"kind": "upazila",
+"district_bn": "লালমনিরহাট",
+"division_bn": "রংপুর",
+"gov_site": "patgram.lalmonirhat.gov.bd"
+},
+"upz_5055444B19774112487674": {
+"bn": "পটিয়া",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "patiya.chattogram.gov.bd"
+},
+"upz_5055444B33989432035169": {
+"bn": "পটুয়াখালী সদর",
+"kind": "upazila",
+"district_bn": "পটুয়াখালী",
+"division_bn": "বরিশাল",
+"gov_site": "sadar.patuakhali.gov.bd"
+},
+"upz_5055444B9589532337582": {
+"bn": "পেকুয়া",
+"kind": "upazila",
+"district_bn": "কক্সবাজার",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "pekua.coxsbazar.gov.bd"
+},
+"upz_5055444B25764140823276": {
+"bn": "ফুলবাড়ী",
+"kind": "upazila",
+"district_bn": "কুড়িগ্রাম",
+"division_bn": "রংপুর",
+"gov_site": "phulbari.kurigram.gov.bd"
+},
+"upz_5055444B96560704124015": {
+"bn": "ফুলপুর",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "phulpur.mymensingh.gov.bd"
+},
+"upz_5055444B58469671805988": {
+"bn": "ফুলতলা",
+"kind": "upazila",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা",
+"gov_site": "fultola.khulna.gov.bd"
+},
+"upz_5055444B11792824344189": {
+"bn": "রাজনগর",
+"kind": "upazila",
+"district_bn": "মৌলভীবাজার",
+"division_bn": "সিলেট",
+"gov_site": "rajnagar.moulvibazar.gov.bd"
+},
+"upz_5055444B86740606942965": {
+"bn": "পীরগাছা",
+"kind": "upazila",
+"district_bn": "রংপুর",
+"division_bn": "রংপুর",
+"gov_site": "pirgacha.rangpur.gov.bd"
+},
+"upz_5055444B93678014899997": {
+"bn": "রাজারহাট",
+"kind": "upazila",
+"district_bn": "কুড়িগ্রাম",
+"division_bn": "রংপুর",
+"gov_site": "rajarhat.kurigram.gov.bd"
+},
+"upz_5055444B35718531117283": {
+"bn": "পীরগঞ্জ",
+"kind": "upazila",
+"district_bn": "রংপুর",
+"division_bn": "রংপুর",
+"gov_site": "pirgonj.rangpur.gov.bd"
+},
+"upz_5055444B15060771373546": {
+"bn": "রাজস্থলী",
+"kind": "upazila",
+"district_bn": "রাঙ্গামাটি পার্বত্য",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "rajasthali.rangamati.gov.bd"
+},
+"upz_5055444B85021187940919": {
+"bn": "রাজবাড়ী সদর",
+"kind": "upazila",
+"district_bn": "রাজবাড়ী",
+"division_bn": "ঢাকা",
+"gov_site": "sadar.rajbari.gov.bd"
+},
+"upz_5055444B42154785912558": {
+"bn": "পীরগঞ্জ",
+"kind": "upazila",
+"district_bn": "ঠাকুরগাঁও",
+"division_bn": "রংপুর",
+"gov_site": "pirganj.thakurgaon.gov.bd"
+},
+"upz_5055444B11684382381514": {
+"bn": "পিরোজপুর সদর",
+"kind": "upazila",
+"district_bn": "পিরোজপুর",
+"division_bn": "বরিশাল",
+"gov_site": "sadar.pirojpur.gov.bd"
+},
+"upz_5055444B89015715919581": {
+"bn": "রামগতি",
+"kind": "upazila",
+"district_bn": "লক্ষ্মীপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "ramgati.lakshmipur.gov.bd"
+},
+"upz_5055444B54942136795919": {
+"bn": "পূর্বধলা",
+"kind": "upazila",
+"district_bn": "নেত্রকোণা",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "purbadhala.netrokona.gov.bd"
+},
+"upz_5055444B90978043630705": {
+"bn": "রাজাপুর",
+"kind": "upazila",
+"district_bn": "ঝালকাঠি",
+"division_bn": "বরিশাল",
+"gov_site": "rajapur.jhalakathi.gov.bd"
+},
+"upz_5055444B66987540891927": {
+"bn": "রমনা",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B47802764053873": {
+"bn": "রাজৈর",
+"kind": "upazila",
+"district_bn": "মাদারীপুর",
+"division_bn": "ঢাকা",
+"gov_site": "rajoir.madaripur.gov.bd"
+},
+"upz_5055444B57812164143880": {
+"bn": "রামগঞ্জ",
+"kind": "upazila",
+"district_bn": "লক্ষ্মীপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "ramganj.lakshmipur.gov.bd"
+},
+"upz_5055444B38799821527712": {
+"bn": "রামগড়",
+"kind": "upazila",
+"district_bn": "খাগড়াছড়ি",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "ramgarh.khagrachhari.gov.bd"
+},
+"upz_5055444B66391023963948": {
+"bn": "রামপাল",
+"kind": "upazila",
+"district_bn": "বাগেরহাট",
+"division_bn": "খুলনা",
+"gov_site": "rampal.bagerhat.gov.bd"
+},
+"upz_5055444B30627422876303": {
+"bn": "রামপুরা",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B73950402088749": {
+"bn": "রামু",
+"kind": "upazila",
+"district_bn": "কক্সবাজার",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "ramu.coxsbazar.gov.bd"
+},
+"upz_5055444B57589177592395": {
+"bn": "রাঙ্গামাটি সদর",
+"kind": "upazila",
+"district_bn": "রাঙ্গামাটি পার্বত্য",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sadar.rangamati.gov.bd"
+},
+"upz_5055444B60964273253151": {
+"bn": "রংপুর সদর",
+"kind": "upazila",
+"district_bn": "রংপুর",
+"division_bn": "রংপুর",
+"gov_site": "rangpursadar.rangpur.gov.bd"
+},
+"upz_5055444B52491986806664": {
+"bn": "রাঙ্গুনিয়া",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "rangunia.chattogram.gov.bd"
+},
+"upz_5055444B84227309830947": {
+"bn": "রৌমারী",
+"kind": "upazila",
+"district_bn": "কুড়িগ্রাম",
+"division_bn": "রংপুর",
+"gov_site": "rowmari.kurigram.gov.bd"
+},
+"upz_5055444B74571408942121": {
+"bn": "রোয়াংছড়ি",
+"kind": "upazila",
+"district_bn": "বান্দরবান",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "rowangchhari.bandarban.gov.bd"
+},
+"upz_5055444B74943148977386": {
+"bn": "রাণীশংকৈল",
+"kind": "upazila",
+"district_bn": "ঠাকুরগাঁও",
+"division_bn": "রংপুর",
+"gov_site": "ranisankail.thakurgaon.gov.bd"
+},
+"upz_5055444B26554901820582": {
+"bn": "রাউজান",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "raozan.chattogram.gov.bd"
+},
+"upz_5055444B15740177551005": {
+"bn": "রুমা",
+"kind": "upazila",
+"district_bn": "বান্দরবান",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "ruma.bandarban.gov.bd"
+},
+"upz_5055444B1613484588697": {
+"bn": "রায়পুর",
+"kind": "upazila",
+"district_bn": "লক্ষ্মীপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "raipur.lakshmipur.gov.bd"
+},
+"upz_5055444B39659813181832": {
+"bn": "রায়পুরা",
+"kind": "upazila",
+"district_bn": "নরসিংদী",
+"division_bn": "ঢাকা",
+"gov_site": "raipura.narsingdi.gov.bd"
+},
+"upz_5055444B98720015841654": {
+"bn": "রূপগঞ্জ",
+"kind": "upazila",
+"district_bn": "নারায়ণগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "rupganj.narayanganj.gov.bd"
+},
+"upz_5055444B36775211946071": {
+"bn": "রূপসা",
+"kind": "upazila",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা",
+"gov_site": "rupsha.khulna.gov.bd"
+},
+"upz_5055444B47617762942552": {
+"bn": "সবুজবাগ",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B68847835082367": {
+"bn": "সদরপুর",
+"kind": "upazila",
+"district_bn": "ফরিদপুর",
+"division_bn": "ঢাকা",
+"gov_site": "sadarpur.faridpur.gov.bd"
+},
+"upz_5055444B23601063726349": {
+"bn": "সাদুল্লাপুর",
+"kind": "upazila",
+"district_bn": "গাইবান্ধা",
+"division_bn": "রংপুর",
+"gov_site": "sadullapur.gaibandha.gov.bd"
+},
+"upz_5055444B53491444498319": {
+"bn": "সাঘাটা",
+"kind": "upazila",
+"district_bn": "গাইবান্ধা",
+"division_bn": "রংপুর",
+"gov_site": "saghata.gaibandha.gov.bd"
+},
+"upz_5055444B15265131690562": {
+"bn": "সৈয়দপুর",
+"kind": "upazila",
+"district_bn": "নীলফামারী",
+"division_bn": "রংপুর",
+"gov_site": "syedpur.nilphamari.gov.bd"
+},
+"upz_5055444B2662823308468": {
+"bn": "সখিপুর",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "sakhipur.tangail.gov.bd"
+},
+"upz_5055444B68654289756116": {
+"bn": "সালথা",
+"kind": "upazila",
+"district_bn": "ফরিদপুর",
+"division_bn": "ঢাকা",
+"gov_site": "saltha.faridpur.gov.bd"
+},
+"upz_5055444B38303257659951": {
+"bn": "সন্দ্বীপ",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sandwip.chattogram.gov.bd"
+},
+"upz_5055444B36413802235947": {
+"bn": "সরাইল",
+"kind": "upazila",
+"district_bn": "ব্রাহ্মণবাড়িয়া",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "sarail.brahmanbaria.gov.bd"
+},
+"upz_5055444B91761091581926": {
+"bn": "শরণখোলা",
+"kind": "upazila",
+"district_bn": "বাগেরহাট",
+"division_bn": "খুলনা",
+"gov_site": "sarankhola.bagerhat.gov.bd"
+},
+"upz_5055444B77410212597117": {
+"bn": "সরিষাবাড়ী",
+"kind": "upazila",
+"district_bn": "জামালপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "sarishabari.jamalpur.gov.bd"
+},
+"upz_5055444B15331282943417": {
+"bn": "সাতকানিয়া",
+"kind": "upazila",
+"district_bn": "চট্টগ্রাম",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "satkania.chattogram.gov.bd"
+},
+"upz_5055444B14680374784380": {
+"bn": "সাভার",
+"kind": "upazila",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা",
+"gov_site": "savar.dhaka.gov.bd"
+},
+"upz_5055444B68417393184011": {
+"bn": "সাতক্ষীরা সদর",
+"kind": "upazila",
+"district_bn": "সাতক্ষীরা",
+"division_bn": "খুলনা",
+"gov_site": "satkhirasadar.satkhira.gov.bd"
+},
+"upz_5055444B13608186326056": {
+"bn": "সাটুরিয়া",
+"kind": "upazila",
+"district_bn": "মানিকগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "saturia.manikganj.gov.bd"
+},
+"upz_5055444B94204865824830": {
+"bn": "সেনবাগ",
+"kind": "upazila",
+"district_bn": "নোয়াখালী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "senbug.noakhali.gov.bd"
+},
+"upz_5055444B42865599243727": {
+"bn": "সিরাজদিখান",
+"kind": "upazila",
+"district_bn": "মুন্সীগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "sirajdikhan.munshiganj.gov.bd"
+},
+"upz_5055444B88449011386405": {
+"bn": "শাহ আলী",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B26697181188091": {
+"bn": "শাহবাগ",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B12266298386193": {
+"bn": "শাহমখদুম",
+"kind": "metro",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী"
+},
+"upz_5055444B68903355888510": {
+"bn": "শাহরাস্তি",
+"kind": "upazila",
+"district_bn": "চাঁদপুর",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "shahrasti.chandpur.gov.bd"
+},
+"upz_5055444B8502207940741": {
+"bn": "শেরপুর সদর",
+"kind": "upazila",
+"district_bn": "শেরপুর",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "sherpursadar.sherpur.gov.bd"
+},
+"upz_5055444B71336622802607": {
+"bn": "শৈলকুপা",
+"kind": "upazila",
+"district_bn": "ঝিনাইদহ",
+"division_bn": "খুলনা",
+"gov_site": "shailkupa.jhenaidah.gov.bd"
+},
+"upz_5055444B61145755581844": {
+"bn": "সিংগাইর",
+"kind": "upazila",
+"district_bn": "মানিকগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "singair.manikganj.gov.bd"
+},
+"upz_5055444B40078895461279": {
+"bn": "শালিখা",
+"kind": "upazila",
+"district_bn": "মাগুরা",
+"division_bn": "খুলনা",
+"gov_site": "shalikha.magura.gov.bd"
+},
+"upz_5055444B47272791978719": {
+"bn": "শরিয়তপুর সদর",
+"kind": "upazila",
+"district_bn": "শরীয়তপুর",
+"division_bn": "ঢাকা",
+"gov_site": "sadar.shariatpur.gov.bd"
+},
+"upz_5055444B86703057545377": {
+"bn": "শিবচর",
+"kind": "upazila",
+"district_bn": "মাদারীপুর",
+"division_bn": "ঢাকা",
+"gov_site": "shibchar.madaripur.gov.bd"
+},
+"upz_5055444B18695908729515": {
+"bn": "শার্শা",
+"kind": "upazila",
+"district_bn": "যশোর",
+"division_bn": "খুলনা",
+"gov_site": "sharsha.jashore.gov.bd"
+},
+"upz_5055444B71144810702424": {
+"bn": "শেরে বাংলা নগর",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B74745553133953": {
+"bn": "শিবালয়",
+"kind": "upazila",
+"district_bn": "মানিকগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "shibaloy.manikganj.gov.bd"
+},
+"upz_5055444B61286165049189": {
+"bn": "শ্রীমঙ্গল",
+"kind": "upazila",
+"district_bn": "মৌলভীবাজার",
+"division_bn": "সিলেট",
+"gov_site": "sreemangal.moulvibazar.gov.bd"
+},
+"upz_5055444B3417610497527": {
+"bn": "শ্রীনগর",
+"kind": "upazila",
+"district_bn": "মুন্সীগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "sreenagar.munshiganj.gov.bd"
+},
+"upz_5055444B53188311171075": {
+"bn": "শ্রীপুর",
+"kind": "upazila",
+"district_bn": "গাজীপুর",
+"division_bn": "ঢাকা",
+"gov_site": "sreepur.gazipur.gov.bd"
+},
+"upz_5055444B72092725021808": {
+"bn": "শ্রীপুর",
+"kind": "upazila",
+"district_bn": "মাগুরা",
+"division_bn": "খুলনা",
+"gov_site": "sreepur.magura.gov.bd"
+},
+"upz_5055444B25255559930535": {
+"bn": "সুবর্ণচর",
+"kind": "upazila",
+"district_bn": "নোয়াখালী",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "subarnachar.noakhali.gov.bd"
+},
+"upz_5055444B95452950620517": {
+"bn": "তাহিরপুর",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "tahirpur.sunamganj.gov.bd"
+},
+"upz_5055444B90768873722388": {
+"bn": "শাল্লা",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "shalla.sunamganj.gov.bd"
+},
+"upz_5055444B97560692768354": {
+"bn": "সুনামগঞ্জ সদর",
+"kind": "upazila",
+"district_bn": "সুনামগঞ্জ",
+"division_bn": "সিলেট",
+"gov_site": "sadar.sunamganj.gov.bd"
+},
+"upz_5055444B52225315755922": {
+"bn": "সুন্দরগঞ্জ",
+"kind": "upazila",
+"district_bn": "গাইবান্ধা",
+"division_bn": "রংপুর",
+"gov_site": "sundarganj.gaibandha.gov.bd"
+},
+"upz_5055444B49503871645568": {
+"bn": "সূত্রাপুর",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B38529052727167": {
+"bn": "সিলেট সদর",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "sylhetsadar.sylhet.gov.bd"
+},
+"upz_5055444B51023191617559": {
+"bn": "তালা",
+"kind": "upazila",
+"district_bn": "সাতক্ষীরা",
+"division_bn": "খুলনা",
+"gov_site": "tala.satkhira.gov.bd"
+},
+"upz_5055444B87492899662704": {
+"bn": "টাঙ্গাইল সদর",
+"kind": "upazila",
+"district_bn": "টাঙ্গাইল",
+"division_bn": "ঢাকা",
+"gov_site": "tangailsadar.tangail.gov.bd"
+},
+"upz_5055444B72148073143785": {
+"bn": "তাড়াইল",
+"kind": "upazila",
+"district_bn": "কিশোরগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "tarail.kishoreganj.gov.bd"
+},
+"upz_5055444B41041723149943": {
+"bn": "তারাগঞ্জ",
+"kind": "upazila",
+"district_bn": "রংপুর",
+"division_bn": "রংপুর",
+"gov_site": "taragonj.rangpur.gov.bd"
+},
+"upz_5055444B71206516737064": {
+"bn": "জিয়ানগর",
+"kind": "upazila",
+"district_bn": "পিরোজপুর",
+"division_bn": "বরিশাল",
+"gov_site": "zianagar.pirojpur.gov.bd"
+},
+"upz_5055444B2612720248468": {
+"bn": "তজুমদ্দিন",
+"kind": "upazila",
+"district_bn": "ভোলা",
+"division_bn": "বরিশাল",
+"gov_site": "tazumuddin.bhola.gov.bd"
+},
+"upz_5055444B91995345267504": {
+"bn": "তেজগাঁও",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B57500985162038": {
+"bn": "তেজগাঁও শিল্পাঞ্চল",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B37552741338938": {
+"bn": "টেকনাফ",
+"kind": "upazila",
+"district_bn": "কক্সবাজার",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "teknaf.coxsbazar.gov.bd"
+},
+"upz_5055444B24539740757234": {
+"bn": "তেঁতুলিয়া",
+"kind": "upazila",
+"district_bn": "পঞ্চগড়",
+"division_bn": "রংপুর",
+"gov_site": "tetulia.panchagarh.gov.bd"
+},
+"upz_5055444B83461070324075": {
+"bn": "তেরখাদা",
+"kind": "upazila",
+"district_bn": "খুলনা",
+"division_bn": "খুলনা",
+"gov_site": "terokhada.khulna.gov.bd"
+},
+"upz_5055444B92466625108630": {
+"bn": "ঠাকুরগাঁও সদর",
+"kind": "upazila",
+"district_bn": "ঠাকুরগাঁও",
+"division_bn": "রংপুর",
+"gov_site": "thakurgaonsadar.thakurgaon.gov.bd"
+},
+"upz_5055444B32847645930703": {
+"bn": "থানচি",
+"kind": "upazila",
+"district_bn": "বান্দরবান",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "thanchi.bandarban.gov.bd"
+},
+"upz_5055444B67482191059434": {
+"bn": "তিতাস",
+"kind": "upazila",
+"district_bn": "কুমিল্লা",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "titas.comilla.gov.bd"
+},
+"upz_5055444B54809057308219": {
+"bn": "টংগিবাড়ী",
+"kind": "upazila",
+"district_bn": "মুন্সীগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "tongibari.munshiganj.gov.bd"
+},
+"upz_5055444B56674431526223": {
+"bn": "ত্রিশাল",
+"kind": "upazila",
+"district_bn": "ময়মনসিংহ",
+"division_bn": "ময়মনসিংহ",
+"gov_site": "trishal.mymensingh.gov.bd"
+},
+"upz_5055444B95964430529833": {
+"bn": "টুঙ্গিপাড়া",
+"kind": "upazila",
+"district_bn": "গোপালগঞ্জ",
+"division_bn": "ঢাকা",
+"gov_site": "tungipara.gopalganj.gov.bd"
+},
+"upz_5055444B30733148378014": {
+"bn": "তুরাগ",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B67012705011880": {
+"bn": "উখিয়া",
+"kind": "upazila",
+"district_bn": "কক্সবাজার",
+"division_bn": "চট্টগ্রাম",
+"gov_site": "ukhiya.coxsbazar.gov.bd"
+},
+"upz_5055444B25253769673904": {
+"bn": "উলিপুর",
+"kind": "upazila",
+"district_bn": "কুড়িগ্রাম",
+"division_bn": "রংপুর",
+"gov_site": "ulipur.kurigram.gov.bd"
+},
+"upz_5055444B65870568835453": {
+"bn": "উত্তরখান",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B45163668529800": {
+"bn": "উত্তরা",
+"kind": "metro",
+"district_bn": "ঢাকা",
+"division_bn": "ঢাকা"
+},
+"upz_5055444B71045315974475": {
+"bn": "উজিরপুর",
+"kind": "upazila",
+"district_bn": "বরিশাল",
+"division_bn": "বরিশাল",
+"gov_site": "wazirpur.barisal.gov.bd"
+},
+"upz_5055444B92630668918235": {
+"bn": "জকিগঞ্জ",
+"kind": "upazila",
+"district_bn": "সিলেট",
+"division_bn": "সিলেট",
+"gov_site": "zakiganj.sylhet.gov.bd"
+},
+"upz_5055444B37868983096118": {
+"bn": "জাজিরা",
+"kind": "upazila",
+"district_bn": "শরীয়তপুর",
+"division_bn": "ঢাকা",
+"gov_site": "zajira.shariatpur.gov.bd"
+},
+"upz_5055444B58770697674534": {
+"bn": "আদমদিঘি",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "adamdighi.bogra.gov.bd"
+},
+"upz_5055444B76477721024576": {
+"bn": "আক্কেলপুর",
+"kind": "upazila",
+"district_bn": "জয়পুরহাট",
+"division_bn": "রাজশাহী",
+"gov_site": "akkelpur.joypurhat.gov.bd"
+},
+"upz_5055444B13262596743861": {
+"bn": "আটঘরিয়া",
+"kind": "upazila",
+"district_bn": "পাবনা",
+"division_bn": "রাজশাহী",
+"gov_site": "atghoria.pabna.gov.bd"
+},
+"upz_5055444B3575688139772": {
+"bn": "আত্রাই",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "atrai.naogaon.gov.bd"
+},
+"upz_5055444B60678935174681": {
+"bn": "বদলগাছী",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "badalgachi.naogaon.gov.bd"
+},
+"upz_5055444B5068099947740": {
+"bn": "বাগাতিপাড়া",
+"kind": "upazila",
+"district_bn": "নাটোর",
+"division_bn": "রাজশাহী",
+"gov_site": "bagatipara.natore.gov.bd"
+},
+"upz_5055444B95183901987528": {
+"bn": "বাঘা",
+"kind": "upazila",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী",
+"gov_site": "bagha.rajshahi.gov.bd"
+},
+"upz_5055444B7328601552159": {
+"bn": "বাগমারা",
+"kind": "upazila",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী",
+"gov_site": "bagmara.rajshahi.gov.bd"
+},
+"upz_5055444B50551499462707": {
+"bn": "বড়াইগ্রাম",
+"kind": "upazila",
+"district_bn": "নাটোর",
+"division_bn": "রাজশাহী",
+"gov_site": "baraigram.natore.gov.bd"
+},
+"upz_5055444B61751715276638": {
+"bn": "বেলকুচি",
+"kind": "upazila",
+"district_bn": "সিরাজগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "belkuchi.sirajganj.gov.bd"
+},
+"upz_5055444B90956087424891": {
+"bn": "বেড়া",
+"kind": "upazila",
+"district_bn": "পাবনা",
+"division_bn": "রাজশাহী",
+"gov_site": "bera.pabna.gov.bd"
+},
+"upz_5055444B89119170954251": {
+"bn": "ভাঙ্গুড়া",
+"kind": "upazila",
+"district_bn": "পাবনা",
+"division_bn": "রাজশাহী",
+"gov_site": "bhangura.pabna.gov.bd"
+},
+"upz_5055444B5224825785279": {
+"bn": "ভোলাহাট",
+"kind": "upazila",
+"district_bn": "চাঁপাইনবাবগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "bholahat.chapainawabganj.gov.bd"
+},
+"upz_5055444B83464339159312": {
+"bn": "বগুড়া সদর",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "sadar.bogra.gov.bd"
+},
+"upz_5055444B52811201124670": {
+"bn": "চারঘাট",
+"kind": "upazila",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী",
+"gov_site": "charghat.rajshahi.gov.bd"
+},
+"upz_5055444B40727855162076": {
+"bn": "চাটমোহর",
+"kind": "upazila",
+"district_bn": "পাবনা",
+"division_bn": "রাজশাহী",
+"gov_site": "chatmohar.pabna.gov.bd"
+},
+"upz_5055444B20988672766215": {
+"bn": "চৌহালি",
+"kind": "upazila",
+"district_bn": "সিরাজগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "chauhali.sirajganj.gov.bd"
+},
+"upz_5055444B49062995436606": {
+"bn": "ধামইরহাট",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "dhamoirhat.naogaon.gov.bd"
+},
+"upz_5055444B75599042311563": {
+"bn": "ধুনট",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "dhunot.bogra.gov.bd"
+},
+"upz_5055444B62446820117735": {
+"bn": "দুপচাচিঁয়া",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "dupchanchia.bogra.gov.bd"
+},
+"upz_5055444B93638080796536": {
+"bn": "দুর্গাপুর",
+"kind": "upazila",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী",
+"gov_site": "durgapur.rajshahi.gov.bd"
+},
+"upz_5055444B5426320976059": {
+"bn": "ফরিদপুর",
+"kind": "upazila",
+"district_bn": "পাবনা",
+"division_bn": "রাজশাহী",
+"gov_site": "faridpur.pabna.gov.bd"
+},
+"upz_5055444B85005696436554": {
+"bn": "গাবতলী",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "gabtali.bogra.gov.bd"
+},
+"upz_5055444B45852065441553": {
+"bn": "গোদাগাড়ী",
+"kind": "upazila",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী",
+"gov_site": "godagari.rajshahi.gov.bd"
+},
+"upz_5055444B89693136712968": {
+"bn": "গোমস্তাপুর",
+"kind": "upazila",
+"district_bn": "চাঁপাইনবাবগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "gomostapur.chapainawabganj.gov.bd"
+},
+"upz_5055444B53518678954927": {
+"bn": "গুরুদাসপুর",
+"kind": "upazila",
+"district_bn": "নাটোর",
+"division_bn": "রাজশাহী",
+"gov_site": "gurudaspur.natore.gov.bd"
+},
+"upz_5055444B93250488853616": {
+"bn": "ঈশ্বরদী",
+"kind": "upazila",
+"district_bn": "পাবনা",
+"division_bn": "রাজশাহী",
+"gov_site": "ishurdi.pabna.gov.bd"
+},
+"upz_5055444B74368179000930": {
+"bn": "কামারখন্দ",
+"kind": "upazila",
+"district_bn": "সিরাজগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "kamarkhand.sirajganj.gov.bd"
+},
+"upz_5055444B93992233540184": {
+"bn": "জয়পুরহাট সদর",
+"kind": "upazila",
+"district_bn": "জয়পুরহাট",
+"division_bn": "রাজশাহী",
+"gov_site": "joypurhatsadar.joypurhat.gov.bd"
+},
+"upz_5055444B94680478371785": {
+"bn": "কাহালু",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "kahaloo.bogra.gov.bd"
+},
+"upz_5055444B30865127714111": {
+"bn": "কালাই",
+"kind": "upazila",
+"district_bn": "জয়পুরহাট",
+"division_bn": "রাজশাহী",
+"gov_site": "kalai.joypurhat.gov.bd"
+},
+"upz_5055444B60898734615082": {
+"bn": "কাজীপুর",
+"kind": "upazila",
+"district_bn": "সিরাজগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "kazipur.sirajganj.gov.bd"
+},
+"upz_5055444B82593576675649": {
+"bn": "ক্ষেতলাল",
+"kind": "upazila",
+"district_bn": "জয়পুরহাট",
+"division_bn": "রাজশাহী",
+"gov_site": "khetlal.joypurhat.gov.bd"
+},
+"upz_5055444B7503946702912": {
+"bn": "লালপুর",
+"kind": "upazila",
+"district_bn": "নাটোর",
+"division_bn": "রাজশাহী",
+"gov_site": "lalpur.natore.gov.bd"
+},
+"upz_5055444B79967096461469": {
+"bn": "মহাদেবপুর",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "mohadevpur.naogaon.gov.bd"
+},
+"upz_5055444B25908372106798": {
+"bn": "মান্দা",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "manda.naogaon.gov.bd"
+},
+"upz_5055444B51642868289665": {
+"bn": "মতিহার",
+"kind": "metro",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী"
+},
+"upz_5055444B74655378820598": {
+"bn": "মোহনপুর",
+"kind": "upazila",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী",
+"gov_site": "mohonpur.rajshahi.gov.bd"
+},
+"upz_5055444B4211226512154": {
+"bn": "নাচোল",
+"kind": "upazila",
+"district_bn": "চাঁপাইনবাবগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "nachol.chapainawabganj.gov.bd"
+},
+"upz_5055444B95396653214812": {
+"bn": "নন্দিগ্রাম",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "nondigram.bogra.gov.bd"
+},
+"upz_5055444B48392577301269": {
+"bn": "নওগাঁ সদর",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "naogaonsadar.naogaon.gov.bd"
+},
+"upz_5055444B49495174582406": {
+"bn": "নাটোর সদর",
+"kind": "upazila",
+"district_bn": "নাটোর",
+"division_bn": "রাজশাহী",
+"gov_site": "natoresadar.natore.gov.bd"
+},
+"upz_5055444B78695242801039": {
+"bn": "চাঁপাইনবাবগঞ্জ সদর",
+"kind": "upazila",
+"district_bn": "চাঁপাইনবাবগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "chapainawabganjsadar.chapainawabganj.gov.bd"
+},
+"upz_5055444B35482632168622": {
+"bn": "নিয়ামতপুর",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "niamatpur.naogaon.gov.bd"
+},
+"upz_5055444B6547949128734": {
+"bn": "পবা",
+"kind": "upazila",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী",
+"gov_site": "paba.rajshahi.gov.bd"
+},
+"upz_5055444B21601893255114": {
+"bn": "পাবনা সদর",
+"kind": "upazila",
+"district_bn": "পাবনা",
+"division_bn": "রাজশাহী",
+"gov_site": "pabnasadar.pabna.gov.bd"
+},
+"upz_5055444B1649196171252": {
+"bn": "পাঁচবিবি",
+"kind": "upazila",
+"district_bn": "জয়পুরহাট",
+"division_bn": "রাজশাহী",
+"gov_site": "panchbibi.joypurhat.gov.bd"
+},
+"upz_5055444B91431094862758": {
+"bn": "পত্নীতলা",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "patnitala.naogaon.gov.bd"
+},
+"upz_5055444B54487127643063": {
+"bn": "পোরশা",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "porsha.naogaon.gov.bd"
+},
+"upz_5055444B90282468448704": {
+"bn": "পুঠিয়া",
+"kind": "upazila",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী",
+"gov_site": "puthia.rajshahi.gov.bd"
+},
+"upz_5055444B47903202093493": {
+"bn": "রাজপাড়া",
+"kind": "metro",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী"
+},
+"upz_5055444B30475124532663": {
+"bn": "রাণীনগর",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "raninagar.naogaon.gov.bd"
+},
+"upz_5055444B16102075953805": {
+"bn": "রায়গঞ্জ",
+"kind": "upazila",
+"district_bn": "সিরাজগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "raigonj.sirajganj.gov.bd"
+},
+"upz_5055444B30152429816544": {
+"bn": "সাঁথিয়া",
+"kind": "upazila",
+"district_bn": "পাবনা",
+"division_bn": "রাজশাহী",
+"gov_site": "santhia.pabna.gov.bd"
+},
+"upz_5055444B68995178117667": {
+"bn": "সাপাহার",
+"kind": "upazila",
+"district_bn": "নওগাঁ",
+"division_bn": "রাজশাহী",
+"gov_site": "sapahar.naogaon.gov.bd"
+},
+"upz_5055444B56899132484318": {
+"bn": "সারিয়াকান্দি",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "shariakandi.bogra.gov.bd"
+},
+"upz_5055444B61931792811678": {
+"bn": "শাহজাদপুর",
+"kind": "upazila",
+"district_bn": "সিরাজগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "shahjadpur.sirajganj.gov.bd"
+},
+"upz_5055444B26369547392038": {
+"bn": "শাজাহানপুর",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "shajahanpur.bogra.gov.bd"
+},
+"upz_5055444B70149320100288": {
+"bn": "শেরপুর",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "sherpur.bogra.gov.bd"
+},
+"upz_5055444B6771742340057": {
+"bn": "শিবগঞ্জ",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "shibganj.bogra.gov.bd"
+},
+"upz_5055444B62264346581700": {
+"bn": "শিবগঞ্জ",
+"kind": "upazila",
+"district_bn": "চাঁপাইনবাবগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "shibganj.chapainawabganj.gov.bd"
+},
+"upz_5055444B99745031093411": {
+"bn": "সিংড়া",
+"kind": "upazila",
+"district_bn": "নাটোর",
+"division_bn": "রাজশাহী",
+"gov_site": "singra.natore.gov.bd"
+},
+"upz_5055444B64677126820268": {
+"bn": "সোনাতলা",
+"kind": "upazila",
+"district_bn": "বগুড়া",
+"division_bn": "রাজশাহী",
+"gov_site": "sonatala.bogra.gov.bd"
+},
+"upz_5055444B98549548680688": {
+"bn": "সিরাজগঞ্জ সদর",
+"kind": "upazila",
+"district_bn": "সিরাজগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "sirajganjsadar.sirajganj.gov.bd"
+},
+"upz_5055444B66896198128187": {
+"bn": "সুজানগর",
+"kind": "upazila",
+"district_bn": "পাবনা",
+"division_bn": "রাজশাহী",
+"gov_site": "sujanagar.pabna.gov.bd"
+},
+"upz_5055444B20385993089689": {
+"bn": "তানোর",
+"kind": "upazila",
+"district_bn": "রাজশাহী",
+"division_bn": "রাজশাহী",
+"gov_site": "tanore.rajshahi.gov.bd"
+},
+"upz_5055444B40057720303666": {
+"bn": "তাড়াশ",
+"kind": "upazila",
+"district_bn": "সিরাজগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "tarash.sirajganj.gov.bd"
+},
+"upz_5055444B69566265360354": {
+"bn": "উল্লাপাড়া",
+"kind": "upazila",
+"district_bn": "সিরাজগঞ্জ",
+"division_bn": "রাজশাহী",
+"gov_site": "ullapara.sirajganj.gov.bd"
+}
+},
+"new_upazilas_without_boundary": [
+{
+"bn": "ডাসার",
+"district_bn": "মাদারীপুর",
+"gov_site": "dasar.madaripur.gov.bd"
+},
+{
+"bn": "কর্ণফুলী",
+"district_bn": "চট্টগ্রাম",
+"gov_site": "karnafuli.chattogram.gov.bd"
+},
+{
+"bn": "ফটিকছড়ি উত্তর",
+"district_bn": "চট্টগ্রাম",
+"gov_site": "fatikchhariuttar.chattogram.gov.bd"
+},
+{
+"bn": "লালমাই",
+"district_bn": "কুমিল্লা",
+"gov_site": "lalmai.comilla.gov.bd"
+},
+{
+"bn": "বাঙ্গরা",
+"district_bn": "কুমিল্লা",
+"gov_site": "bangara.cumilla.gov.bd"
+},
+{
+"bn": "ঈদগাঁও",
+"district_bn": "কক্সবাজার",
+"gov_site": "eidgaon.coxsbazar.gov.bd"
+},
+{
+"bn": "গুইমারা",
+"district_bn": "খাগড়াছড়ি",
+"gov_site": "guimara.khagrachhari.gov.bd"
+},
+{
+"bn": "চন্দ্রগঞ্জ",
+"district_bn": "লক্ষ্মীপুর",
+"gov_site": "chandraganj.lakshmipur.gov.bd"
+},
+{
+"bn": "মোকামতলা",
+"district_bn": "বগুড়া",
+"gov_site": "mokamtala.bogra.gov.bd"
+},
+{
+"bn": "নলডাঙ্গা",
+"district_bn": "নাটোর",
+"gov_site": "naldanga.natore.gov.bd"
+},
+{
+"bn": "শায়েস্তাগঞ্জ",
+"district_bn": "হবিগঞ্জ",
+"gov_site": "shayestaganj.habiganj.gov.bd"
+},
+{
+"bn": "মধ্যনগর",
+"district_bn": "সুনামগঞ্জ",
+"gov_site": "madhyanagar.sunamganj.gov.bd"
+},
+{
+"bn": "ওসমানী নগর",
+"district_bn": "সিলেট",
+"gov_site": "osmaninagar.sylhet.gov.bd"
+},
+{
+"bn": "ভূল্লী",
+"district_bn": "ঠাকুরগাঁও",
+"gov_site": "bhulli.thakurgaon.gov.bd"
+},
+{
+"bn": "রুহিয়া",
+"district_bn": "ঠাকুরগাঁও",
+"gov_site": "ruhia.thakurgaon.gov.bd"
+},
+{
+"bn": "তারাকান্দা",
+"district_bn": "ময়মনসিংহ",
+"gov_site": "tarakanda.mymensingh.gov.bd"
+},
+{
+"bn": "দক্ষিণ গফরগাঁও",
+"district_bn": "ময়মনসিংহ",
+"gov_site": "southgafargaon.mymensingh.gov.bd"
+},
+{
+"bn": "তালতলী",
+"district_bn": "বরগুনা",
+"gov_site": "taltali.barguna.gov.bd"
+},
+{
+"bn": "রাঙ্গাবালী",
+"district_bn": "পটুয়াখালী",
+"gov_site": "rangabali.patuakhali.gov.bd"
+}
+]
+}

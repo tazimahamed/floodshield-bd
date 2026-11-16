@@ -22,6 +22,7 @@ from sqlalchemy import select
 
 from app.core.config import settings
 from app.core.ratelimit import RateLimiter
+from app.services import admin_names
 from app.services.ops import notify_admin
 from app.services.outlook import heat_level, node_outlook
 from app.db.models import AlertLog, FloodForecast, HealthFacility, FloodForecastRun, Node, RainForecast, Subscriber
@@ -116,7 +117,7 @@ def render(level: str, node: Node, fc: FloodForecast, run: FloodForecastRun, rai
     frac, p10, p90 = (round((v or 0) * 100) for v in (fc.flood_frac, fc.frac_p10, fc.frac_p90))
     risk_bn, risk_en = RISK_WORD[fc.risk]
     w_bn, w_en = rain_word((rain.get("next72") or 0) / 3)
-    name = html.escape(f"{node.name}, {node.district}")
+    name = html.escape(admin_names.place(node))
     bn = [f"<b>{HEAD[level][0]}</b>", f"📍 {name}", f"📅 আগামী ১৫ দিন: {_bn_date(start)} – {_bn_date(end)}", "",
           "<b>🌧️ বৃষ্টির পূর্বাভাস</b>",
           f"• আগামী ২৪ ঘণ্টা: {_mm(rain.get('next24'), True)}",
@@ -417,7 +418,7 @@ def _subscribe(db, sub: Subscriber, node_id: str) -> list[dict]:
     node = db.get(Node, node_id)
     sub.node_ids = sorted(set(sub.node_ids) | {node_id})
     sub.active = True
-    out = [{"text": UI["subscribed"].format(name=html.escape(node.name), district=html.escape(node.district or ""))}]
+    out = [{"text": UI["subscribed"].format(name=html.escape(admin_names.bn_name(node) + (f" ({node.name})" if admin_names.bn_name(node) != node.name else "")), district=html.escape(admin_names.of(node.id).get("district_bn") or node.district or ""))}]
     for t, v in _status_messages(db, sub, [node_id]):
         out.append({"text": t, "voice": v if sub.voice is not False else ""})
     return out

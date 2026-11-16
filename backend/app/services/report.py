@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 from sqlalchemy import text
 
+from app.services import admin_names
+
 from app.db.session import engine
 from app.ml.features import graph_tables
 from app.ml.train import FLOOD_FRAC
@@ -113,7 +115,7 @@ def upazila_report(node_id: str) -> dict:
     wettest = rain.local.nlargest(5)
     st = static.loc[node_id]
     return {
-        "node": {**dict(node), "km2": round(node["km2"], 1), "catchment_km2": round(float(st.catchment_km2)),
+        "node": {**dict(node), **admin_names.of(node["id"]), "km2": round(node["km2"], 1), "catchment_km2": round(float(st.catchment_km2)),
                  "outside_bd_pct": round(float(st.outside_share) * 100)},
         "flood_threshold_pct": FLOOD_FRAC * 100,
         "history": rows, "summary": summary,

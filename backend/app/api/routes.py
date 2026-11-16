@@ -12,6 +12,7 @@ from sqlalchemy import func, select, text
 
 from app.db.models import Asset, Cyclone, CycloneExposure, CyclonePoint, Edge, Era5Daily, FloodEvent, FloodForecast, FloodForecastRun, FloodLabel, HealthFacility, IngestRun, ModelVersion, Node, RainForecast, River
 from app.db.session import SessionLocal
+from app.services import admin_names
 from app.services.alerts import is_stale
 from app.services.impact import impact
 from app.services.outlook import heat_level, node_outlook
@@ -76,6 +77,7 @@ def _upazilas(division: str | None):
                 "geometry": json.loads(geom),
                 "properties": {
                     "id": node.id, "name": node.name, "district": node.district, "division": node.division,
+                    **{k: v for k, v in admin_names.of(node.id).items() if k in ("bn", "kind", "district_bn", "division_bn")},
                     "rain_past_72h_mm": rf.rain_past_72h_mm if rf else None,
                     "rain_24h_mm": rf.rain_24h_mm if rf else None,
                     "rain_48h_mm": rf.rain_48h_mm if rf else None,
@@ -563,6 +565,12 @@ def landslide_now_png():
     if not PNG.exists():
         raise HTTPException(404, "No landslide map yet")
     return FileResponse(PNG, media_type="image/png", headers={"Cache-Control": "public, max-age=3600"})
+
+
+@router.get("/areas")
+def areas_info():
+    """How the map's 544 areas relate to the government's 502 upazilas."""
+    return admin_names.counts()
 
 
 @router.get("/model/calendar")

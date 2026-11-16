@@ -326,12 +326,15 @@ function render() {
   document.body.classList.toggle("bn", lang === "bn");
   document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = tt[el.dataset.i18n]);
   $("lang").textContent = lang === "en" ? "বাংলা" : "English";
-  document.title = `${n.name} — ${lang === "bn" ? "বন্যার রিপোর্ট" : "flood report"} · FloodShield BD`;
-  $("title").textContent = n.name;
+  // official Bangla names (bangladesh.gov.bd) when Bangla is on; metropolitan thanas are said to be city areas
+  const name = (lang === "bn" && n.bn) || n.name;
+  document.title = `${name} — ${lang === "bn" ? "বন্যার রিপোর্ট" : "flood report"} · FloodShield BD`;
+  $("title").textContent = name;
   $("tg").href = `https://t.me/DurjogBartaBangladesh_bot?start=${encodeURIComponent(nodeId)}`;
   $("tg-t").textContent = tt.tgBtn;
   $("ffwc-t").textContent = tt.ffwcBtn;
-  $("crumb").textContent = tt.crumb(n.district, n.division);
+  $("crumb").textContent = tt.crumb((lang === "bn" && n.district_bn) || n.district, (lang === "bn" && n.division_bn) || n.division)
+    + (n.kind === "metro" ? (lang === "bn" ? " · মহানগর থানা (শহর এলাকা, উপজেলা নয়)" : " · metropolitan thana (city area, not an upazila)") : "");
   const oneIn = s && s.flooded_windows ? Math.max(1, Math.round(s.windows / s.flooded_windows)) : 0;
   $("lead").innerHTML = s ? tt.lead(nf(s.flooded_windows), nf(s.windows), nf(oneIn)) : "";
   const now = $("now");

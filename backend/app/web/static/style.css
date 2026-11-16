@@ -442,6 +442,7 @@ body.bn .mini-h { text-transform: none; letter-spacing: 0; }
 .wn-card p { margin: 0 0 6px; } .wn-card small { color: var(--muted); }
 .wn-card.l1 { border-color: #8cc2ff; } .wn-card.l2 { border-color: #1d8cf8; background: rgba(29,140,248,.08); }
 .wn-card.none p { margin: 0; color: var(--muted); }
+.wn-card p.ppl { margin: 8px 0 2px; }
 .wn-meter { position: relative; height: 7px; border-radius: 4px; background: rgba(0,0,0,.08); margin: 2px 0 6px; overflow: visible; }
 .wn-meter i { display: block; height: 100%; border-radius: 4px; background: #1d8cf8; animation: grow .9s cubic-bezier(.2,.8,.2,1) both; transform-origin: left; }
 .wn-meter b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--high); opacity: .7; }

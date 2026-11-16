@@ -44,7 +44,7 @@ def test_alert_levels_and_messages():
     assert level_for("high", 0.6) == "warning"
     assert level_for("high", 0.8) == "severe"
 
-    node = SimpleNamespace(name="Chhatak", district="Sunamganj")
+    node = SimpleNamespace(id="upz_test", name="Chhatak", district="Sunamganj")
     run = SimpleNamespace(reference_day=date(2026, 7, 1), valid_until=date(2026, 7, 15))
     low = SimpleNamespace(flood_prob=0.03, flood_frac=0.01, frac_p10=0.0, frac_p90=0.02, risk="low")
     calm = render("none", node, low, run)

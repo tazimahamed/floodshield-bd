@@ -91,6 +91,15 @@ const T = {
     wnWord: ["Almost none: like a normal year.", "A little more water than usual.", "A lot more water than usual: the level counted as a flood in the flood history."],
     wnMissing: "No satellite picture of this upazila in the last 12 days.",
     whyTitle: "Why this risk?",
+    metroTag: "metropolitan thana (city area, not an upazila)",
+    newUpz: (n, d) => `${n} (${d}): a newer upazila. The map's boundaries are older, so it has no separate shape here; it lies inside an older upazila of ${d}.`,
+    pplSum: (k, n) => `In these ${k} upazilas, about <b>${n}</b> people live on the land where the extra water was seen (estimate).`,
+    pplCard: (pop, n) => `About <b>${pop}</b> people live in this upazila; about <b>${n}</b> of them live on the land where unusual water was seen (estimate).`,
+    pplNone: pop => `About <b>${pop}</b> people live in this upazila.`,
+    pplNote: "People: WorldPop 2020 estimate in 100 m squares, matched with the satellite water. Not everyone counted is flooded: many homes stand on raised plinths, and the population map is itself an estimate.",
+    pplFew: "fewer than 100",
+    wnCityCard: "This is a city area: among buildings the radar often mistakes surfaces for water, so this number is not reliable here.",
+    wnCity: "The 61 metropolitan thanas (city areas) are left out of these counts: among city buildings the radar often mistakes surfaces for water.",
     slideLayer: "⛰️ Landslide chance (NASA)",
     slideKey: ["under 5%", "5–12%", "12% and more"],
     slideNote: d => `NASA LHASA, ${d}. Only hilly land has a value. 12% is the level NASA's study used to test the model, not an official warning level.`,
@@ -203,6 +212,15 @@ const T = {
     wnWord: ["প্রায় নেই: স্বাভাবিক বছরের মতো।", "স্বাভাবিকের চেয়ে কিছুটা বেশি পানি।", "স্বাভাবিকের চেয়ে অনেক বেশি পানি: বন্যার ইতিহাসে এই মাত্রাকে বন্যা ধরা হয়।"],
     wnMissing: "গত ১২ দিনে এই উপজেলার স্যাটেলাইট ছবি নেই।",
     whyTitle: "ঝুঁকি কেন এমন?",
+    metroTag: "মহানগর থানা (শহর এলাকা, উপজেলা নয়)",
+    newUpz: (n, d) => `${n} (${d}): নতুন উপজেলা। মানচিত্রের সীমানা এর আগের, তাই এখানে এর আলাদা সীমানা নেই; এটি ${d} জেলার পুরনো কোনো উপজেলার ভেতরে পড়ে।`,
+    pplSum: (k, n) => `এই ${k}টি উপজেলায় যে জমিতে বাড়তি পানি দেখা গেছে, সেখানে প্রায় <b>${n}</b> জন মানুষ থাকেন (আনুমানিক)।`,
+    pplCard: (pop, n) => `এই উপজেলায় প্রায় <b>${pop}</b> জন মানুষ থাকেন; তাদের মধ্যে প্রায় <b>${n}</b> জন থাকেন যে জমিতে বাড়তি পানি দেখা গেছে (আনুমানিক)।`,
+    pplNone: pop => `এই উপজেলায় প্রায় <b>${pop}</b> জন মানুষ থাকেন।`,
+    pplNote: "মানুষের সংখ্যা: WorldPop ২০২০-এর আনুমানিক হিসাব (১০০ মিটারের ঘর), স্যাটেলাইটের পানির সাথে মিলিয়ে। এরা সবাই পানিবন্দি নন: অনেক বাড়ি উঁচু ভিটায়, আর জনসংখ্যার মানচিত্রও আনুমানিক।",
+    pplFew: "১০০-এর কম",
+    wnCityCard: "এটি শহর এলাকা: দালানকোঠার মধ্যে রাডার প্রায়ই ভুল করে পানি দেখায়, তাই এখানে এই সংখ্যা নির্ভরযোগ্য নয়।",
+    wnCity: "৬১টি মহানগর থানা (শহর এলাকা) এই হিসাবের বাইরে রাখা হয়েছে: শহরের দালানকোঠার মধ্যে রাডার প্রায়ই ভুল করে পানি দেখায়।",
     slideLayer: "⛰️ ভূমিধসের সম্ভাবনা (NASA)",
     slideKey: ["৫%-এর কম", "৫–১২%", "১২% বা বেশি"],
     slideNote: d => `NASA LHASA, ${d}। শুধু পাহাড়ি জমির হিসাব আছে। ১২% হলো NASA-র গবেষণায় মডেল পরীক্ষার সীমা, সরকারি সতর্কতার মাত্রা নয়।`,
@@ -364,7 +382,7 @@ async function load(reframe = false) {
   layer = L.geoJSON(data, {
     style: baseStyle,
     onEachFeature: (f, l) => {
-      l.bindTooltip(() => `<div class="tt-name">${f.properties.name}</div><div class="tt-sub">${f.properties.district ?? ""}</div><b>${valueFor(f.properties)}</b>`, { sticky: true, direction: "top", offset: [0, -6] });
+      l.bindTooltip(() => `<div class="tt-name">${nm(f.properties)}</div><div class="tt-sub">${dname(f.properties)}</div><b>${valueFor(f.properties)}</b>`, { sticky: true, direction: "top", offset: [0, -6] });
       l.on("mouseover", () => { if (l !== selectedLayer) l.setStyle({ weight: 1.6, color: "#ffffff", opacity: 1 }); });
       l.on("mouseout", () => { if (l !== selectedLayer) layer.resetStyle(l); });
       l.on("click", () => select(f.properties.id));
@@ -665,7 +683,7 @@ function renderTop() {
   const max = Math.max(1e-9, ...rows.map(f => sortKey(f.properties)));
   $("top").innerHTML = rows.map(f => {
     const p = f.properties, fill = fillFor(p);
-    return `<li data-id="${p.id}"><span class="nm">${p.name} <small>${p.district ?? ""}</small></span>
+    return `<li data-id="${p.id}"><span class="nm">${nm(p)} <small>${dname(p)}</small></span>
       <span class="val">${valueFor(p)}</span>
       <span class="bar"><span style="width:${(sortKey(p) / max) * 100}%;background:${fill === "rgba(0,0,0,0)" ? "#9aa5ae" : fill}"></span></span></li>`;
   }).join("") || `<li class="empty">–</li>`;
@@ -725,8 +743,8 @@ function closeDetail() {
 function renderStrip() {
   const p = selected, tt = t(), r = riskOf(p.flood_prob);
   $("strip").hidden = false;
-  $("s-name").textContent = p.name;
-  $("s-where").textContent = [p.district, p.division].filter(Boolean).join(" · ");
+  $("s-name").textContent = nm(p);
+  $("s-where").textContent = where(p);
   $("s-risk").innerHTML = (r ? `<span class="dot" style="background:${RISK[r]}"></span>${tt.riskOf[r]} · ${nf(p.flood_prob * 100)}%` : "")
     + (p.rain_72h_mm != null ? ` <span style="opacity:.7">· ${tt.stripRain(`${nf(p.rain_72h_mm, 1)} ${tt.mm}`)}</span>` : "");
 }
@@ -806,17 +824,41 @@ function toggleWaterNow() {
   if (!waterLayerGroup) return;
   if ($("show-water").checked) waterLayerGroup.addTo(map); else waterLayerGroup.remove();
 }
+// people, rounded to 2 significant figures so the number never looks more exact than it is
+const approx = n => {
+  if (n == null) return null;
+  if (n < 100) return t().pplFew;
+  const k = Math.pow(10, Math.floor(Math.log10(n)) - 1);
+  return nf(Math.round(n / k) * k);
+};
+// names in the chosen language: the official Bangla names (bangladesh.gov.bd) when Bangla is on
+const nm = p => (lang === "bn" && p.bn) || p.name;
+const dname = p => (lang === "bn" && p.district_bn) || p.district || "";
+const where = p => [dname(p), (lang === "bn" && p.division_bn) || p.division].filter(Boolean).join(" · ")
+  + (p.kind === "metro" ? ` · ${t().metroTag}` : "");
+const byId = id => data && data.features.find(f => f.properties.id === id)?.properties;
+let areasInfo = null;
+fetch("/api/v1/areas").then(r => r.ok ? r.json() : null).then(j => { areasInfo = j; }).catch(() => {});
 function renderWaterNow() {
   if (!waterNow) return;
   const tt = t(), a = dShort(waterNow.window[0]), b = dShort(waterNow.latest_picture || waterNow.window[1]);
   $("wn-panel").hidden = false;
-  $("wn-sum").innerHTML = `<p class="wn-sum">${waterNow.upazilas_flooded ? tt.wnSum(a, b, nf(waterNow.upazilas_flooded), nf(waterNow.mapped)) : tt.wnNone(a, b)}</p>`;
-  const top = waterNow.top.filter(r => r.pct >= 0.5).slice(0, 5);
-  $("wn-top").innerHTML = top.map(r => `<li data-id="${r.id}"><span class="nm">${r.name}<small>${r.district}</small></span>
+  // radar is unreliable among city buildings, so the 61 metropolitan thanas are left out of the counts, the list and the people total
+  const isMetro = id => byId(id)?.kind === "metro";
+  const rows = Object.entries(waterNow.upazilas).filter(([id]) => !isMetro(id));
+  const flooded = rows.filter(([, v]) => v.frac >= 0.05).length;
+  // people are added up only where the satellite shows a flood (5% or more of the upazila): below that, scattered
+  // radar noise over hundreds of upazilas would add up to a large but meaningless number
+  const people = rows.filter(([, v]) => v.frac >= 0.05).reduce((s, [, v]) => s + (v.people || 0), 0);
+  $("wn-sum").innerHTML = `<p class="wn-sum">${flooded ? tt.wnSum(a, b, nf(flooded), nf(rows.length)) : tt.wnNone(a, b)}</p>`
+    + (waterNow.people_total != null && flooded && people >= 100 ? `<p class="wn-sum">👥 ${tt.pplSum(nf(flooded), approx(people))}</p>` : "");
+  const top = rows.map(([id, v]) => ({ id, pct: v.frac * 100 })).filter(r => r.pct >= 0.5).sort((x, y) => y.pct - x.pct).slice(0, 5);
+  $("wn-top").innerHTML = top.map(r => `<li data-id="${r.id}"><span class="nm">${nm(byId(r.id) || r)}<small>${dname(byId(r.id) || r)}</small></span>
     <span class="bar"><i style="width:${Math.min(100, r.pct * 3)}%"></i></span><b>${nf(r.pct, 1)}%</b></li>`).join("");
   $("wn-top").querySelectorAll("li").forEach(li => li.onclick = () => select(li.dataset.id, true));
   const old = Date.now() - Date.parse(waterNow.computed_at) > 2 * 864e5;
-  $("wn-note").innerHTML = `${old ? `<b class="stale">${tt.wnOld}</b> ` : ""}${tt.wnMade(whenFmt(waterNow.computed_at))} ${tt.wnNote}`;
+  $("wn-note").innerHTML = `${old ? `<b class="stale">${tt.wnOld}</b> ` : ""}${tt.wnMade(whenFmt(waterNow.computed_at))} ${tt.wnNote} ${tt.wnCity}`
+    + (waterNow.people_total != null ? ` ${tt.pplNote}` : "");
 }
 function renderWaterDetail() {
   const box = $("d-water"), tt = t();
@@ -827,7 +869,10 @@ function renderWaterDetail() {
   const pct = w.frac * 100, lvl = pct < 0.5 ? 0 : pct < 5 ? 1 : 2;
   box.className = `wn-card l${lvl}`;
   box.innerHTML = `<span class="ico">🛰️</span><div><p>${tt.wnDetail(dShort(w.last_day), nf(pct, pct < 10 ? 1 : 0))}</p>
-    <div class="wn-meter"><i style="width:${Math.min(100, pct * 4)}%"></i><b style="left:20%"></b></div><small>${tt.wnWord[lvl]}</small></div>`;
+    <div class="wn-meter"><i style="width:${Math.min(100, pct * 4)}%"></i><b style="left:20%"></b></div><small>${tt.wnWord[lvl]}</small>
+    ${selected.kind === "metro" ? `<p class="small stale">⚠️ ${tt.wnCityCard}</p>` : ""}
+    ${w.pop ? `<p class="ppl">👥 ${lvl >= 1 && w.people >= 100 ? tt.pplCard(approx(w.pop), approx(w.people)) : tt.pplNone(approx(w.pop))}</p><small>${tt.pplNote}</small>` : ""}</div>`;
+  if (selected.kind === "metro") box.innerHTML = box.innerHTML.replaceAll("এই উপজেলার", "এই থানা এলাকার").replaceAll("এই উপজেলায়", "এই থানা এলাকায়").replaceAll("this upazila", "this area");
 }
 
 // "Why this risk?": the model's own TreeSHAP reasons for the live forecast (not shown for past dates)
@@ -855,8 +900,8 @@ function renderWhy() {
 
 function renderDetail() {
   const p = selected, tt = t();
-  $("d-name").textContent = p.name;
-  $("d-where").textContent = [p.district, p.division].filter(Boolean).join(" · ");
+  $("d-name").textContent = nm(p);
+  $("d-where").textContent = where(p);
   const r = riskOf(p.flood_prob), box = $("d-risk");
   if (!r) { box.className = "risk-card"; box.innerHTML = `<p>${tt.noForecast}</p><p><a class="ffwc" href="https://www.ffwc.gov.bd/" target="_blank" rel="noopener">${tt.ffwcLink}</a></p>`; }
   else {
@@ -1112,21 +1157,26 @@ function search(q) {
   const box = $("search-results");
   q = q.trim().toLowerCase();
   if (!q || !data) { box.hidden = true; return; }
-  hits = data.features.map(f => f.properties)
-    .filter(p => p.name.toLowerCase().includes(q) || (p.district || "").toLowerCase().includes(q))
-    .sort((a, b) => (b.name.toLowerCase().startsWith(q) - a.name.toLowerCase().startsWith(q)) || a.name.localeCompare(b.name))
+  // English or Bangla, upazila or district
+  const has = (p, k) => [p.name, p.district, p.bn, p.district_bn].some(s => (s || "").toLowerCase().includes(k));
+  const starts = p => [p.name, p.bn].some(s => (s || "").toLowerCase().startsWith(q));
+  hits = data.features.map(f => f.properties).filter(p => has(p, q))
+    .sort((a, b) => (starts(b) - starts(a)) || nm(a).localeCompare(nm(b)))
     .slice(0, 8);
   active = -1;
-  box.innerHTML = hits.length
-    ? hits.map((p, i) => `<li role="option" data-i="${i}"><span>${p.name}</span><span class="tag">${p.district ?? ""}, ${p.division ?? ""}</span></li>`).join("")
-    : `<li class="empty">${t().noResults}</li>`;
+  // newer upazilas have no boundary of their own on the map: say so instead of "no results"
+  const newer = (areasInfo?.new_upazilas || []).filter(u => u.bn.includes(q) || u.district_bn.includes(q)).slice(0, 3);
+  box.innerHTML = (hits.length
+    ? hits.map((p, i) => `<li role="option" data-i="${i}"><span>${nm(p)}</span><span class="tag">${where(p)}</span></li>`).join("")
+    : (newer.length ? "" : `<li class="empty">${t().noResults}</li>`))
+    + newer.map(u => `<li class="empty newupz">${t().newUpz(u.bn, u.district_bn)}</li>`).join("");
   box.hidden = false;
   box.querySelectorAll("li[data-i]").forEach(li => li.onmousedown = () => pick(+li.dataset.i));
 }
 function pick(i) {
   const p = hits[i];
   if (!p) return;
-  $("search").value = p.name;
+  $("search").value = nm(p);
   $("search-results").hidden = true;
   select(p.id, true);
 }

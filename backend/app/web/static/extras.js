@@ -157,7 +157,7 @@ const BIG_UP = 15000;  // only rivers with at least this much land upstream are 
 
 function upText() {
   const u = X.up; if (!u) return;
-  const tt = upt(), name = R.node.name;
+  const tt = upt(), name = (lang === "bn" && R.node.bn) || R.node.name;
   $("up-t").textContent = tt.t;
   $("up-sub").textContent = tt.sub(name);
   const maxR = Math.max(0, ...u.rains), lvl = maxR >= 50 ? 2 : maxR >= 20 ? 1 : 0;
