@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/poster.css?v=2">
+  <link rel="stylesheet" href="/static/poster.css?v=30">
 </head>
 <body>
   <header class="pbar">
@@ -26,18 +26,21 @@
         <h1 id="pname">…</h1>
         <p id="psub"></p>
         <div class="prisk" id="prisk"></div>
+        <p class="pstat" id="pstat"></p>
       </div>
       <div class="pbrand"><span class="pmark"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0e5a8a"/><path d="M5 19c3-3 5-3 8 0s5 3 8 0 5-3 6-1v6H5z" fill="#fff"/><path d="M16 5l7 4v4c0 3-3 5-7 6-4-1-7-3-7-6V9z" fill="#89d0f5"/></svg></span><b>FloodShield<br>BD</b></div>
       <div id="plabels"></div>
+      <div class="pload" id="pload"><span></span>মানচিত্র তৈরি হচ্ছে…</div>
       <section class="plegend" id="plegend"></section>
       <div class="pscale" id="pscale"></div>
-      <div class="pnorth">উ<svg viewBox="0 0 20 30"><path d="M10 0 18 30 10 23 2 30z" fill="#fff"/><path d="M10 0 10 23 2 30z" fill="#9aa4ad"/></svg></div>
+      <div class="pnorth">উ<svg viewBox="0 0 20 30"><path d="M10 0 18 30 10 23 2 30z" fill="#1f2937"/><path d="M10 0 10 23 2 30z" fill="#9ca3af"/></svg></div>
       <p class="pfoot" id="pfoot"></p>
     </article>
     <p class="pnote" id="pnote"></p>
+    <section class="pact" id="pact"></section>
   </main>
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="/static/poster.js?v=5"></script>
+  <script src="/static/poster.js?v=34"></script>
 </body>
 </html>

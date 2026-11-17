@@ -573,6 +573,50 @@ def areas_info():
     return admin_names.counts()
 
 
+@router.get("/nodes/{node_id}/flood-freq")
+def node_flood_freq(node_id: str):
+    """In how many monsoons each place in and around the upazila had water (Sentinel-1). Made on first request (~15 s)."""
+    from app.services import flood_freq
+
+    try:
+        return flood_freq.get(node_id)
+    except KeyError:
+        raise HTTPException(404, "Unknown upazila")
+    except Exception:
+        raise HTTPException(503, "The flood map for this area could not be made just now; try again later.")
+
+
+@router.get("/nodes/{node_id}/flood-freq.png")
+def node_flood_freq_png(node_id: str):
+    from app.services import flood_freq
+
+    png, _ = flood_freq.paths(node_id)
+    if not png.exists():
+        raise HTTPException(404, "Not made yet")
+    return FileResponse(png, media_type="image/png", headers={"Cache-Control": "public, max-age=86400"})
+
+
+@router.get("/flood-freq")
+def flood_freq_meta():
+    """How many monsoons (2017-2025) each place had unusual water: the map tiles and their colours."""
+    from app.core.config import settings
+
+    f = settings.data_dir / "flood_freq" / "meta.json"
+    if not f.exists():
+        raise HTTPException(503, "The flood frequency map is being made.")
+    return json.loads(f.read_text(encoding="utf-8"))
+
+
+@router.get("/flood-freq/{name}")
+def flood_freq_tile(name: str):
+    from app.core.config import settings
+
+    f = settings.data_dir / "flood_freq" / name
+    if not re.fullmatch(r"t\d\d\.png", name) or not f.exists():
+        raise HTTPException(404, "No such tile")
+    return FileResponse(f, media_type="image/png", headers={"Cache-Control": "public, max-age=86400"})
+
+
 @router.get("/model/calendar")
 def model_calendar_view():
     """Last 12 months, fortnight by fortnight: floods the model caught, missed, and its false alarms."""
