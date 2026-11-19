@@ -26,3 +26,21 @@ It talks over stdio. To use it in an MCP client, add:
 ## Test
 
 `python test_client.py` starts the server as a real MCP client would, lists the tools and calls each one.
+
+## Two clients, two transports
+
+- `python floodshield_mcp.py` serves over **stdio**; `python floodshield_mcp.py --http` serves over **Streamable HTTP** at `http://127.0.0.1:8765/mcp`.
+- Client 1: `test_client.py` (official MCP SDK client, stdio).
+- Client 2: `llm/mcp_agent.py`, a Pydantic-AI agent on a local qwen2.5 model that gets its tools from this server, over stdio or `--http`.
+- Works with MCP Python SDK 1.x and 2.x.
+
+## Reaching it from the internet (Cloudflare Tunnel)
+
+For demos we expose the HTTP server for a short time with a free Cloudflare quick tunnel (no account, random `*.trycloudflare.com` address):
+
+```bash
+FLOODSHIELD_ALLOWED_HOST=<name>.trycloudflare.com python floodshield_mcp.py --http
+cloudflared tunnel --url http://127.0.0.1:8765
+```
+
+The server only accepts requests addressed to localhost or that one tunnel host (DNS-rebinding protection stays on; any other host gets HTTP 400/421). Tested: our Pydantic-AI agent called `get_flood_risk` through the public tunnel URL and got the live forecast. The tunnel is closed after each demo; the server is read-only.

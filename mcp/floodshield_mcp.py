@@ -9,10 +9,15 @@ Env:  FLOODSHIELD_API  (default https://floodshieldbd.duckdns.org/api/v1)
 import os
 
 import httpx
-from mcp.server.fastmcp import FastMCP
+try:                                    # MCP Python SDK 2.x
+    from mcp.server.mcpserver import MCPServer as _Server
+    SDK2 = True
+except ImportError:                     # MCP Python SDK 1.x
+    from mcp.server.fastmcp import FastMCP as _Server
+    SDK2 = False
 
 API = os.environ.get("FLOODSHIELD_API", "https://floodshieldbd.duckdns.org/api/v1").rstrip("/")
-mcp = FastMCP("floodshield-mcp")
+mcp = _Server("floodshield-mcp")
 
 
 def _get(path: str) -> dict:
@@ -83,4 +88,20 @@ def list_high_risk_areas(level: str = "high", limit: int = 20) -> dict:
 
 
 if __name__ == "__main__":
-    mcp.run()
+    import sys
+    if "--http" in sys.argv:          # Streamable HTTP on http://127.0.0.1:8765/mcp
+        if SDK2:
+            kw = {}
+            extra = os.environ.get("FLOODSHIELD_ALLOWED_HOST")  # e.g. a tunnel host; others stay blocked
+            if extra:
+                from mcp.server.transport_security import TransportSecuritySettings
+                kw["transport_security"] = TransportSecuritySettings(
+                    enable_dns_rebinding_protection=True,
+                    allowed_hosts=["127.0.0.1:*", "localhost:*", extra],
+                    allowed_origins=["http://127.0.0.1:*", "http://localhost:*", f"https://{extra}"])
+            mcp.run(transport="streamable-http", host="127.0.0.1", port=8765, **kw)
+        else:
+            mcp.settings.host, mcp.settings.port = "127.0.0.1", 8765
+            mcp.run(transport="streamable-http")
+    else:                              # stdio (default)
+        mcp.run()
