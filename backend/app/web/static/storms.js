@@ -26,7 +26,8 @@ const ST = {
 const stt = () => ST[lang];
 let STORMS = null, stormLayer = null;
 const ALERT_COL = { green: "#3fae6b", orange: "#f39a2b", red: "#e5483a" };
-const SPIN = `<svg viewBox="0 0 40 40"><path d="M20 4c-6 0-10 3-12 7 4-3 9-3 12 0 3 3 3 8 0 11a8 8 0 0 1-3 2c6 1 13-3 14-10 0-6-5-10-11-10z" fill="currentColor"/><path d="M20 36c6 0 10-3 12-7-4 3-9 3-12 0-3-3-3-8 0-11a8 8 0 0 1 3-2c-6-1-13 3-14 10 0 6 5 10 11 10z" fill="currentColor" opacity=".75"/><circle cx="20" cy="20" r="3.2" fill="#fff"/></svg>`;
+// a satellite-like cyclone (white cloud bands, dark eye), turning anticlockwise as storms do north of the equator
+const SPIN = `<svg viewBox="0 0 100 100"><defs><radialGradient id="cyG" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".55" stop-color="#e8f1f8" stop-opacity=".75"/><stop offset="1" stop-color="#cfe0ee" stop-opacity="0"/></radialGradient><filter id="cyB" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter></defs><g class="cy-rot"><circle cx="50" cy="50" r="46" fill="url(#cyG)" opacity=".55"/><g filter="url(#cyB)" fill="#fff"><path d="M50 50 C 50 30, 70 16, 92 26 C 76 20, 60 30, 58 46 Z" opacity=".95"/><path d="M50 50 C 70 50, 84 70, 74 92 C 80 76, 70 60, 54 58 Z" opacity=".9"/><path d="M50 50 C 50 70, 30 84, 8 74 C 24 80, 40 70, 42 54 Z" opacity=".95"/><path d="M50 50 C 30 50, 16 30, 26 8 C 20 24, 30 40, 46 42 Z" opacity=".9"/><circle cx="50" cy="50" r="15" opacity=".95"/></g></g><circle cx="50" cy="50" r="5.5" fill="#1f2a36"/><circle cx="50" cy="50" r="5.5" fill="none" stroke="#9fb3c4" stroke-width="1.2"/></svg>`;
 
 function drawStorms() {
   if (stormLayer) stormLayer.remove();

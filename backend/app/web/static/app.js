@@ -531,11 +531,10 @@ async function selectCyclone() {
 }
 
 function stormIcon(kt) {
-  const size = 26 + Math.max(0, catIdx(kt)) * 5, c = IMD_COLOR(kt);
+  // a satellite-like cyclone (white cloud bands, dark eye) with a ring in the Met Department's strength colour
+  const size = 34 + Math.max(0, catIdx(kt)) * 6, c = IMD_COLOR(kt);
   return L.divIcon({ className: "storm-icon", iconSize: [size, size], iconAnchor: [size / 2, size / 2],
-    html: `<svg viewBox="0 0 40 40" width="${size}" height="${size}"><g class="spin" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round">
-      <path d="M20 20 C 20 8, 34 6, 36 14"/><path d="M20 20 C 32 20, 34 34, 26 36"/><path d="M20 20 C 20 32, 6 34, 4 26"/><path d="M20 20 C 8 20, 6 6, 14 4"/></g>
-      <circle cx="20" cy="20" r="5" fill="${c}" stroke="#fff" stroke-width="2"/></svg>` });
+    html: `<span class="cy-ring" style="border-color:${c}"></span><svg viewBox="0 0 100 100"><defs><radialGradient id="cyG2" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".55" stop-color="#e8f1f8" stop-opacity=".75"/><stop offset="1" stop-color="#cfe0ee" stop-opacity="0"/></radialGradient><filter id="cyB2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter></defs><g class="cy-rot"><circle cx="50" cy="50" r="46" fill="url(#cyG2)" opacity=".55"/><g filter="url(#cyB2)" fill="#fff"><path d="M50 50 C 50 30, 70 16, 92 26 C 76 20, 60 30, 58 46 Z" opacity=".95"/><path d="M50 50 C 70 50, 84 70, 74 92 C 80 76, 70 60, 54 58 Z" opacity=".9"/><path d="M50 50 C 50 70, 30 84, 8 74 C 24 80, 40 70, 42 54 Z" opacity=".95"/><path d="M50 50 C 30 50, 16 30, 26 8 C 20 24, 30 40, 46 42 Z" opacity=".9"/><circle cx="50" cy="50" r="15" opacity=".95"/></g></g><circle cx="50" cy="50" r="5.5" fill="#1f2a36"/><circle cx="50" cy="50" r="5.5" fill="none" stroke="#9fb3c4" stroke-width="1.2"/></svg>` });
 }
 
 function setStormTime(i) {

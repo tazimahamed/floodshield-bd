@@ -519,7 +519,8 @@ async function map3d() {
     const world = [[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]];
     map.addSource("mask", { type: "geojson", data: { type: "Feature", geometry: { type: "Polygon", coordinates: [world, ...outerRings(shape.geometry)] } } });
     map.addLayer({ id: "mask", type: "fill", source: "mask", paint: { "fill-color": "#0a1722", "fill-opacity": 0.5 } }, "osm-place");
-    map.addSource("upz", { type: "geojson", data: shape });
+    // the rim and cliff follow the outer edge only (holes in the boundary are river channels)
+    map.addSource("upz", { type: "geojson", data: { type: "Feature", properties: {}, geometry: { type: "MultiLineString", coordinates: outerRings(shape.geometry) } } });
     // the cliff of the raised block: a dark earth band along the edge, then a light rim on top
     map.addLayer({ id: "upz-cliff", type: "line", source: "upz", paint: { "line-color": "#2b1d12", "line-width": 7, "line-blur": 1.5, "line-opacity": 0.92 } }, "osm-road-label");
     map.addLayer({ id: "upz-line", type: "line", source: "upz", paint: { "line-color": "#e9f6ff", "line-width": 1, "line-opacity": 0.55 } }, "osm-road-label");
@@ -820,8 +821,12 @@ function raisedDem(shape, lift) {
       const ctx = c.getContext("2d", { willReadFrequently: true }), mx = m.getContext("2d", { willReadFrequently: true });
       ctx.drawImage(bmp, 0, 0);
       mx.beginPath();
-      polys.forEach(p => p.forEach(ring => { ring.forEach(([lo, la], i) => i ? mx.lineTo(px(lo), py(la)) : mx.moveTo(px(lo), py(la))); mx.closePath(); }));
-      mx.fill("evenodd");
+      // outer edges only, and gaps up to about 1 km filled: a big river can split an upazila in two (its channel is in
+      // neither side), which drew walls along both banks; now the area rises as one block
+      polys.forEach(p => { p[0].forEach(([lo, la], i) => i ? mx.lineTo(px(lo), py(la)) : mx.moveTo(px(lo), py(la))); mx.closePath(); });
+      mx.fill("nonzero");
+      const mPerPx = 40075016.686 * Math.cos((y0 + y1) / 2 * Math.PI / 180) / (256 * n);
+      mx.lineWidth = Math.min(40, 1000 / mPerPx); mx.lineJoin = "round"; mx.strokeStyle = "#000"; mx.stroke();
       const im = ctx.getImageData(0, 0, 256, 256), d = im.data, k = mx.getImageData(0, 0, 256, 256).data;
       for (let i = 0; i < d.length; i += 4) {
         if (k[i + 3] < 128) continue;
