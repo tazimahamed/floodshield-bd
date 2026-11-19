@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>For organisations and other countries · FloodShield BD</title>
+  <meta name="description" content="How FloodShield BD stays free for people, is paid for by organisations, and can grow to other flood-prone countries.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e5a8a'/%3E%3Cpath d='M5 19c3-3 5-3 8 0s5 3 8 0 5-3 6-1v6H5z' fill='%23fff'/%3E%3Cpath d='M16 5l7 4v4c0 3-3 5-7 6-4-1-7-3-7-6V9z' fill='%2389d0f5'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink: #0b2233; --muted: #4b6070; --line: #dde7ee; --paper: #f5f9fb; --card: #fff;
+      --teal: #0e7490; --deep: #0b3b5c; --sky: #38bdf8; --amber: #f59e0b; --green: #16a34a; --soft: #eaf4f8; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Hind Siliguri", Inter, system-ui, sans-serif; line-height: 1.6; }
+    a { color: var(--teal); }
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 20px; max-width: 1140px; margin: 0 auto; }
+    .top a.back { text-decoration: none; color: var(--muted); font-weight: 500; }
+    .top button { font: inherit; font-weight: 600; border: 1px solid var(--line); background: #fff; border-radius: 10px; padding: 7px 14px; cursor: pointer; }
+    /* hero */
+    .hero { background: linear-gradient(160deg, #0b3b5c 0%, #0e5a7a 55%, #0e7490 100%); color: #fff; overflow: hidden; }
+    .hero .in { max-width: 1140px; margin: 0 auto; padding: 48px 20px 56px; display: grid; grid-template-columns: 1.15fr 1fr; gap: 36px; align-items: center; }
+    .eyebrow { display: inline-block; font-size: 13px; font-weight: 600; background: rgba(255,255,255,.14); padding: 4px 12px; border-radius: 99px; }
+    .hero h1 { font-size: clamp(30px, 4.2vw, 48px); line-height: 1.15; margin: 14px 0 12px; }
+    .hero h1 em { font-style: normal; color: #fcd34d; }
+    .hero p.lead { font-size: 17.5px; color: #d7ebf3; margin: 0 0 20px; max-width: 560px; }
+    .cta { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 700; padding: 11px 18px; border-radius: 12px; }
+    .btn.amber { background: var(--amber); color: #3b2300; } .btn.ghost { color: #fff; border: 1px solid rgba(255,255,255,.45); }
+    .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 26px; max-width: 600px; }
+    .fact b { display: block; font: 800 24px Inter, "Hind Siliguri"; } .fact span { font-size: 13px; color: #c7e1ec; line-height: 1.35; display: block; }
+    .scene svg { overflow: hidden; } .scene { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.16); border-radius: 22px; padding: 10px; }
+    .scene svg { width: 100%; height: auto; display: block; }
+    #story svg { width: 100%; height: auto; display: block; border-radius: 16px; }
+    .story-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 6px 2px; font-size: 14px; color: #e0f2fe; }
+    .story-bar button { font: inherit; font-size: 13px; color: #fff; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); border-radius: 99px; padding: 4px 12px; cursor: pointer; }
+    .scene p { margin: 6px 8px 4px; font-size: 13.5px; color: #cfe6f0; text-align: center; }
+    main { max-width: 1140px; margin: 0 auto; padding: 0 20px 40px; }
+    section { margin-top: 64px; }
+    section.band { background: var(--soft); margin-left: -20px; margin-right: -20px; padding: 44px 20px; border-radius: 28px; }
+    .kick { font-size: 13px; font-weight: 700; color: var(--teal); letter-spacing: .03em; }
+    h2 { font-size: clamp(24px, 3vw, 32px); margin: 2px 0 6px; line-height: 1.25; }
+    .sub { color: var(--muted); margin: 0 0 22px; max-width: 760px; font-size: 16px; }
+    .tag { display: inline-block; font-size: 11.5px; font-weight: 700; border-radius: 99px; padding: 2px 9px; vertical-align: middle; white-space: nowrap; }
+    .tag.now { background: #dcfce7; color: #166534; } .tag.plan { background: #fef3c7; color: #92400e; }
+    .grid { display: grid; gap: 16px; } .g3 { grid-template-columns: repeat(3, 1fr); } .g2 { grid-template-columns: repeat(2, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 18px 16px; box-shadow: 0 1px 2px rgba(11,34,51,.04); }
+    .card .row { display: flex; gap: 12px; align-items: flex-start; }
+    .ico { flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 23px; background: var(--soft); }
+    .card h3 { margin: 0 0 4px; font-size: 17px; line-height: 1.35; } .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+    .payer .ico { background: #fff7e6; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+    .who h4 { margin: 0 0 10px; font-size: 15px; color: var(--muted); font-weight: 600; }
+    .who .grid { gap: 12px; }
+    /* tiers */
+    .tier { display: flex; flex-direction: column; position: relative; }
+    .tier h3 { font-size: 16px; color: var(--muted); font-weight: 600; }
+    .tier .price { font: 800 30px Inter, "Hind Siliguri"; margin: 4px 0 2px; color: var(--ink); }
+    .tier .price small { font-size: 14px; font-weight: 600; color: var(--muted); }
+    .tier .for { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+    .tier ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 6px; font-size: 14.5px; }
+    .tier li::before { content: "✓"; color: var(--green); font-weight: 800; margin-right: 8px; }
+    .tier.pop { border: 2px solid var(--amber); box-shadow: 0 10px 30px rgba(245,158,11,.15); }
+    .tier .badge { position: absolute; top: -12px; left: 18px; background: var(--amber); color: #3b2300; font-size: 12px; font-weight: 800; padding: 2px 10px; border-radius: 99px; }
+    .flowbox { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 10px; margin-bottom: 18px; }
+    .flowbox svg { width: 100%; height: auto; display: block; }
+    /* cost */
+    .costs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .cost { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+    .cost b { display: block; font: 800 22px Inter, "Hind Siliguri"; color: var(--deep); } .cost span { font-size: 14px; color: var(--muted); }
+    /* steps */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; position: relative; }
+    .step { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 16px; position: relative; }
+    .step .n { width: 30px; height: 30px; border-radius: 50%; background: var(--deep); color: #fff; font: 800 14px Inter; display: grid; place-items: center; margin-bottom: 8px; }
+    .step.cur .n { background: var(--amber); color: #3b2300; }
+    .step b { font-size: 13px; color: var(--teal); } .step h3 { margin: 2px 0 4px; font-size: 16px; } .step p { margin: 0; color: var(--muted); font-size: 14px; }
+    /* countries */
+    .world { display: grid; grid-template-columns: 1fr 1.25fr; gap: 22px; align-items: center; }
+    .world svg { width: 100%; height: auto; display: block; background: #fff; border: 1px solid var(--line); border-radius: 20px; }
+    .countries { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .ctry { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; }
+    .ctry .code { flex: none; width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; font: 800 13px Inter; color: #fff; background: linear-gradient(135deg, var(--sky), var(--teal)); }
+    .ctry b { display: block; font-size: 15px; } .ctry small { color: var(--muted); font-size: 13px; display: block; line-height: 1.4; }
+    .bar { height: 6px; background: #e3edf2; border-radius: 99px; overflow: hidden; margin-top: 7px; } .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--sky), var(--teal)); }
+    .how5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 18px; }
+    .how5 div { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px; font-size: 13.5px; color: var(--muted); }
+    .how5 div b { display: block; color: var(--ink); font-size: 14.5px; margin-bottom: 2px; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 14px; }
+    .kpis div { background: var(--deep); color: #fff; border-radius: 16px; padding: 14px 16px; } .kpis b { display: block; font: 800 24px Inter, "Hind Siliguri"; } .kpis span { font-size: 13.5px; color: #c7e1ec; }
+    .nrb { display: grid; grid-template-columns: 1fr 1.2fr; gap: 22px; align-items: center; }
+    .nrb svg { width: 100%; height: auto; display: block; background: #fff; border: 1px solid var(--line); border-radius: 20px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: 15px; }
+    th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { background: #f1f7fa; font-size: 14px; color: #31495a; width: 40%; font-weight: 600; }
+    .where { margin-top: 26px; background: linear-gradient(135deg, #0b3b5c, #0e7490); color: #fff; border-radius: 20px; padding: 20px 22px; }
+    .where h3 { margin: 0 0 10px; font-size: 18px; } .wrow { display: flex; gap: 12px; align-items: baseline; padding: 6px 0; flex-wrap: wrap; }
+    .wrow b { min-width: 92px; } .wrow span:last-child { color: #d7ebf3; flex: 1; min-width: 220px; }
+    .where .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; transform: translateY(1px); } .dot.now { background: #4ade80; box-shadow: 0 0 0 4px rgba(74,222,128,.25); } .dot.plan { background: #fcd34d; box-shadow: 0 0 0 4px rgba(252,211,77,.25); }
+    .note { background: #fff7ed; border: 1px solid #fed7aa; color: #7c2d12; border-radius: 14px; padding: 14px 16px; font-size: 14.5px; margin-top: 26px; }
+    footer { text-align: center; color: var(--muted); font-size: 14px; padding: 26px 20px 46px; }
+    /* motion: only in the four pictures that explain something */
+    .rain line { animation: fall 1.1s linear infinite; }
+    .rain line:nth-child(2n) { animation-delay: .35s; } .rain line:nth-child(3n) { animation-delay: .7s; }
+    @keyframes fall { from { transform: translateY(-10px); opacity: 0; } 30% { opacity: 1; } to { transform: translateY(26px); opacity: 0; } }
+    .riverup { animation: rise 6s ease-in-out infinite; transform-origin: bottom; }
+    @keyframes rise { 0%, 15% { transform: scaleY(.55); } 55%, 100% { transform: scaleY(1); } }
+    .alert { animation: ping 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    @keyframes ping { 0%, 50% { opacity: 0; transform: translateY(18px); } 60% { opacity: 1; transform: translateY(-2px); } 66%, 92% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(0); } }
+    .drift { animation: drift 7s ease-in-out infinite alternate; } @keyframes drift { from { transform: translateX(-8px); } to { transform: translateX(14px); } }
+    .wave { animation: wave 5s linear infinite; } @keyframes wave { from { transform: translateX(0); } to { transform: translateX(420px); } }
+    .bell { transform-box: fill-box; transform-origin: 50% 10%; animation: bell 6s ease-in-out infinite; }
+    @keyframes bell { 0%, 60% { transform: rotate(0); } 64% { transform: rotate(16deg); } 68% { transform: rotate(-14deg); } 72% { transform: rotate(10deg); } 76%, 100% { transform: rotate(0); } }
+    .pulse { animation: pulse 6s ease-in-out infinite; } @keyframes pulse { 0%, 55% { opacity: 0; } 62%, 95% { opacity: 1; } 100% { opacity: 0; } }
+    .coin { offset-rotate: 0deg; animation: travel 3.2s cubic-bezier(.45,.05,.55,.95) infinite; filter: drop-shadow(0 0 4px rgba(245,158,11,.7)); }
+    .coin.c2 { animation-delay: 1.07s; } .coin.c3 { animation-delay: 2.14s; }
+    @keyframes travel { from { offset-distance: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } to { offset-distance: 100%; opacity: 0; } }
+    .ring { transform-box: fill-box; transform-origin: center; animation: ring 4s ease-out infinite; }
+    .ring.r2 { animation-delay: 1.33s; } .ring.r3 { animation-delay: 2.66s; }
+    @keyframes ring { from { transform: scale(.2); opacity: .9; } to { transform: scale(1); opacity: 0; } }
+    .light { animation: light 4s ease-in-out infinite; } .light.l2 { animation-delay: 1s; } .light.l3 { animation-delay: 2s; } .light.l4 { animation-delay: 3s; }
+    @keyframes light { 0%, 20% { fill: #cbd5e1; } 35%, 80% { fill: #0e7490; } 100% { fill: #cbd5e1; } }
+    .plane { offset-rotate: auto; animation: fly 5s ease-in-out infinite; }
+    @keyframes fly { from { offset-distance: 0%; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } to { offset-distance: 100%; opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } .alert, .pulse { opacity: 1; } .riverup { transform: none; } }
+    @media (max-width: 900px) {
+      .hero .in, .g3, .g2, .g4, .split, .world, .nrb, .countries, .costs, .steps, .how5, .kpis { grid-template-columns: 1fr; }
+      .facts { grid-template-columns: repeat(2, 1fr); } .costs, .kpis { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="top"><a class="back" href="/" id="back"></a><div><a href="/about" id="aboutL"></a> &nbsp; <button id="lang"></button></div></div>
+
+  <header class="hero"><div class="in">
+    <div>
+      <span class="eyebrow" id="eb"></span>
+      <h1 id="h1"></h1>
+      <p class="lead" id="lead"></p>
+      <div class="cta"><a class="btn amber" href="/" id="cta1"></a><a class="btn ghost" href="https://t.me/DurjogBartaBangladesh_bot" target="_blank" rel="noopener" id="cta2"></a></div>
+      <div class="facts" id="facts"></div>
+    </div>
+    <!-- the story: rain, rising river, a FloodShield alert, the family walks to the shelter in time -->
+    <div class="scene"><div id="story"></div></div>
+  </div></header>
+
+  <main id="main"></main>
+  <footer id="foot"></footer>
+
+<script>
+const T = {
+  bn: {
+    back: "← ম্যাপে ফিরুন", about: "ডেটা সম্পর্কে", lang: "English",
+    eb: "প্রতিষ্ঠান ও বিস্তার", h1: "মানুষের জন্য <em>বিনামূল্যে</em>, প্রতিষ্ঠানের টাকায় টেকসই",
+    lead: "গ্রামের মানুষ আর স্থানীয় প্রশাসন সতর্কবার্তা পাবে সবসময় বিনামূল্যে। খরচ দেবে সেই প্রতিষ্ঠানগুলো, বন্যার ঝুঁকি আগে জানলে যাদের টাকা বাঁচে। একই পদ্ধতি যেকোনো বন্যাপ্রবণ দেশে চালানো যায়।",
+    cta1: "সাইট দেখুন", cta2: "Telegram বট খুলুন",
+    heroCap: "উজানে বৃষ্টি → নদীর পানি বাড়ে → বন্যার আগেই ফোনে সতর্কবার্তা",
+    facts: [["৫৪৪", "এলাকা, প্রতি ৬ ঘণ্টায় হালনাগাদ"], ["২৪১", "স্যাটেলাইট সময়কাল থেকে শেখা"], ["~$৩৫", "মাসে সার্ভার খরচ (আনুমানিক)"], ["৳০", "ডেটার লাইসেন্স খরচ"]],
+    now: "চালু আছে", plan: "পরিকল্পনা",
+    who: { k: "ব্যবহারকারী", h: "কে পায়, কে খরচ দেয়", s: "যারা সতর্কবার্তা পায়, তারা টাকা দেয় না। খরচ দেয় সেই প্রতিষ্ঠান, ঝুঁকির তথ্যে যাদের লাভ।",
+      getH: "বিনামূল্যে পায়", payH: "খরচ দেবে",
+      get: [["👨‍👩‍👧", "গ্রামের মানুষ", "ফোনে বাংলা সতর্কবার্তা, ভয়েস নোট, নিজের এলাকার বন্যার মানচিত্র", "now"], ["🏛️", "ইউনিয়ন ও উপজেলা প্রশাসন", "কোথায় আগে প্রস্তুতি, কোন সড়ক ডোবে, কোথায় হাসপাতাল", "now"], ["🧳", "প্রবাসী পরিবার", "বিদেশ থেকে নিজের উপজেলায় subscribe করে পরিবারকে আগে জানানো", "now"]],
+      pay: [["🤝", "মানবিক সংস্থা ও এনজিও", "বন্যার আগে নগদ সহায়তা পাঠানোর সংকেত (anticipatory action)", "plan"], ["🏦", "ক্ষুদ্রঋণ ও কৃষি ব্যাংক", "কোন এলাকা বন্যাপ্রবণ, কখন কিস্তিতে ছাড় দিতে হবে", "plan"], ["🛡️", "বীমা কোম্পানি", "ফসল ও প্যারামেট্রিক বীমার জন্য উপজেলার বন্যার ইতিহাস", "plan"], ["📡", "মোবাইল অপারেটর", "যাদের Telegram নেই, তাদের এসএমএস ও ভয়েস কল", "plan"]] },
+    price: { k: "আয়", h: "টাকা আসবে কোথা থেকে", s: "তিন স্তর। দামগুলো প্রস্তাব; পাইলটের পরে চূড়ান্ত হবে।",
+      flow: ["প্রতিষ্ঠান", "FloodShield BD", "মানুষ ও প্রশাসন", "সাবস্ক্রিপশন ও API", "বিনামূল্যে সতর্কবার্তা"],
+      tiers: [["জনসাধারণ", "৳০", "সবসময়", "গ্রামের মানুষ ও স্থানীয় প্রশাসনের জন্য", ["ওয়েবসাইট ও Telegram বট", "বন্যা, ঘূর্ণিঝড়, তাপপ্রবাহের সতর্কবার্তা", "প্রতিটি উপজেলার বন্যার মানচিত্র"], false],
+              ["সংস্থা", "৳৫,০০০", "/মাস থেকে", "এনজিও ও ক্ষুদ্রঋণ প্রতিষ্ঠানের জন্য", ["কর্মএলাকার ড্যাশবোর্ড", "ঝুঁকি বাড়লে দলকে স্বয়ংক্রিয় বার্তা", "এসএমএস পাঠানো", "মাসিক প্রতিবেদন ও CSV"], true],
+              ["ডেটা ও API", "চুক্তিতে", "", "বীমা, ব্যাংক ও অন্য দেশের জন্য", ["উপজেলাভিত্তিক ঝুঁকির API", "২০১৭ থেকে বন্যার ইতিহাস ও মানচিত্র", "অন্য দেশে চালানোর লাইসেন্স"], false]],
+      badge: "প্রধান আয়", extra: "এর বাইরে: জলবায়ু তহবিলের অনুদান আর কর্পোরেট সিএসআর, বিনামূল্যের স্তর চালু রাখতে।" },
+    cost: { k: "খরচ", h: "চালাতে খরচ খুব কম", s: "সব ডেটা খোলা ও বৈশ্বিক, কেনার কিছু নেই। পুরো দেশ চলে একটি ছোট ক্লাউড সার্ভারে।",
+      items: [["~$৩৫", "মাসে সার্ভার (Azure, ২ সিপিইউ, ৪ জিবি; আনুমানিক)"], ["৳০", "স্যাটেলাইট ও আবহাওয়া ডেটা (Sentinel-1, ERA5, GFS, NASA)"], ["< ৳১", "প্রতি উপজেলায় মাসিক খরচ"], ["১ সার্ভার", "পুরো বাংলাদেশ"]],
+      fine: "Earth Engine অবাণিজ্যিক কাজে বিনামূল্যে; বাণিজ্যিক স্তরে আলাদা লাইসেন্স লাগবে।" },
+    go: { k: "পরিকল্পনা", h: "বাজারে যাওয়ার চার ধাপ", s: "প্রতিটি ধাপে কী মাপা হবে, আগে থেকেই ঠিক।",
+      steps: [["এখন", "সারাদেশে চালু", "বিনামূল্যে সাইট ও বট; মডেলের সাফল্য আর ভুল প্রকাশ্যে", true], ["২০২৭ বর্ষা", "জেলা পাইলট", "সুনামগঞ্জ, কুড়িগ্রাম, সিরাজগঞ্জে ২–৩টি এনজিওর সাথে; সতর্কবার্তা কত আগে পৌঁছায় মাপা"], ["২০২৭ শেষে", "সংস্থা স্তর", "সাবস্ক্রিপশন, এসএমএস অংশীদার, FFWC ও দুর্যোগ অধিদপ্তরের সাথে তথ্য বিনিময়"], ["২০২৮", "বিদেশে প্রথম", "নেপাল বা আসামে পাইলট; বীমা ও ব্যাংকের জন্য API"]] },
+    global: { k: "বৈশ্বিক প্রস্তুতি", h: "অন্য দেশেও একই ব্যবস্থা", s: "আমাদের কোনো ডেটা বাংলাদেশের জন্য কেনা নয়। সীমানা বদলে, স্যাটেলাইট থেকে অতীতের বন্যা মেপে, মডেল আবার শেখালেই চলে।",
+      cbar: "দাগ = কতটা ডেটা হাতে আছে (আনুমানিক)",
+      countries: [["NP", "নেপাল", "বাংলাদেশের উজান; নদী-অববাহিকা আগেই আমাদের গ্রাফে", 90], ["IN", "ভারত: আসাম ও বিহার", "ব্রহ্মপুত্র ও গঙ্গার একই নদী-গ্রাফ", 85], ["MM", "মিয়ানমার", "ইরাবতী অববাহিকা; ঘূর্ণিঝড় ও বন্যা", 65], ["PK", "পাকিস্তান", "সিন্ধু অববাহিকা; ২০২২-এর বড় বন্যা", 60], ["VN", "ভিয়েতনাম", "মেকং ব-দ্বীপ, নিচু উপকূল", 55], ["AF", "আফ্রিকার নদী", "নাইজার, জাম্বেজি; একই বৈশ্বিক ডেটা", 45]],
+      how: [["সীমানা", "দেশের প্রশাসনিক এলাকা (HDX)"], ["নদী-গ্রাফ", "HydroSHEDS দিয়ে উজান-ভাটি"], ["শেখার ডেটা", "Sentinel-1 থেকে অতীতের বন্যা"], ["মডেল", "একই কোডে শেখানো ও যাচাই"], ["ভাষা", "সতর্কবার্তার লেখা অনুবাদ"]] },
+    scale: { k: "বিস্তারযোগ্যতা", h: "ব্যবহার বাড়লেও ভেঙে পড়বে না", s: "এখন একটি সার্ভারে পুরো দেশ। প্রতিটি অংশ আলাদা করে বাড়ানো যায়।",
+      parts: [["ডেটা আনা", "নির্ধারিত সময়ে নিজে চলে; ব্যর্থ হলে আবার চেষ্টা"], ["মডেল", "৫৪৪ এলাকা কয়েক সেকেন্ডে; নতুন মডেল চালু হয় শুধু ভালো হলে"], ["API", "বড় উত্তর আগেই সংকুচিত করে রাখা, ভিড়েও চাপ নেই"], ["সতর্কবার্তা", "একই বার্তা দুবার যায় না; পুরনো পূর্বাভাসে বন্ধ"], ["চালানো", "যেকোনো ক্লাউডে এক কমান্ডে; প্রতিদিন ব্যাকআপ"]],
+      kpis: [["২৩", "স্বয়ংক্রিয় পরীক্ষা"], ["৬ ঘণ্টা", "পূর্বাভাস হালনাগাদ"], ["৩০ মিনিট", "ঘূর্ণিঝড় যাচাই"], ["১ কমান্ড", "নতুন সার্ভারে চালু"]] },
+    nrb: { k: "প্রবাসী সহযোগিতা", h: "প্রবাসী বাংলাদেশিদের (NRB) সাথে", s: "প্রবাসীরা নিজের গ্রামের সতর্কবার্তা পাচ্ছেন এখনই। বাকিগুলো পরিকল্পনা; এখনো কোনো প্রবাসী অংশীদার নেই।",
+      cap: "দেশে বন্যার সংকেত → বিদেশে পরিবারের সদস্যের ফোনে",
+      cards: [["🏠", "পরিবারের সতর্কবার্তা", "বিদেশ থেকে নিজের উপজেলায় subscribe করা যায়", "now"], ["🔬", "গবেষক", "বিদেশের বিশ্ববিদ্যালয়ের বাংলাদেশি জলবিদ ও রিমোট সেন্সিং বিশেষজ্ঞ মডেল যাচাই করবেন", "plan"], ["☁️", "প্রকৌশলী", "ক্লাউড ও MLOps: বড় পরিসরে চালানো, নিরাপত্তা পর্যালোচনা", "plan"], ["💼", "বাজার ও বিনিয়োগ", "নেপাল, ভারত, মধ্যপ্রাচ্যে পরিচয়; প্রবাসী অ্যাঞ্জেল বিনিয়োগ", "plan"]] },
+    kpi: { k: "মাপকাঠি", h: "সফল হলাম কি না, কীভাবে বুঝব", s: "প্রতিটি সংখ্যা সাইটে প্রকাশ হবে।",
+      rows: [["বন্যা আগে ধরা পড়ে", "এখন ৪২% (না দেখা বছরে); লক্ষ্য প্রতি বছর বাড়ানো, ভুল সতর্কতা কমানো"], ["সতর্কবার্তা কত আগে পৌঁছায়", "পাইলটে মাপা হবে"], ["নিবন্ধিত মানুষ ও সংস্থা", "পাইলটের শুরু থেকে প্রকাশ্যে"], ["বার্তা পৌঁছানোর হার", "প্রতিটি বার্তার লগ রাখা হয়"]] },
+    honestH: "আমরা এখন কোথায়", honest: [["now", "চালু আছে", "সারাদেশে সাইট, বট আর সব সতর্কবার্তা, বিনামূল্যে।"], ["plan", "পরের ধাপ", "২০২৭ বর্ষার পাইলটে প্রথম অংশীদার সংস্থা। দামগুলো পাইলটের পরে চূড়ান্ত হবে।"]],
+    foot: "FloodShield BD · সহায়ক তথ্য, সরকারি সতর্কবার্তা নয় · জরুরি সেবা ৯৯৯ · দুর্যোগের তথ্য ১০৯০",
+  },
+  en: {
+    back: "← Back to the map", about: "About the data", lang: "বাংলা",
+    eb: "Organisations and other countries", h1: "<em>Free</em> for people, paid for by organisations",
+    lead: "Villagers and local offices always get alerts for free. The costs are carried by organisations that save money when they know flood risk early. The same method runs in any flood-prone country.",
+    cta1: "Open the site", cta2: "Open the Telegram bot",
+    heroCap: "Rain upstream → the river rises → a warning on the phone before the flood",
+    facts: [["544", "areas, updated every 6 hours"], ["241", "satellite windows learned from"], ["~$35", "server cost a month (estimate)"], ["$0", "data licence cost"]],
+    now: "Live", plan: "Planned",
+    who: { k: "Users", h: "Who gets it, who pays", s: "The people who receive alerts never pay. The organisations that profit from risk information do.",
+      getH: "Gets it free", payH: "Will pay",
+      get: [["👨‍👩‍👧", "Villagers", "Bangla alerts, voice notes and a flood map of their own area", "now"], ["🏛️", "Union and upazila offices", "Where to prepare first, which roads flood, where the hospitals are", "now"], ["🧳", "Families abroad", "Subscribe to the home upazila from abroad and warn family early", "now"]],
+      pay: [["🤝", "Humanitarian agencies and NGOs", "A trigger to send cash before the flood (anticipatory action)", "plan"], ["🏦", "Microfinance and agricultural banks", "Which areas flood, and when to ease repayments", "plan"], ["🛡️", "Insurers", "Upazila flood history for crop and parametric insurance", "plan"], ["📡", "Mobile operators", "SMS and voice calls for people without Telegram", "plan"]] },
+    price: { k: "Revenue", h: "Where the money comes from", s: "Three tiers. Prices are proposals, to be set after a pilot.",
+      flow: ["Organisations", "FloodShield BD", "People and offices", "Subscriptions and API", "Free alerts"],
+      tiers: [["Public", "৳0", "always", "For villagers and local offices", ["Website and Telegram bot", "Flood, cyclone and heatwave alerts", "A flood map for every upazila"], false],
+              ["Organisation", "৳5,000", "/month from", "For NGOs and microfinance lenders", ["Dashboard for the working area", "Automatic team alerts when risk rises", "SMS sending", "Monthly reports and CSV"], true],
+              ["Data and API", "by contract", "", "For insurers, banks and other countries", ["Upazila risk API", "Flood history and maps since 2017", "Licence to run it in other countries"], false]],
+      badge: "Main revenue", extra: "Plus: climate-fund grants and corporate CSR to keep the free tier running." },
+    cost: { k: "Cost", h: "Very cheap to run", s: "Every dataset is open and global; there is nothing to buy. The whole country runs on one small cloud server.",
+      items: [["~$35", "a month for the server (Azure, 2 vCPU, 4 GB; estimate)"], ["$0", "satellite and weather data (Sentinel-1, ERA5, GFS, NASA)"], ["< ৳1", "per upazila per month"], ["1 server", "for all of Bangladesh"]],
+      fine: "Earth Engine is free for noncommercial work; a commercial tier needs its own licence." },
+    go: { k: "Plan", h: "Four steps to market", s: "What each step will measure is fixed in advance.",
+      steps: [["Now", "Live nationwide", "Free site and bot; the model's hits and misses published", true], ["Monsoon 2027", "District pilots", "With 2–3 NGOs in Sunamganj, Kurigram and Sirajganj; measure how early alerts arrive"], ["Late 2027", "Organisation tier", "Subscriptions, an SMS partner, data sharing with FFWC and the disaster department"], ["2028", "First abroad", "Pilot in Nepal or Assam; API for insurers and banks"]] },
+    global: { k: "Global readiness", h: "The same system in other countries", s: "No data we use was bought for Bangladesh. Swap the boundaries, map past floods from satellite, retrain, and it runs.",
+      cbar: "Bar = how much of the data we already have (estimate)",
+      countries: [["NP", "Nepal", "Upstream of Bangladesh; basins already in our graph", 90], ["IN", "India: Assam and Bihar", "The same Brahmaputra and Ganges river graph", 85], ["MM", "Myanmar", "Irrawaddy basin; cyclones and floods", 65], ["PK", "Pakistan", "Indus basin; the 2022 megaflood", 60], ["VN", "Vietnam", "Mekong delta, a low coast", 55], ["AF", "African rivers", "Niger, Zambezi; the same global data", 45]],
+      how: [["Boundaries", "The country's admin areas (HDX)"], ["River graph", "Upstream and downstream with HydroSHEDS"], ["Training data", "Past floods from Sentinel-1"], ["Model", "Retrain and test with the same code"], ["Language", "Translate the alert text"]] },
+    scale: { k: "Scalability", h: "Built not to fall over as use grows", s: "One server runs the whole country now. Each part can be scaled on its own.",
+      parts: [["Data intake", "Runs on schedule; retries on failure"], ["Model", "544 areas in seconds; a new model goes live only if it is better"], ["API", "Large responses kept compressed; no strain in a rush"], ["Alerts", "No duplicates; paused when the forecast is stale"], ["Operations", "One command on any cloud; daily backups"]],
+      kpis: [["23", "automated tests"], ["6 h", "forecast refresh"], ["30 min", "cyclone check"], ["1 command", "to deploy a new server"]] },
+    nrb: { k: "Diaspora", h: "With non-resident Bangladeshis (NRB)", s: "People abroad already get alerts for their home area. The rest is planned; there is no NRB partner yet.",
+      cap: "A flood signal at home → a family member's phone abroad",
+      cards: [["🏠", "Family alerts", "Subscribe to the home upazila from abroad", "now"], ["🔬", "Researchers", "Bangladeshi hydrologists and remote-sensing experts abroad to test the model", "plan"], ["☁️", "Engineers", "Cloud and MLOps: running at scale, security review", "plan"], ["💼", "Markets and investment", "Introductions in Nepal, India, the Gulf; diaspora angel investment", "plan"]] },
+    kpi: { k: "Measures", h: "How we will know it works", s: "Every number will be published on the site.",
+      rows: [["Floods caught in advance", "42% now (unseen years); goal: raise it each year, cut false alarms"], ["How early alerts arrive", "to be measured in the pilot"], ["People and organisations signed up", "published from the start of the pilot"], ["Alert delivery rate", "every message is logged"]] },
+    honestH: "Where we are", honest: [["now", "Live", "The site, the bot and every alert, nationwide and free."], ["plan", "Next", "First partner organisations in the monsoon 2027 pilot. Prices are set after the pilot."]],
+    foot: "FloodShield BD · supporting information, not an official warning · Emergency 999 · Disaster information 1090",
+  },
+};
+let lang = (() => { try { return localStorage.getItem("fs-lang") || "bn"; } catch (e) { return "bn"; } })();
+const $ = id => document.getElementById(id);
+const tag = (t, k) => `<span class="tag ${k}">${k === "now" ? t.now : t.plan}</span>`;
+const card = (t, [i, h, p, k], cls = "") => `<div class="card ${cls}"><div class="row"><div class="ico">${i}</div><div><h3>${h} ${tag(t, k)}</h3><p>${p}</p></div></div></div>`;
+const head = s => `<div class="kick">${s.k}</div><h2>${s.h}</h2><p class="sub">${s.s}</p>`;
+
+// money: organisations pay → FloodShield → free alerts to people (coins move along the arrows)
+const moneySvg = f => `<svg viewBox="0 0 760 170" role="img" aria-label="${f[0]} → ${f[1]} → ${f[2]}">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#94a3b8"/></marker></defs>
+  <path id="p1" d="M170 85 L320 85" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="6 6" marker-end="url(#ar)" fill="none"/>
+  <path id="p2" d="M440 85 L590 85" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="6 6" marker-end="url(#ar)" fill="none"/>
+  <g transform="translate(40 30)"><rect width="130" height="110" rx="18" fill="#fff7e6" stroke="#fcd34d"/><text x="65" y="52" text-anchor="middle" font-size="34">🏦</text><text x="65" y="88" text-anchor="middle" font-size="15" font-weight="700" fill="#7c4a03">${f[0]}</text></g>
+  <g transform="translate(320 22)"><rect width="120" height="126" rx="18" fill="#0b3b5c"/><path d="M40 70c6-6 10-6 16 0s10 6 16 0 10-6 12-2v10H40z" fill="#fff"/><path d="M60 30l14 8v8c0 6-6 10-14 12-8-2-14-6-14-12v-8z" fill="#89d0f5"/><text x="60" y="108" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">${f[1]}</text></g>
+  <g transform="translate(590 30)"><rect width="130" height="110" rx="18" fill="#ecfdf5" stroke="#86efac"/><text x="65" y="52" text-anchor="middle" font-size="34">👨‍👩‍👧</text><text x="65" y="88" text-anchor="middle" font-size="15" font-weight="700" fill="#166534">${f[2]}</text></g>
+  <text x="245" y="70" text-anchor="middle" font-size="13" fill="#64748b">${f[3]}</text><text x="515" y="70" text-anchor="middle" font-size="13" fill="#64748b">${f[4]}</text>
+  ${[1, 2, 3].map(n => `<circle class="coin c${n}" r="9" fill="#f59e0b" stroke="#b45309" stroke-width="2" style="offset-path: path('M170 85 L320 85')"/>`).join("")}
+  ${[1, 2, 3].map(n => `<text class="coin c${n}" font-size="16" style="offset-path: path('M440 92 L590 92')">🔔</text>`).join("")}
+</svg>`;
+
+// spreading from Bangladesh to neighbouring countries
+const worldSvg = () => `<svg viewBox="0 0 420 300" role="img" aria-label="Bangladesh and nearby countries">
+  <rect width="420" height="300" fill="#f1f7fa"/>
+  <path d="M40 60 Q120 30 200 50 T380 70 L390 140 Q330 160 300 220 Q260 270 210 250 Q170 230 150 180 Q110 170 70 150 Q30 120 40 60Z" fill="#e2e8f0"/>
+  <g font-size="12" font-weight="700" fill="#475569">
+    <circle class="light l1" cx="200" cy="92" r="10"/><text x="200" y="76" text-anchor="middle">NP</text>
+    <circle class="light l2" cx="245" cy="122" r="10"/><text x="270" y="118">IN</text>
+    <circle class="light l3" cx="300" cy="160" r="10"/><text x="318" y="164">MM</text>
+    <circle class="light l4" cx="95" cy="95" r="10"/><text x="95" y="80" text-anchor="middle">PK</text>
+  </g>
+  <circle class="ring r1" cx="255" cy="150" r="90" fill="none" stroke="#0e7490" stroke-width="2"/>
+  <circle class="ring r2" cx="255" cy="150" r="90" fill="none" stroke="#0e7490" stroke-width="2"/>
+  <circle class="ring r3" cx="255" cy="150" r="90" fill="none" stroke="#0e7490" stroke-width="2"/>
+  <circle cx="255" cy="150" r="13" fill="#16a34a" stroke="#fff" stroke-width="3"/><text x="255" y="182" text-anchor="middle" font-size="13" font-weight="800" fill="#14532d">BD</text>
+</svg>`;
+
+// a warning travels from home to a phone abroad
+const nrbSvg = cap => `<svg viewBox="0 0 420 220" role="img" aria-label="${cap}">
+  <rect width="420" height="220" fill="#f1f7fa"/>
+  <g transform="translate(30 110)"><path d="M0 60 C 30 50, 60 70, 90 60 L90 80 L0 80Z" fill="#7dd3fc"/><rect x="18" y="22" width="44" height="34" fill="#fde68a"/><path d="M14 24 L40 4 L66 24 Z" fill="#b45309"/><text x="40" y="-6" text-anchor="middle" font-size="22">🇧🇩</text></g>
+  <path id="arc" d="M90 120 Q210 -10 330 110" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="6 6"/>
+  <text class="plane" font-size="22" style="offset-path: path('M90 120 Q210 -10 330 110')">⚠️</text>
+  <g transform="translate(320 70)"><rect width="64" height="110" rx="12" fill="#0b2233"/><rect x="6" y="12" width="52" height="86" rx="6" fill="#e0f2fe"/><text x="32" y="50" text-anchor="middle" font-size="22">👋</text><rect x="12" y="64" width="40" height="6" rx="3" fill="#f59e0b"/><rect x="12" y="76" width="28" height="6" rx="3" fill="#94a3b8"/></g>
+  <text x="352" y="200" text-anchor="middle" font-size="12" fill="#475569">🌍</text>
+</svg>`;
+
+function render() {
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  $("back").textContent = t.back; $("aboutL").textContent = t.about; $("lang").textContent = t.lang;
+  $("eb").textContent = t.eb; $("h1").innerHTML = t.h1; $("lead").textContent = t.lead; $("cta1").textContent = t.cta1; $("cta2").textContent = t.cta2;
+  $("facts").innerHTML = t.facts.map(([b, s]) => `<div class="fact"><b>${b}</b><span>${s}</span></div>`).join("");
+  const w = t.who, p = t.price, c = t.cost, g = t.go, gl = t.global, sc = t.scale, n = t.nrb, k = t.kpi;
+  $("main").innerHTML = `
+  <section>${head(w)}<div class="split who">
+    <div><h4>✅ ${w.getH}</h4><div class="grid">${w.get.map(x => card(t, x)).join("")}</div></div>
+    <div><h4>💳 ${w.payH}</h4><div class="grid">${w.pay.map(x => card(t, x, "payer")).join("")}</div></div></div></section>
+  <section class="band">${head(p)}<div class="flowbox">${moneySvg(p.flow)}</div>
+    <div class="grid g3">${p.tiers.map(([nm, pr, u, f, items, pop]) => `<div class="card tier${pop ? " pop" : ""}">${pop ? `<span class="badge">${p.badge}</span>` : ""}<h3>${nm}</h3><div class="price">${pr} <small>${u}</small></div><div class="for">${f}</div><ul>${items.map(x => `<li>${x}</li>`).join("")}</ul></div>`).join("")}</div>
+    <p class="sub" style="margin:16px 0 0">${p.extra}</p></section>
+  <section>${head(c)}<div class="costs">${c.items.map(([b, s]) => `<div class="cost"><b>${b}</b><span>${s}</span></div>`).join("")}</div><p class="sub" style="margin:12px 0 0;font-size:14px">${c.fine}</p></section>
+  <section>${head(g)}<div class="steps">${g.steps.map(([when, h, d, cur], i) => `<div class="step${cur ? " cur" : ""}"><div class="n">${i + 1}</div><b>${when}</b><h3>${h}</h3><p>${d}</p></div>`).join("")}</div></section>
+  <section class="band">${head(gl)}<div class="world">${worldSvg()}<div><div class="countries">${gl.countries.map(([cd, nm, d, r]) => `<div class="ctry"><span class="code">${cd}</span><div style="flex:1"><b>${nm}</b><small>${d}</small><div class="bar"><i style="width:${r}%"></i></div></div></div>`).join("")}</div><p class="sub" style="margin:8px 0 0;font-size:13px">${gl.cbar}</p></div></div>
+    <div class="how5">${gl.how.map(([h, d], i) => `<div><b>${i + 1}. ${h}</b>${d}</div>`).join("")}</div></section>
+  <section>${head(sc)}<div class="how5">${sc.parts.map(([h, d]) => `<div><b>${h}</b>${d}</div>`).join("")}</div><div class="kpis">${sc.kpis.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("")}</div></section>
+  <section class="band">${head(n)}<div class="nrb"><figure style="margin:0">${nrbSvg(n.cap)}<figcaption class="sub" style="margin:8px 0 0;font-size:13.5px;text-align:center">${n.cap}</figcaption></figure><div class="grid g2">${n.cards.map(x => card(t, x)).join("")}</div></div></section>
+  <section>${head(k)}<table><tbody>${k.rows.map(([a, b]) => `<tr><th>${a}</th><td>${b}</td></tr>`).join("")}</tbody></table>
+    <div class="where"><h3>${t.honestH}</h3>${t.honest.map(([k, h, d]) => `<div class="wrow"><span class="dot ${k}"></span><b>${h}</b><span>${d}</span></div>`).join("")}</div></section>`;
+  $("foot").textContent = t.foot;
+}
+$("lang").onclick = () => { lang = lang === "bn" ? "en" : "bn"; try { localStorage.setItem("fs-lang", lang); } catch (e) {} render(); };
+render();
+</script>
+<script src="/static/story.js?v=6"></script>
+</body>
+</html>

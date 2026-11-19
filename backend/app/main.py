@@ -204,6 +204,11 @@ def model_page():
     return FileResponse(WEB_DIR / "model.html")
 
 
+@app.get("/plan", include_in_schema=False)
+def plan_page():
+    return FileResponse(WEB_DIR / "plan.html")
+
+
 @app.get("/map/{node_id}", include_in_schema=False)
 def poster_page(node_id: str):
     return FileResponse(WEB_DIR / "poster.html")

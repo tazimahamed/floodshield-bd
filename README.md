@@ -77,6 +77,30 @@ filler for the ERA5 gap (7-day error 35.3 mm against 28.5 mm for GFS) all failed
 ([ml/MODEL_V2_RESULTS.md](ml/MODEL_V2_RESULTS.md)). Re-scored on 241 windows (2017–2026), leave-one-year-out:
 AUC 0.83, floods caught 42%, false warnings 63%.
 
+## Business model and growth
+
+Full page: [floodshieldbd.duckdns.org/plan](https://floodshieldbd.duckdns.org/plan). Marked plainly: there are no
+customers, revenue or foreign partners yet, and prices are proposals.
+
+- **Free for people, always:** villagers, union and upazila offices get the site, the bot and every alert free.
+- **Paid by organisations that gain from flood risk (planned):** NGOs doing anticipatory action, microfinance lenders
+  and agricultural banks, insurers (crop and parametric flood cover), mobile operators for SMS. Tiers: Public ৳0;
+  Organisation from ৳5,000/month (area dashboard, team alerts, SMS, reports); Data and API by contract. Grants and CSR
+  keep the free tier running.
+- **Cheap to run:** all data is open and global; the whole country runs on one 2 vCPU / 4 GB server, about $35 a month
+  (list-price estimate), under one taka per upazila per month.
+- **Go to market:** now, free national service; monsoon 2027, NGO pilots in Sunamganj, Kurigram and Sirajganj
+  measuring alert lead time; late 2027, organisation tier, SMS partner, data sharing with FFWC and DDM; 2028, first
+  pilot abroad.
+- **Other countries:** nothing is specific to Bangladesh. New boundaries, past floods mapped from Sentinel-1, the same
+  river graph (HydroSHEDS) and a retrained model. Nearest candidates: Nepal and Assam/Bihar (already in the river
+  graph), then Myanmar, Pakistan, the Mekong delta and African river basins.
+- **Scaling:** scheduled data intake with retries, a model that only replaces the live one if it scores better, cached
+  compressed API responses, no duplicate alerts, one Docker command to deploy on any cloud, daily backups, 23 tests.
+- **NRB collaboration (planned):** hydrology and remote-sensing researchers abroad to test and improve the model;
+  cloud and MLOps engineers for scale and security reviews; market introductions and diaspora investment. Already
+  working: anyone abroad can subscribe to their home upazila and warn family before a flood.
+
 ## Known limits
 
 - River levels and local waterlogging are not in the estimate.
