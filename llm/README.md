@@ -12,3 +12,14 @@ python bangla_explainer.py Rajapur
 ```
 
 Tested on an NVIDIA RTX 2050 laptop GPU (4 GB) with `qwen2.5:3b` (Q4, about 1.9 GB).
+
+## Flood question agent (Pydantic-AI)
+
+`flood_agent.py` is a small tool-calling agent built with Pydantic-AI on the same local model. You ask in plain words; it picks a tool (`get_flood_risk` or `list_risky_areas`), the tool reads our live forecast, and it answers only from that.
+
+```bash
+pip install "pydantic-ai-slim[openai]"
+python flood_agent.py "Is Rajapur at risk of flooding?"
+```
+
+Test run: "Is Rajapur at risk of flooding?" → called `get_flood_risk` → "Rajapur is at low risk of flooding, with a 18% chance…" (matches the live forecast).
