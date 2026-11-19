@@ -23,3 +23,22 @@ python flood_agent.py "Is Rajapur at risk of flooding?"
 ```
 
 Test run: "Is Rajapur at risk of flooding?" → called `get_flood_risk` → "Rajapur is at low risk of flooding, with a 18% chance…" (matches the live forecast).
+
+## Ask our documents (local RAG)
+
+`rag.py` answers questions about FloodShield BD from our own documents (README files), fully on our laptop.
+
+- Chunking: split at headings, long sections again at paragraphs (variable-size chunks, one topic each)
+- Embeddings: `nomic-embed-text` via Ollama; vector database: ChromaDB (cosine)
+- Search: hybrid BM25 keyword + vector, merged with reciprocal rank fusion
+- Query rewriting: the LLM first turns the question into a short search query
+- Answer: `qwen2.5:3b` answers only from the top 4 chunks and lists its sources; if nothing is close enough it says it does not know
+
+```bash
+ollama pull nomic-embed-text
+pip install chromadb rank_bm25
+python rag.py --build
+python rag.py "What tools does the MCP server have?"
+```
+
+Test: "What tools does the MCP server have?" → the three correct tools, from mcp/README.md. "Who is the president of France?" → "I don't know."
